@@ -244,7 +244,7 @@ input[type=range]{accent-color:var(--gold);width:140px;height:44px}
 
 /* ===== طبقة الفخامة: أيقونات Phosphor، كتب ثلاثية الأبعاد، حركة ===== */
 .ph,.ph-fill,.ph-duotone,.ph-bold{line-height:1;display:inline-block;vertical-align:middle}
-.nav{margin:0 12px calc(10px + env(safe-area-inset-bottom));border:1px solid var(--line);border-radius:26px;padding:6px;background:color-mix(in srgb,var(--card) 88%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 10px 30px rgb(40 20 70/.14);position:relative}
+.nav{margin:0 12px calc(env(safe-area-inset-bottom) * .45 + 4px);border:1px solid var(--line);border-radius:26px;padding:6px;background:color-mix(in srgb,var(--card) 88%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 10px 30px rgb(40 20 70/.14);position:relative}
 .nav button{font-size:11px;min-height:54px;border-radius:18px;transition:background .25s,color .25s}
 .nav button i{font-size:24px;transition:transform .3s cubic-bezier(.3,1.6,.5,1)}
 .nav button.on{background:var(--soft)}
@@ -321,7 +321,7 @@ section .rail{background:linear-gradient(to bottom,transparent calc(100% - 9px),
 /* ===== إصلاح الحواف وشريط سفلي مثل إنستغرام ===== */
 html,body{height:100%;overscroll-behavior:none}
 @media(max-width:599px){body{background:var(--bg)}.app{position:fixed;inset:0;height:auto;max-width:none;margin:0;border-radius:0}}
-#view{overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch;padding-bottom:calc(104px + env(safe-area-inset-bottom))!important}
+#view{overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch;padding-bottom:calc(92px + env(safe-area-inset-bottom) * .45)!important}
 .sfill{position:absolute;top:0;left:0;right:0;height:env(safe-area-inset-top);z-index:4;pointer-events:none;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
 .nav{position:absolute;left:0;right:0;bottom:0;z-index:4;transition:margin .35s cubic-bezier(.2,.8,.2,1),padding .35s,border-radius .35s,box-shadow .35s}
 .nav button{transition:min-height .35s cubic-bezier(.2,.8,.2,1),font-size .25s,background .25s,color .25s}
@@ -912,6 +912,9 @@ let tx=0;$('#page').addEventListener('touchstart',e=>{tx=e.touches[0].clientX},{
 $('#page').addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>50)turn(dx>0?1:-1)},{passive:true});
 document.addEventListener('keydown',e=>{if(!$('#reader').classList.contains('on'))return;if(e.key==='ArrowLeft')turn(1);else if(e.key==='ArrowRight')turn(-1);else if(e.key==='Escape')closeReader()});
 {let lastY=0;const v=$('#view'),nv=$('#nav');v.addEventListener('scroll',()=>{const y=v.scrollTop;if(y>lastY+6&&y>90)nv.classList.add('mini');else if(y<lastY-6||y<40)nv.classList.remove('mini');lastY=y},{passive:true})}
+/* آيفون كتطبيق مثبّت: يحسب ارتفاع الشاشة الحقيقي حتى ما يبقى فراغ أبيض بالأسفل */
+const fitH=()=>{const a=$('#app');if(standalone()&&isIOS&&innerWidth<600){const port=innerHeight>=innerWidth;const sh=port?Math.max(screen.height,screen.width):Math.min(screen.height,screen.width);a.style.bottom='auto';a.style.height=Math.max(innerHeight,sh)+'px'}else{a.style.height='';a.style.bottom=''}};
+fitH();addEventListener('resize',fitH);addEventListener('orientationchange',()=>setTimeout(fitH,300));
 render();
 setTimeout(()=>$('#splash').classList.add('off'),1000);
 if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});

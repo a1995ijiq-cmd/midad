@@ -1,6 +1,6 @@
 // خادم مداد: يجلب فهارس المكتبات (OPDS / JSON / RSS / HTML) نيابة عن التطبيق
 // لأن أغلب المواقع ما تسمح للمتصفح يتصل بيها مباشرة (CORS).
-const BLOCK = ['welib', 'annas-archive', 'annas-', 'libgen', 'library.lol', 'z-lib', 'zlib', '1lib', 'pdfdrive', 'sci-hub', 'b-ok', 'singlelogin'];
+const BLOCK = ['noor-book', 'noorbook', 'welib', 'annas-archive', 'annas-', 'libgen', 'library.lol', 'z-lib', 'zlib', '1lib', 'pdfdrive', 'sci-hub', 'b-ok', 'singlelogin'];
 const MAX = 8 * 1024 * 1024;
 const CORS = { 'access-control-allow-origin': '*', 'access-control-expose-headers': 'x-final-url' };
 const err = (msg, status) => new Response(JSON.stringify({ error: msg }), { status, headers: { ...CORS, 'content-type': 'application/json; charset=utf-8' } });

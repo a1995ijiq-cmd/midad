@@ -399,7 +399,7 @@ const BUILTIN={
  ia:{n:'أرشيف الإنترنت',u:'archive.org',type:'Advanced Search API',c:'#1f4e6b',lic:'متاح للقراءة العامة',hosts:['archive.org']},
  ol:{n:'Open Library',u:'openlibrary.org',type:'Search API',c:'#7a2e4f',lic:'نسخ عامة فقط',hosts:['openlibrary.org']},
  gut:{n:'Project Gutenberg',u:'gutendex.com',type:'Gutendex API',c:'#3d3d5c',lic:'ملكية عامة',hosts:['gutenberg.org','gutendex.com']}};
-const BLOCK=['welib','annas-archive','annas-','libgen','library.lol','z-lib','zlib','1lib','pdfdrive','sci-hub','b-ok','singlelogin'];
+const BLOCK=['noor-book','noorbook','welib','annas-archive','annas-','libgen','library.lol','z-lib','zlib','1lib','pdfdrive','sci-hub','b-ok','singlelogin'];
 const SUGG=[['https://standardebooks.org/feeds/opds','Standard Ebooks (OPDS)'],['https://m.gutenberg.org/ebooks.opds/','Gutenberg OPDS'],['https://bookserver.archive.org/catalog/','أرشيف الإنترنت OPDS']];
 
 const MEM={};
@@ -528,9 +528,9 @@ function sources(){
  return `<h1>المصادر</h1><p class="mut" style="margin:6px 0 0">مداد يبحث في كل المصادر المفعّلة بنفس الوقت. أضف مكتبة رقمية برابطها، وإذا كانت تسمح بالاتصال المباشر تُجلب كتبها فوراً.</p>
  <button class="addsrc" data-act="addsrc"><i><i class="ph-bold ph-plus"></i></i><span><b>إضافة مصدر جديد</b><br><span class="mut">رابط OPDS أو JSON أو API</span></span></button>
  <h2>المصادر <small>${ar(enabled().length)} نشط</small></h2>
- ${S.src.map(x=>{const s=srcMeta(x);const n=BUILTIN[s.id]?'∞':ar((S.cust[s.id]||[]).length);const wait=s.custom&&s.wait;return `<div class="src"><header><em style="background:${s.c}"><i class="ph-duotone ph-${{wiki:'scroll',ia:'archive',ol:'book-bookmark',gut:'books'}[s.id]||'link'}"></i></em><div style="flex:1"><h4>${esc(s.n)}</h4><div class="u">${esc(s.u)}</div></div><button class="sw ${s.on?'on':''}" data-tog="${s.id}" role="switch" aria-checked="${s.on}" aria-label="تفعيل ${esc(s.n)}"></button></header>
- <footer><span class="live ${!s.on?'off':wait?'wait':''}" id="lv-${s.id}">${!s.on?'متوقف':wait?'غير متصل':'متصل'}</span><span>·</span><span>${BUILTIN[s.id]?'بحث مباشر':n+' كتاب'}</span><span>·</span><span class="tag" style="margin:0">${esc(s.type)}</span><span class="sp"></span><span id="sy-${s.id}">${ago(s.sync)}</span>
- <button data-sync="${s.id}"><i class="ph-bold ph-arrows-clockwise"></i> فحص</button>${s.custom?`<button data-del="${s.id}" style="color:var(--bad)">حذف</button>`:''}</footer>${wait?`<p class="hint">تعذّر جلب الفهرس. اضغط «فحص» للمحاولة مرة ثانية عبر خادم مداد.</p>`:''}</div>`}).join('')}`;
+ ${S.src.map(x=>{const s=srcMeta(x);const n=BUILTIN[s.id]?'∞':ar((S.cust[s.id]||[]).length);const wait=s.custom&&(s.wait||!(S.cust[s.id]||[]).length);return `<div class="src"><header><em style="background:${s.c}"><i class="ph-duotone ph-${{wiki:'scroll',ia:'archive',ol:'book-bookmark',gut:'books'}[s.id]||'link'}"></i></em><div style="flex:1"><h4>${esc(s.n)}</h4><div class="u">${esc(s.u)}</div></div><button class="sw ${s.on?'on':''}" data-tog="${s.id}" role="switch" aria-checked="${s.on}" aria-label="تفعيل ${esc(s.n)}"></button></header>
+ <footer><span class="live ${!s.on?'off':wait?'wait':''}" id="lv-${s.id}">${!s.on?'متوقف':wait?(s.wait?'غير متصل':'بلا فهرس'):'متصل'}</span><span>·</span><span>${BUILTIN[s.id]?'بحث مباشر':n+' كتاب'}</span><span>·</span><span class="tag" style="margin:0">${esc(s.type)}</span><span class="sp"></span><span id="sy-${s.id}">${ago(s.sync)}</span>
+ <button data-sync="${s.id}"><i class="ph-bold ph-arrows-clockwise"></i> فحص</button>${s.custom?`<button data-del="${s.id}" style="color:var(--bad)">حذف</button>`:''}</footer>${wait?`<p class="hint">${s.wait?'تعذّر الوصول للمصدر. اضغط «فحص» للمحاولة مرة ثانية.':'الموقع اشتغل بس ما بيه فهرس كتب يقرأه التطبيق (OPDS أو JSON). جرّب رابط الفهرس بدل الصفحة الرئيسية.'}</p>`:''}</div>`}).join('')}`;
 }
 function profile(){
  const days=[...Array(7)].map((_,i)=>6-i).map(o=>({k:dayKey(o),m:S.days[dayKey(o)]||0,o}));

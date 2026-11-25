@@ -387,6 +387,9 @@ const ago=t=>{if(!t)return 'لم تتم المزامنة';const m=Math.round((Da
 const toast=m=>{const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove('on'),2000)};
 const getRaw=(u,ms=14000)=>{const c=new AbortController();const t=setTimeout(()=>c.abort(),ms);return fetch(u,{signal:c.signal}).then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r}).finally(()=>clearTimeout(t))};
 const getJSON=(u,ms)=>getRaw(u,ms).then(r=>r.json());
+const PROXY='/api/fetch?url=';
+/* يجرب الاتصال المباشر، وإذا المنع من الموقع يمر عبر خادم مداد */
+const getVia=async(u,ms=15000)=>{try{const r=await getRaw(u,ms);return {r,via:'direct'}}catch(e){const r=await getRaw(PROXY+enc(u),ms+5000);const ct=r.headers.get('content-type')||'';if(/json/.test(ct)&&!/opds/.test(ct)){const c=r.clone();try{const j=await c.json();if(j&&j.error&&Object.keys(j).length===1)throw new Error(j.error)}catch(x){if(x.message&&!/JSON|Unexpected/.test(x.message))throw x}}return {r,via:'proxy',final:r.headers.get('x-final-url')||u}}};
 const PAL=[['#1f4e6b','#0e2536'],['#8a5a12','#4a2e06'],['#3b2157','#1a0d2b'],['#7a2e4f','#3a0f22'],['#22566b','#0b2530'],['#6b3d22','#2b160a'],['#2e5a3a','#0e2414'],['#3d3d5c','#16162a'],['#9a3b1b','#3d1306'],['#5a2a6b','#220e2e']];
 const pal=s=>{let h=0;for(const ch of String(s))h=(h*31+ch.charCodeAt(0))>>>0;return PAL[h%PAL.length]};
 
@@ -526,8 +529,8 @@ function sources(){
  <button class="addsrc" data-act="addsrc"><i><i class="ph-bold ph-plus"></i></i><span><b>إضافة مصدر جديد</b><br><span class="mut">رابط OPDS أو JSON أو API</span></span></button>
  <h2>المصادر <small>${ar(enabled().length)} نشط</small></h2>
  ${S.src.map(x=>{const s=srcMeta(x);const n=BUILTIN[s.id]?'∞':ar((S.cust[s.id]||[]).length);const wait=s.custom&&s.wait;return `<div class="src"><header><em style="background:${s.c}"><i class="ph-duotone ph-${{wiki:'scroll',ia:'archive',ol:'book-bookmark',gut:'books'}[s.id]||'link'}"></i></em><div style="flex:1"><h4>${esc(s.n)}</h4><div class="u">${esc(s.u)}</div></div><button class="sw ${s.on?'on':''}" data-tog="${s.id}" role="switch" aria-checked="${s.on}" aria-label="تفعيل ${esc(s.n)}"></button></header>
- <footer><span class="live ${!s.on?'off':wait?'wait':''}" id="lv-${s.id}">${!s.on?'متوقف':wait?'يحتاج الخادم':'متصل'}</span><span>·</span><span>${BUILTIN[s.id]?'بحث مباشر':n+' كتاب'}</span><span>·</span><span class="tag" style="margin:0">${esc(s.type)}</span><span class="sp"></span><span id="sy-${s.id}">${ago(s.sync)}</span>
- <button data-sync="${s.id}"><i class="ph-bold ph-arrows-clockwise"></i> فحص</button>${s.custom?`<button data-del="${s.id}" style="color:var(--bad)">حذف</button>`:''}</footer>${wait?`<p class="hint">هذا الموقع لا يسمح للمتصفح بالاتصال المباشر. سيعمل عند إضافة خادم مداد.</p>`:''}</div>`}).join('')}`;
+ <footer><span class="live ${!s.on?'off':wait?'wait':''}" id="lv-${s.id}">${!s.on?'متوقف':wait?'غير متصل':'متصل'}</span><span>·</span><span>${BUILTIN[s.id]?'بحث مباشر':n+' كتاب'}</span><span>·</span><span class="tag" style="margin:0">${esc(s.type)}</span><span class="sp"></span><span id="sy-${s.id}">${ago(s.sync)}</span>
+ <button data-sync="${s.id}"><i class="ph-bold ph-arrows-clockwise"></i> فحص</button>${s.custom?`<button data-del="${s.id}" style="color:var(--bad)">حذف</button>`:''}</footer>${wait?`<p class="hint">تعذّر جلب الفهرس. اضغط «فحص» للمحاولة مرة ثانية عبر خادم مداد.</p>`:''}</div>`}).join('')}`;
 }
 function profile(){
  const days=[...Array(7)].map((_,i)=>6-i).map(o=>({k:dayKey(o),m:S.days[dayKey(o)]||0,o}));
@@ -599,7 +602,7 @@ function openBook(id,keep){
 /* ---------- إضافة مصدر (اتصال حقيقي) ---------- */
 function addSheet(){
  const a=add;
- if(a.step==='form')sheetOn(`<h2 style="margin-top:0">إضافة مصدر</h2><p class="mut" style="margin:0">الصق رابط فهرس المكتبة (OPDS أو JSON).</p>
+ if(a.step==='form')sheetOn(`<h2 style="margin-top:0">إضافة مصدر</h2><p class="mut" style="margin:0">الصق رابط المكتبة أو فهرسها (OPDS، JSON، RSS، أو صفحة الموقع). مداد يتصل مباشرة، وإذا الموقع يمنع المتصفح يجلبه عبر خادمه.</p>
  <label class="field"><span>رابط المصدر</span><input class="url" id="su" type="url" inputmode="url" placeholder="https://example.org/opds" value="${esc(a.u||'')}" autocomplete="off"></label>
  <label class="field"><span>اسم يظهر في التطبيق (اختياري)</span><input id="sn" type="text" placeholder="مثلاً: مكتبة الجامعة" value="${esc(a.n||'')}"></label>
  <p class="mut" style="margin:14px 0 6px">فهارس مجانية وقانونية:</p><div class="shelf" style="margin:0">${SUGG.map(s=>`<button class="chip" data-sg="${esc(s[0])}">${esc(s[1])}</button>`).join('')}</div>
@@ -617,6 +620,12 @@ function addSheet(){
 function parseFeed(text,ct,base,sid){
  const out=[];const abs=h=>{try{return new URL(h,base).href}catch(e){return h}};
  const t=text.trim();
+ if(/^<!doctype html|<html[\s>]/i.test(t.slice(0,600))){
+  const d=new DOMParser().parseFromString(t,'text/html');
+  const alt=[...d.querySelectorAll('link[rel~="alternate"],a[href]')].map(l=>({type:(l.getAttribute('type')||'').toLowerCase(),href:l.getAttribute('href')||''})).find(l=>/opds|atom\+xml/.test(l.type)||/\.opds|\/opds(\/|$)/i.test(l.href));
+  d.querySelectorAll('script[type="application/ld+json"]').forEach((sc,i)=>{try{[].concat(JSON.parse(sc.textContent)).flatMap(o=>o['@graph']||[o]).forEach((o,k)=>{const ty=[].concat(o['@type']||[]).join(' ');if(/Book/.test(ty)&&o.name)out.push(mkB({src:sid,key:i+'-'+k+'-'+String(o.name).slice(0,40),t:String(o.name),a:String(first(o.author)?.name||first(o.author)||''),kind:'link',link:abs(o.url||base),cover:first(o.image)?.url||first(o.image)||'',d:strip(o.description||'').slice(0,300)}))})}catch(e){}});
+  return {type:alt?'صفحة ويب ← OPDS':'صفحة ويب (schema.org)',books:out,nav:alt?[abs(alt.href)]:[]};
+ }
  if(t.startsWith('<')){
   const x=new DOMParser().parseFromString(t,'application/xml');
   const entries=[...x.getElementsByTagName('entry'),...x.getElementsByTagName('item')];
@@ -650,14 +659,14 @@ async function runScan(){
  await step(1);
  let url=a.u.trim();if(!/^https?:/i.test(url))url='https://'+url;
  try{
-  const r=await getRaw(url,12000);const ct=r.headers.get('content-type')||'';const text=await r.text();
+  const g=await getVia(url);const base=g.final||url;const ct=g.r.headers.get('content-type')||'';const text=await g.r.text();
   await step(2);
-  let p=parseFeed(text,ct,url,sid);
-  if(!p.books.length&&p.nav.length){try{const r2=await getRaw(p.nav[0],12000);const p2=parseFeed(await r2.text(),'',p.nav[0],sid);if(p2.books.length)p={...p2,type:p.type}}catch(e){}}
-  res={...p,ok:true,msg:p.books.length?'':`تم الاتصال (${p.type}) لكن ما لگينا كتب بالصفحة الأولى. جرّب رابط قسم أو فهرس داخلي.`};
+  let p=parseFeed(text,ct,base,sid);
+  for(let hop=0;hop<2&&!p.books.length&&p.nav.length;hop++){try{const g2=await getVia(p.nav[0]);const p2=parseFeed(await g2.r.text(),'',g2.final||p.nav[0],sid);p={...p2,type:p.type.includes('←')?p.type:p.type+(p2.books.length?'':'')}}catch(e){break}}
+  res={...p,ok:true,via:g.via,msg:p.books.length?'':`تم الاتصال (${p.type}) لكن ما لگينا كتب بالصفحة الأولى. جرّب رابط قسم أو فهرس داخلي.`};
  }catch(e){
   await step(2);
-  res={books:[],type:/opds|atom|\.xml/i.test(url)?'OPDS':/api|\.json/i.test(url)?'JSON':'صفحة ويب',wait:true,msg:'الموقع ما يسمح للمتصفح يتصل بيه مباشرة (أو الرابط ما يشتغل). تگدر تضيفه هسه، ويشتغل لما نضيف خادم مداد.'};
+  res={books:[],type:/opds|atom|\.xml/i.test(url)?'OPDS':/api|\.json/i.test(url)?'JSON':'صفحة ويب',wait:true,msg:/blocked/.test(e.message||'')?'هذا المصدر غير مدعوم.':'تعذّر الوصول للرابط حتى عبر خادم مداد. تأكد إن الرابط صحيح ويفتح بالمتصفح، أو جرّب رابط الفهرس (OPDS) بدل الصفحة الرئيسية.'};
  }
  await step(4);
  if(add!==a)return;
@@ -715,7 +724,7 @@ async function openReader(id,jump){
    if(root.parts.length&&txtLen<1500){R.parts=root.parts;e.parts=root.parts.length}else{R.parts=[{t:b.t,ref:b.key}];R.root=root;e.parts=1}
    await loadPart(e.part||0,e.p||1);
   }else if(b.kind==='gut'){
-   const r=await getRaw(b.txt,20000);const blocks=gutText(await r.text());
+   const g=await getVia(b.txt,20000);const blocks=gutText(await g.r.text());
    R.parts=[{t:b.t}];e.parts=1;R.pages=paginate(blocks);e.pages=R.pages.length;e.p=Math.min(e.p||1,e.pages);save();drawPage(0);
   }
  }catch(err){
@@ -798,7 +807,7 @@ document.addEventListener('click',async ev=>{
  if(d.font){S.set.font=d.font;save();applyR();return}
  if(d.tog){const s=S.src.find(x=>x.id===d.tog);s.on=!s.on;save();shelfCache={};results=[];rstat={};render();toast(s.on?'تم التفعيل':'تم الإيقاف');return}
  if(d.sync){const s=S.src.find(x=>x.id===d.sync);const el=$('#sy-'+s.id);if(el)el.innerHTML='<span class="spin">⟳</span>';
-  try{if(BUILTIN[s.id])await A[s.id].search(s.id==='gut'?'':'كتاب',{});else{const r=await getRaw(s.u.startsWith('http')?s.u:'https://'+s.u);const p=parseFeed(await r.text(),'',s.u,s.id);S.cust[s.id]=p.books;s.wait=false}s.sync=Date.now();toast('المصدر يعمل ✓')}catch(e){if(!BUILTIN[s.id])s.wait=true;toast('تعذّر الاتصال بالمصدر')}save();render();return}
+  try{if(BUILTIN[s.id])await A[s.id].search(s.id==='gut'?'':'كتاب',{});else{const uu=s.u.startsWith('http')?s.u:'https://'+s.u;const g=await getVia(uu);const p=parseFeed(await g.r.text(),'',g.final||uu,s.id);if(!p.books.length&&p.nav.length){const g2=await getVia(p.nav[0]);Object.assign(p,parseFeed(await g2.r.text(),'',g2.final||p.nav[0],s.id))}S.cust[s.id]=p.books;s.wait=false}s.sync=Date.now();toast('المصدر يعمل ✓')}catch(e){if(!BUILTIN[s.id])s.wait=true;toast('تعذّر الاتصال بالمصدر')}save();render();return}
  if(d.del){S.src=S.src.filter(s=>s.id!==d.del);delete S.cust[d.del];save();render();toast('حُذف المصدر');return}
  if(d.sg){add.u=d.sg;add.n=$('#sn').value;add.ok=$('#sok').checked;add.err='';addSheet();return}
  const a=d.act;

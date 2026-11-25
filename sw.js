@@ -1,5 +1,5 @@
 // مداد — يشتغل بدون إنترنت بعد أول فتح
-const CACHE = 'midad-v2';
+const CACHE = 'midad-v3';
 const CORE = ['./', './index.html', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png'];
 
 self.addEventListener('install', e => {
@@ -21,7 +21,7 @@ self.addEventListener('fetch', e => {
     return;
   }
   // ملفات التطبيق: الشبكة أولاً حتى توصل التحديثات، والكاش عند انقطاع الإنترنت
-  if (url.origin === location.origin) {
+  if (url.origin === location.origin && !url.pathname.startsWith('/api/')) {
     e.respondWith(fetch(e.request).then(res => {
       const copy = res.clone(); caches.open(CACHE).then(c => c.put(e.request, copy)); return res;
     }).catch(() => caches.match(e.request).then(r => r || caches.match('./index.html'))));

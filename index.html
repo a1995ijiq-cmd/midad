@@ -406,20 +406,20 @@ const MEM={};
 const mkB=o=>{o.id=o.src+':'+o.key;if(!o.lang)o.lang=isAr(o.t)?'ar':'en';o.c=pal(o.t);MEM[o.id]=o;return o};
 const getB=id=>MEM[id]||S.books[id];
 const A={
- wiki:{async search(q){
-   const j=await getJSON(`https://ar.wikisource.org/w/api.php?action=query&list=search&srsearch=${enc(q)}&srnamespace=0&srlimit=24&format=json&origin=*`);
-   return (j.query&&j.query.search||[]).filter(r=>!r.title.includes('/')).map(r=>mkB({src:'wiki',key:r.title,t:r.title,a:'',lang:'ar',kind:'wiki',d:strip(r.snippet).slice(0,240)}))}},
- ia:{async search(q,o){
-   const qq=`(${q}) AND mediatype:(texts) AND NOT collection:(inlibrary OR printdisabled OR lendinglibrary OR americana_restricted)`+(o.ar?' AND language:(ara OR arabic OR Arabic)':'');
-   const j=await getJSON(`https://archive.org/advancedsearch.php?q=${enc(qq)}&fl%5B%5D=identifier&fl%5B%5D=title&fl%5B%5D=creator&fl%5B%5D=year&fl%5B%5D=language&fl%5B%5D=description&rows=24&sort%5B%5D=downloads+desc&output=json`);
-   return (j.response&&j.response.docs||[]).filter(d=>d.title).map(d=>{const L=[].concat(d.language||[]).join(' ').toLowerCase();return mkB({src:'ia',key:d.identifier,t:first(d.title),a:first(d.creator)||'',year:d.year,lang:/ara|arab/.test(L)||isAr(first(d.title))?'ar':'en',kind:'ia',ref:d.identifier,cover:`https://archive.org/services/img/${enc(d.identifier)}`,d:strip(first(d.description)).slice(0,300)})})}},
- ol:{async search(q,o){
-   const j=await getJSON(`https://openlibrary.org/search.json?q=${enc(q+(o.ar?' language:ara':''))}&fields=key,title,author_name,first_publish_year,cover_i,language,ia,ebook_access&limit=50`);
-   return (j.docs||[]).filter(d=>d.ebook_access==='public'&&d.ia&&d.ia.length).slice(0,24).map(d=>mkB({src:'ol',key:d.key.replace('/works/',''),t:d.title,a:(d.author_name||[])[0]||'',year:d.first_publish_year,lang:(d.language||[]).includes('ara')||isAr(d.title)?'ar':'en',kind:'ia',ref:d.ia[0],cover:d.cover_i?`https://covers.openlibrary.org/b/id/${d.cover_i}-M.jpg`:`https://archive.org/services/img/${enc(d.ia[0])}`,d:''}))}},
- gut:{async search(q,o){
-   const p=[];if(q)p.push('search='+enc(q));if(o.ar)p.push('languages=ar');
+ wiki:{async search(q,o){const pg=o.page||1;
+   const j=await getJSON(`https://ar.wikisource.org/w/api.php?action=query&list=search&srsearch=${enc(q)}&srnamespace=0&srlimit=30&sroffset=${(pg-1)*30}&format=json&origin=*`);
+   const l=(j.query&&j.query.search||[]).filter(r=>!r.title.includes('/')).map(r=>mkB({src:'wiki',key:r.title,t:r.title,a:'',lang:'ar',kind:'wiki',d:strip(r.snippet).slice(0,240)}));l.more=!!j.continue;return l}},
+ ia:{async search(q,o){const pg=o.page||1;
+   const qq=`(${q||'*'}) AND mediatype:(texts) AND NOT collection:(inlibrary OR printdisabled OR lendinglibrary OR americana_restricted)`+(o.ar?' AND language:(ara OR arabic OR Arabic)':'');
+   const j=await getJSON(`https://archive.org/advancedsearch.php?q=${enc(qq)}&fl%5B%5D=identifier&fl%5B%5D=title&fl%5B%5D=creator&fl%5B%5D=year&fl%5B%5D=language&fl%5B%5D=description&rows=30&page=${pg}&sort%5B%5D=downloads+desc&output=json`);
+   const R=j.response||{};const l=(R.docs||[]).filter(d=>d.title).map(d=>{const L=[].concat(d.language||[]).join(' ').toLowerCase();return mkB({src:'ia',key:d.identifier,t:first(d.title),a:first(d.creator)||'',year:d.year,lang:/ara|arab/.test(L)||isAr(first(d.title))?'ar':'en',kind:'ia',ref:d.identifier,cover:`https://archive.org/services/img/${enc(d.identifier)}`,d:strip(first(d.description)).slice(0,300)})});l.more=(R.numFound||0)>pg*30;return l}},
+ ol:{async search(q,o){const pg=o.page||1;
+   const j=await getJSON(`https://openlibrary.org/search.json?q=${enc((q||'classic')+(o.ar?' language:ara':''))}&fields=key,title,author_name,first_publish_year,cover_i,language,ia,ebook_access&limit=60&page=${pg}`);
+   const docs=j.docs||[];const l=docs.filter(d=>d.ebook_access==='public'&&d.ia&&d.ia.length).map(d=>mkB({src:'ol',key:d.key.replace('/works/',''),t:d.title,a:(d.author_name||[])[0]||'',year:d.first_publish_year,lang:(d.language||[]).includes('ara')||isAr(d.title)?'ar':'en',kind:'ia',ref:d.ia[0],cover:d.cover_i?`https://covers.openlibrary.org/b/id/${d.cover_i}-M.jpg`:`https://archive.org/services/img/${enc(d.ia[0])}`,d:''}));l.more=docs.length===60;return l}},
+ gut:{async search(q,o){const pg=o.page||1;
+   const p=['page='+pg];if(q)p.push('search='+enc(q));if(o.ar)p.push('languages=ar');if(o.topic)p.push('topic='+enc(o.topic));
    const j=await getJSON(`https://gutendex.com/books/?${p.join('&')}`);
-   return (j.results||[]).slice(0,24).map(r=>{const f=r.formats||{};return mkB({src:'gut',key:String(r.id),t:r.title,a:(r.authors[0]||{}).name||'',lang:(r.languages||[]).includes('ar')?'ar':(isAr(r.title)?'ar':'en'),kind:'gut',ref:r.id,cover:f['image/jpeg']||'',txt:f['text/plain; charset=utf-8']||f['text/plain; charset=us-ascii']||f['text/plain']||'',html:f['text/html']||f['text/html; charset=utf-8']||`https://www.gutenberg.org/ebooks/${r.id}`,d:(r.subjects||[]).slice(0,3).join(' · ')})})}}
+   const l=(j.results||[]).map(r=>{const f=r.formats||{};return mkB({src:'gut',key:String(r.id),t:r.title,a:(r.authors[0]||{}).name||'',lang:(r.languages||[]).includes('ar')?'ar':(isAr(r.title)?'ar':'en'),kind:'gut',ref:r.id,cover:f['image/jpeg']||'',txt:f['text/plain; charset=utf-8']||f['text/plain; charset=us-ascii']||f['text/plain']||'',html:f['text/html']||f['text/html; charset=utf-8']||`https://www.gutenberg.org/ebooks/${r.id}`,d:(r.subjects||[]).slice(0,3).join(' · ')})});l.more=!!j.next;return l}}
 };
 const extUrl=b=>b.kind==='wiki'?`https://ar.wikisource.org/wiki/${enc(b.key)}`:b.kind==='ia'?`https://archive.org/details/${enc(b.ref)}`:b.kind==='gut'?`https://www.gutenberg.org/ebooks/${b.ref}`:(b.link||b.html||'#');
 
@@ -445,15 +445,27 @@ const skel=n=>`<div class="skel">${'<i></i>'.repeat(n)}</div>`;
 const streak=()=>{let n=0;for(let i=0;i<365;i++){if((S.days[dayKey(i)]||0)>0)n++;else if(i>0)break}return n};
 const enabled=()=>S.src.filter(s=>s.on);
 
-/* ---------- البحث في كل المصادر ---------- */
+/* ---------- البحث في كل المصادر (مع تحميل المزيد) ---------- */
+let curJobs=null,curTitle='';
+const runJob=(j,page)=>BUILTIN[j.src]?A[j.src].search(j.q,{...j.o,page}):Promise.resolve((()=>{const all=(S.cust[j.src]||[]).filter(b=>!j.q||norm(b.t+' '+b.a).includes(norm(j.q)));const l=all.slice((page-1)*30,page*30).map(b=>{MEM[b.id]=b;return b});l.more=all.length>page*30;return l})());
 function searchAll(query,opt={}){
- const tk=++stoken;results=[];rstat={};
  const ar=opt.ar||fLang==='ar';
- enabled().forEach(s=>{
-  rstat[s.id]='…';
-  const p=BUILTIN[s.id]?A[s.id].search(query,{ar}):Promise.resolve((S.cust[s.id]||[]).filter(b=>!query||norm(b.t+' '+b.a).includes(norm(query))).map(b=>{MEM[b.id]=b;return b}));
-  p.then(list=>{if(tk!==stoken)return;const seen=new Set(results.map(b=>norm(b.t)+b.src));list.forEach(b=>{const k=norm(b.t)+b.src;if(!seen.has(k)){seen.add(k);results.push(b)}});rstat[s.id]=list.length;drawResults()})
-   .catch(()=>{if(tk!==stoken)return;rstat[s.id]='x';drawResults()});
+ const jobs=opt.jobs||enabled().map(s=>({src:s.id,q:query,o:{ar}}));
+ curJobs=jobs.filter(j=>S.src.some(s=>s.id===j.src&&s.on)).map(j=>({...j,page:0,more:true}));
+ curTitle=opt.title||'';
+ const tk=++stoken;results=[];rstat={};
+ loadMore(tk);
+}
+let scount={},sfail={};
+function loadMore(tk=stoken){
+ if(!curJobs)return;
+ if(curJobs.every(j=>j.page===0)){scount={};sfail={}}
+ const upd=src=>{rstat[src]=curJobs.some(x=>x.src===src&&x.busy)?'…':(scount[src]||(sfail[src]?'x':0))};
+ curJobs.filter(j=>j.more&&!j.busy).forEach(j=>{
+  j.busy=true;j.page++;scount[j.src]=scount[j.src]||0;upd(j.src);
+  runJob(j,j.page).then(list=>{if(tk!==stoken)return;j.busy=false;j.more=!!list.more&&list.length>0;
+    const seen=new Set(results.map(b=>norm(b.t)+b.src));list.forEach(b=>{const k=norm(b.t)+b.src;if(!seen.has(k)){seen.add(k);results.push(b);scount[j.src]++}});upd(j.src);drawResults()})
+   .catch(()=>{if(tk!==stoken)return;j.busy=false;j.more=false;sfail[j.src]=1;upd(j.src);drawResults()});
  });
  drawResults();
 }
@@ -462,25 +474,49 @@ function drawResults(){
  const pending=Object.values(rstat).some(v=>v==='…');
  let r=results.filter(b=>(fLang==='all'||b.lang===fLang)&&(fSrc==='all'||b.src===fSrc));
  r=ordered(r);
+ const more=curJobs&&curJobs.some(j=>j.more);
  const st=`<div class="sstat">${Object.entries(rstat).map(([id,v])=>{const s=srcOf(id);return s?`<span class="${v==='x'?'err':v==='…'?'':'ok'}">${esc(s.n)}: ${v==='…'?'<span class="spin">◌</span>':v==='x'?'تعذّر':ar(v)}</span>`:''}).join('')}</div>`;
- el.innerHTML=st+(r.length?`<p class="mut" style="margin:12px 0 0">${ar(r.length)} نتيجة</p><div class="grid">${r.map(card).join('')}</div>`:pending?`<div class="grid">${'<div class="skel-c"></div>'.repeat(6)}</div>`:`<div class="empty"><i class="ph-duotone ph-binoculars"></i><b>ما لگينا نتائج</b>جرّب كلمة ثانية، أو فعّل مصادر أكثر، أو جرّب بالإنجليزي</div>`);
+ el.innerHTML=st+(r.length?`<p class="mut" style="margin:12px 0 0">${ar(r.length)} كتاب</p><div class="grid">${r.map(card).join('')}</div>${pending?`<div class="grid">${'<div class="skel-c"></div>'.repeat(3)}</div>`:more?`<button class="btn alt full" style="margin-top:18px" data-act="more"><i class="ph-bold ph-plus-circle"></i> تحميل المزيد</button>`:`<p class="mut" style="text-align:center;margin-top:18px">وصلت لنهاية النتائج</p>`}`:pending?`<div class="grid">${'<div class="skel-c"></div>'.repeat(6)}</div>`:`<div class="empty"><i class="ph-duotone ph-binoculars"></i><b>ما لگينا نتائج</b>جرّب كلمة ثانية، أو فعّل مصادر أكثر، أو جرّب بالإنجليزي</div>`);
 }
 
 /* ---------- الشاشات ---------- */
 const QUO=[['أَعَزُّ مَكانٍ في الدُنى سَرجُ سابِحٍ','وَخَيرُ جَليسٍ في الزَمانِ كِتابُ','المتنبي'],['عَلى قَدرِ أَهلِ العَزمِ تَأتي العَزائِمُ','وَتَأتي عَلى قَدرِ الكِرامِ المَكارِمُ','المتنبي'],['قُم لِلمُعَلِّمِ وَفِّهِ التَبجيلا','كادَ المُعَلِّمُ أَن يَكونَ رَسولا','أحمد شوقي'],['شَكَوتُ إِلى وَكيعٍ سوءَ حِفظي','فَأَرشَدَني إِلى تَركِ المَعاصي','الإمام الشافعي']];
 let qi=new Date().getDate()%QUO.length;
-const SHELVES=[
- {k:'poetry',t:'دواوين الشعر العربي',src:'wiki',q:'intitle:ديوان'},
- {k:'iaar',t:'كتب عربية من أرشيف الإنترنت',src:'ia',q:'*',ar:true},
- {k:'herit',t:'من كتب التراث',src:'wiki',q:'intitle:كتاب'},
- {k:'world',t:'روائع الأدب العالمي',src:'gut',q:''}];
-const CATS=[['شعر','ديوان','#3b2157','feather'],['روايات','رواية','#7a2e4f','book-open-text'],['تاريخ','تاريخ','#1f4e6b','globe-hemisphere-east'],['فلسفة وفكر','فلسفة','#3d3d5c','lightbulb'],['تراث وأدب','أدب','#8a5a12','scroll'],['علوم وطب','طب','#22566b','flask'],['دين','تفسير','#2e5a3a','mosque'],['أطفال','قصص الأطفال','#b0472a','balloon']];
-function loadShelf(sh){
- if(shelfCache[sh.k]){fillShelf(sh);return}
- if(!S.src.find(s=>s.id===sh.src&&s.on)){const el=$('#sh-'+sh.k);if(el)el.closest('section').remove();return}
- A[sh.src].search(sh.q,{ar:!!sh.ar}).then(l=>{shelfCache[sh.k]=l;fillShelf(sh)}).catch(()=>{const el=$('#sh-'+sh.k);if(el)el.innerHTML='<span class="mut">تعذّر التحميل — تأكد من الإنترنت</span>'});
+/* الأقسام: كل قسم يجمع كتب مرخّصة أو ملكية عامة من أكثر من مصدر */
+const W=(q)=>({src:'wiki',q,o:{}}),I=(q)=>({src:'ia',q,o:{ar:true}}),G=(q,topic)=>({src:'gut',q,o:topic?{topic}:{}}),O=(q)=>({src:'ol',q,o:{}});
+const SECTIONS=[
+ {k:'iraq',t:'من أدب العراق',ic:'tree-palm',c:'#1f6b4f',d:'المتنبي، الجاحظ، أبو نواس، الرصافي، الزهاوي…',jobs:[W('الرصافي'),W('الزهاوي'),W('أبو نواس'),W('ديوان المتنبي'),W('الجاحظ'),I('العراق'),I('بغداد تاريخ')]},
+ {k:'poetry',t:'الشعر العربي',ic:'feather',c:'#3b2157',d:'دواوين ومعلقات وقصائد',jobs:[W('intitle:ديوان'),W('معلقة'),I('ديوان شعر')]},
+ {k:'religion',t:'كتب دينية',ic:'mosque',c:'#2e5a3a',d:'تفسير وحديث وفقه وسيرة',jobs:[W('تفسير'),W('صحيح'),I('تفسير القرآن'),I('السيرة النبوية'),I('فقه')]},
+ {k:'heritage',t:'التراث والأدب',ic:'scroll',c:'#8a5a12',d:'أمهات كتب الأدب العربي',jobs:[W('intitle:كتاب'),W('أدب'),I('الأدب العربي')]},
+ {k:'history',t:'تاريخ ورحلات',ic:'globe-hemisphere-east',c:'#1f4e6b',d:'تواريخ ورحلات وجغرافيا',jobs:[W('تاريخ'),W('رحلة'),I('تاريخ الإسلام'),I('رحلة')]},
+ {k:'social',t:'اجتماع وفكر',ic:'users-three',c:'#6b3d22',d:'علم الاجتماع والفكر والنهضة',jobs:[W('ابن خلدون'),I('علم الاجتماع'),I('الفكر العربي'),G('','sociology')]},
+ {k:'psych',t:'علم النفس',ic:'brain',c:'#5a2a6b',d:'النفس والسلوك والأخلاق',jobs:[I('علم النفس'),W('الأخلاق'),G('','psychology'),O('psychology')]},
+ {k:'philo',t:'فلسفة',ic:'lightbulb',c:'#3d3d5c',d:'فلاسفة العرب والعالم',jobs:[W('فلسفة'),I('فلسفة'),G('','philosophy')]},
+ {k:'novels',t:'روايات وقصص',ic:'book-open-text',c:'#7a2e4f',d:'روايات وقصص عربية وعالمية',jobs:[I('رواية'),W('قصة'),G('','fiction')]},
+ {k:'science',t:'علوم وطب',ic:'flask',c:'#22566b',d:'تراث علمي وعلوم حديثة',jobs:[W('طب'),I('الطب'),I('علوم'),G('','science')]},
+ {k:'kids',t:'للأطفال',ic:'balloon',c:'#b0472a',d:'حكايات وقصص للصغار',jobs:[I('قصص الأطفال'),G('',"children")]},
+ {k:'world',t:'الأدب العالمي',ic:'globe',c:'#4a4f6b',d:'روائع الأدب المترجم والعالمي',jobs:[G(''),O('classic literature')]}];
+const secJobs=sec=>sec.jobs.filter(j=>S.src.some(s=>s.id===j.src&&s.on));
+function loadShelf(sec){
+ const el=$('#sh-'+sec.k);if(!el)return;
+ if(shelfCache[sec.k]){fillShelf(sec);return}
+ const jobs=secJobs(sec);if(!jobs.length){el.closest('section').remove();return}
+ Promise.allSettled(jobs.map(j=>runJob(j,1))).then(rs=>{
+  const seen=new Set(),out=[];const lists=rs.filter(r=>r.status==='fulfilled').map(r=>r.value);
+  for(let i=0;i<20;i++)lists.forEach(l=>{const b=l[i];if(b&&!seen.has(norm(b.t))){seen.add(norm(b.t));out.push(b)}});
+  shelfCache[sec.k]=out;fillShelf(sec)});
 }
-function fillShelf(sh){const el=$('#sh-'+sh.k);if(!el)return;const l=shelfCache[sh.k];l.forEach(b=>MEM[b.id]=b);el.className='rail';el.innerHTML=l.length?l.slice(0,14).map(card).join(''):'<span class="mut">لا توجد كتب</span>'}
+function fillShelf(sec){const el=$('#sh-'+sec.k);if(!el)return;const l=shelfCache[sec.k];l.forEach(b=>MEM[b.id]=b);el.className='rail';el.innerHTML=l.length?ordered(l).slice(0,16).map(card).join(''):'<span class="mut">تعذّر التحميل — تأكد من الإنترنت</span>'}
+let shelfIO=null;
+function observeShelves(){
+ if(shelfIO)shelfIO.disconnect();
+ const els=document.querySelectorAll('[data-shelf-k]');
+ if(!('IntersectionObserver' in window)){els.forEach(e=>loadShelf(SECTIONS.find(s=>s.k===e.dataset.shelfK)));return}
+ shelfIO=new IntersectionObserver(en=>en.forEach(x=>{if(x.isIntersecting){shelfIO.unobserve(x.target);loadShelf(SECTIONS.find(s=>s.k===x.target.dataset.shelfK))}}),{root:$('#view'),rootMargin:'400px'});
+ els.forEach(e=>shelfIO.observe(e));
+}
+function openSection(k){const sec=SECTIONS.find(s=>s.k===k);if(!sec)return;q='';fSrc='all';tab='explore';render();searchAll('',{jobs:secJobs(sec),title:sec.t});$('#view').scrollTop=0}
 const pctOf=id=>Math.round((S.lib[id]||{}).pct||0);
 
 function home(){
@@ -496,9 +532,10 @@ function home(){
  ${n>1?`<div class="dots">${[...Array(Math.min(n,3))].map((_,i)=>`<i class="${i?'':'on'}"></i>`).join('')}</div>`:''}
  <div class="duo"><div class="goal"><svg viewBox="0 0 70 70"><circle cx="35" cy="35" r="29" fill="none" stroke="var(--line)" stroke-width="7"/><circle class="ring" cx="35" cy="35" r="29" fill="none" stroke="var(--gold)" stroke-width="7" stroke-linecap="round" stroke-dasharray="${C*fr} ${C}" transform="rotate(-90 35 35)"/><text x="35" y="41" text-anchor="middle" font-size="17" font-weight="700" fill="currentColor">${ar(m)}</text></svg><b style="font-size:14px">من ${ar(g)} دقيقة</b><span class="mut" style="font-size:12px"><i class="ph-fill ph-fire fire"></i> ${ar(streak())} أيام متتالية</span></div>
  <div class="quote"><i class="ph-fill ph-quotes"></i><span class="mut" style="font-size:12px">بيت اليوم</span><p id="qv">${QUO[qi][0]}<br>${QUO[qi][1]}</p><span class="mut" style="font-size:12px" id="qa">— ${QUO[qi][2]}</span><div class="qact"><button data-act="nextq" aria-label="بيت آخر"><i class="ph-bold ph-arrows-clockwise"></i></button><button data-act="copyq" aria-label="نسخ البيت"><i class="ph-bold ph-copy"></i></button></div></div></div>
- ${SHELVES.map(sh=>`<section><h2>${sh.t} <button data-more="${sh.k}">عرض الكل</button></h2><div id="sh-${sh.k}">${skel(4)}</div></section>`).join('')}
- <h2>تصفح حسب الموضوع</h2>
- <div class="cats">${CATS.map(c=>`<button class="cat" data-catq="${esc(c[1])}"><em style="background:${c[2]}"><i class="ph-duotone ph-${c[3]}"></i></em><span>${c[0]}</span></button>`).join('')}</div>`;
+ <h2>الأقسام</h2>
+ <div class="cats">${SECTIONS.map(c=>`<button class="cat" data-sec="${c.k}"><em style="background:${c.c}"><i class="ph-duotone ph-${c.ic}"></i></em><span>${c.t}</span></button>`).join('')}</div>
+ ${SECTIONS.map(sec=>`<section data-shelf-k="${sec.k}"><h2><span><i class="ph-duotone ph-${sec.ic}" style="color:${sec.c}"></i> ${sec.t}</span><button data-sec="${sec.k}">عرض الكل</button></h2><p class="mut" style="margin:-8px 0 10px;font-size:13px">${sec.d}</p><div id="sh-${sec.k}">${skel(4)}</div></section>`).join('')}
+ <p class="mut" style="text-align:center;font-size:12px;margin-top:24px">كل الكتب من مصادر مرخّصة أو ملكية عامة</p>`;
 }
 function explore(){
  const ch=(v,c,lab,attr)=>`<button class="chip ${c===v?'on':''}" data-${attr}="${esc(v)}">${lab}</button>`;
@@ -506,7 +543,8 @@ function explore(){
  <label class="sbar"><i class="ph-duotone ph-magnifying-glass"></i><input id="q" type="search" placeholder="عنوان، مؤلف، موضوع…" value="${esc(q)}" autocomplete="off" enterkeyhint="search"></label>
  <div class="chips">${ch('all',fLang,'كل اللغات','fl')}${ch('ar',fLang,'العربية','fl')}${ch('en',fLang,'الإنجليزية','fl')}</div>
  <div class="chips" style="padding-top:4px">${ch('all',fSrc,'كل المصادر','fs')}${enabled().map(s=>ch(s.id,fSrc,esc(srcMeta(s).n),'fs')).join('')}</div>
- <div id="res">${q?'':`${S.recent.length?`<p class="mut" style="margin:14px 0 4px">عمليات البحث الأخيرة</p><div class="shelf" style="margin:0">${S.recent.map(r=>`<button class="chip" data-rq="${esc(r)}"><i class="ph ph-clock-counter-clockwise"></i>${esc(r)}</button>`).join('')}</div>`:''}
+ ${curTitle&&!q?`<div class="shelf" style="margin-top:12px"><button class="chip on" data-act="clrsec"><i class="ph-bold ph-x"></i> ${esc(curTitle)}</button></div>`:''}
+ <div id="res">${q||curTitle?'':`${S.recent.length?`<p class="mut" style="margin:14px 0 4px">عمليات البحث الأخيرة</p><div class="shelf" style="margin:0">${S.recent.map(r=>`<button class="chip" data-rq="${esc(r)}"><i class="ph ph-clock-counter-clockwise"></i>${esc(r)}</button>`).join('')}</div>`:''}
   <p class="mut" style="margin:18px 0 6px">اقتراحات</p><div class="shelf" style="margin:0">${['المتنبي','ألف ليلة وليلة','ابن خلدون','الجاحظ','المعلقات','طه حسين','Shakespeare','Dostoevsky'].map(r=>`<button class="chip" data-rq="${r}">${r}</button>`).join('')}</div>`}</div>`;
 }
 function library(){
@@ -568,15 +606,15 @@ const buzz=()=>{try{navigator.vibrate&&navigator.vibrate(8)}catch(e){}};
 function render(){
  $('#view').innerHTML=({home,explore,library,sources,profile})[tab]();
  document.querySelectorAll('.nav button').forEach(b=>{const on=b.dataset.tab===tab;b.classList.toggle('on',on);b.firstElementChild.className=(on?'ph-fill ph-':'ph-duotone ph-')+b.dataset.ic});countUp();
- if(tab==='home')SHELVES.forEach(loadShelf);
- if(tab==='explore'&&q){if(results.length||Object.keys(rstat).length)drawResults();else searchAll(q)}
- const qi=$('#q');if(qi){qi.oninput=()=>{q=qi.value;clearTimeout(qt);if(!q.trim()){render();return}qt=setTimeout(()=>searchAll(q.trim()),500)};qi.onkeydown=e=>{if(e.key==='Enter'&&q.trim()){clearTimeout(qt);S.recent=[q.trim(),...S.recent.filter(x=>x!==q.trim())].slice(0,6);save();searchAll(q.trim());qi.blur()}}}
+ if(tab==='home')observeShelves();
+ if(tab==='explore'&&(q||curTitle)){if(results.length||Object.keys(rstat).length)drawResults();else if(q)searchAll(q)}
+ const qi=$('#q');if(qi){qi.oninput=()=>{q=qi.value;curTitle='';clearTimeout(qt);if(!q.trim()){render();return}qt=setTimeout(()=>searchAll(q.trim()),500)};qi.onkeydown=e=>{if(e.key==='Enter'&&q.trim()){clearTimeout(qt);S.recent=[q.trim(),...S.recent.filter(x=>x!==q.trim())].slice(0,6);save();searchAll(q.trim());qi.blur()}}}
  const gi=$('#goal');if(gi)gi.oninput=()=>{S.set.goal=+gi.value;$('#gv').textContent=ar(gi.value)+' دقيقة';save()};
  const yi=$('#yg');if(yi)yi.oninput=()=>{S.set.yearGoal=+yi.value;$('#ygv').textContent=ar(yi.value)+' كتاباً';save()};
  const f=$('#feat');if(f)f.onscroll=()=>{const i=Math.round(Math.abs(f.scrollLeft)/f.clientWidth);document.querySelectorAll('.dots i').forEach((d,j)=>d.classList.toggle('on',i===j))};
 }
 function go(t,focus){tab=t;render();$('#view').scrollTop=0;if(focus)setTimeout(()=>$('#q')?.focus(),60)}
-function doSearch(term){q=term;tab='explore';S.recent=[term,...S.recent.filter(x=>x!==term)].slice(0,6);save();render();searchAll(term);$('#view').scrollTop=0}
+function doSearch(term){q=term;curTitle='';tab='explore';S.recent=[term,...S.recent.filter(x=>x!==term)].slice(0,6);save();render();searchAll(term);$('#view').scrollTop=0}
 const sheetOn=h=>{$('#sheet').innerHTML='<div class="grab"></div>'+h;$('#sheet').classList.add('on');$('#scrim').classList.add('on')};
 const closeSheet=()=>{$('#sheet').classList.remove('on');$('#scrim').classList.remove('on');add=null};
 
@@ -795,8 +833,7 @@ document.addEventListener('click',async ev=>{
  if(d.hj){openReader(d.hj,{part:+d.part,p:+d.p});return}
  if(d.tj){S.lib[R.id].p=+d.tj;save();drawPage(1);$('#rtocp').classList.remove('on');return}
  if(d.tpart){$('#rtocp').classList.remove('on');await loadPart(+d.tpart,1);return}
- if(d.catq){doSearch(d.catq);return}
- if(d.more){const sh=SHELVES.find(s=>s.k===d.more);fSrc=sh.src;fLang=sh.ar?'ar':'all';doSearch(sh.q||'popular');return}
+ if(d.sec){openSection(d.sec);return}
  if(d.fl){fLang=d.fl;render();if(q)searchAll(q);return}
  if(d.fs){fSrc=d.fs;render();return}
  if(d.rq){doSearch(d.rq);return}
@@ -812,6 +849,8 @@ document.addEventListener('click',async ev=>{
  if(d.sg){add.u=d.sg;add.n=$('#sn').value;add.ok=$('#sok').checked;add.err='';addSheet();return}
  const a=d.act;
  if(a==='close'){closeSheet()}
+ else if(a==='more'){loadMore()}
+ else if(a==='clrsec'){curTitle='';curJobs=null;results=[];rstat={};render()}
  else if(a==='addsrc'){add={step:'form'};addSheet()}
  else if(a==='scan'){add.u=$('#su').value.trim();add.n=$('#sn').value.trim();add.ok=$('#sok').checked;
   if(!add.u){add.err='الصق رابط المصدر أولاً';addSheet();return}

@@ -537,6 +537,7 @@ const BUILTIN={
  libiq:{n:'المكتبة الرقمية العراقية',u:'dl.lib.iq',type:'lib.iq API',c:'#1f6b8a',lic:'منشورة للعامة من المكتبة (العتبة الحسينية المقدسة)',hosts:['lib.iq']},
  gb:{n:'كتب Google المجانية',u:'books.google.com',type:'Books API',c:'#2f6fb0',lic:'كتب مجانية وملكية عامة فقط',hosts:['books.google.com','googleapis.com']},
  sw:{n:'StoryWeaver للأطفال',u:'storyweaver.org.in',type:'StoryWeaver API',c:'#d0662a',lic:'قصص أطفال بترخيص مفتوح',hosts:['storyweaver.org.in']},
+ tr:{n:'تراث (المكتبة الشاملة)',u:'turath.io',type:'Turath API',c:'#5a3a1a',lic:'كتب التراث الإسلامي والعربي المنشورة مجاناً',hosts:['turath.io','shamela.ws']},
  lv:{n:'LibriVox كتب صوتية',u:'librivox.org',type:'LibriVox API',c:'#6b4fa0',lic:'تسجيلات صوتية ملكية عامة',hosts:['librivox.org']}};
 const BLOCK=['welib','annas-archive','annas-','libgen','library.lol','z-lib','zlib','1lib','pdfdrive','sci-hub','b-ok','singlelogin'];
 const SUGG=[['https://standardebooks.org/feeds/opds','Standard Ebooks (OPDS)'],['https://m.gutenberg.org/ebooks.opds/','Gutenberg OPDS'],['https://bookserver.archive.org/catalog/','أرشيف الإنترنت OPDS']];
@@ -581,6 +582,17 @@ A.sw={async search(q,o){const pg=o.page||1;
  const l=(j.data||[]).map(x=>{const js=JSON.stringify(x.coverImage||x.cover_image||x);const cov=(js.match(/https:[^"]+illustration_crops[^"]+size3[^"]+/)||js.match(/https:[^"]+illustration_crops[^"]+/)||[''])[0];
   return mkB({src:'sw',key:String(x.id),t:x.title,a:((x.authors||[])[0]||{}).name||'',lang:(o.lang||'Arabic')==='Arabic'?'ar':'en',kind:'sw',ref:x.slug||x.id,cover:cov,d:strip(x.description||x.synopsis||'').slice(0,240)})});
  const md=j.metadata||{};l.more=(md.hits||0)>pg*24||(md.total_pages||0)>pg;return l}};
+/* تراث: مكتبة الشاملة (آلاف كتب التراث الإسلامي لكل المذاهب) — البحث بالنص ثم نجمع النتائج حسب الكتاب */
+const TRB='https://api.turath.io';
+A.tr={async search(q,o){const pg=o.page||1;
+ const g=await getVia(`${TRB}/search?q=${enc(q||'الحمد لله')}&page=${pg}`,20000);const j=await g.r.json();const seen=new Set(),out=[];
+ (j.data||[]).forEach(x=>{let m={};try{m=typeof x.meta==='string'?JSON.parse(x.meta):(x.meta||{})}catch(e){}if(!x.book_id||seen.has(x.book_id)||!m.book_name)return;seen.add(x.book_id);
+  out.push(mkB({src:'tr',key:String(x.book_id),t:m.book_name,a:m.author_name||'',lang:'ar',kind:'tr',ref:x.book_id,d:strip(x.snip||'').slice(0,200)}))});
+ out.more=(j.data||[]).length>0&&(j.count||0)>pg*(j.data||[]).length;return out}};
+async function trPage(id,p){const k=`tr:${id}:${p}`;const c=await IDB.get(k).catch(()=>null);if(c)return c;
+ const g=await getVia(`${TRB}/page?book_id=${id}&pg=${p}&ver=3`,20000);const j=await g.r.json();if(!j||typeof j.text!=='string')throw new Error('end');
+ const blocks=[];j.text.split('\n').forEach(line=>{const isH=/data-type="title"/.test(line);const t=strip(line).trim();if(!t)return;if(/^_{5,}$/.test(t)){blocks.push({k:'h',t:'الهوامش'});return}blocks.push({k:isH?'h':'p',t})});
+ const out=blocks.length?blocks:[{k:'p',t:'—'}];IDB.set(k,out).catch(()=>{});return out}
 /* LibriVox: كتب صوتية ملكية عامة */
 A.lv={async search(q,o){const pg=o.page||1;
  const g=await getVia(`https://librivox.org/api/feed/audiobooks?format=json&extended=1&limit=20&offset=${(pg-1)*20}${q?'&title='+enc('^'+q):''}`,25000);const j=await g.r.json();
@@ -600,7 +612,7 @@ A.libiq={async search(q,o){const pg=o.page||1,c=LQ();
  if(pg===1)out=Object.values(c.b).filter(hit);
  for(let k=0;k<3&&!c.end;k++){const got=await lqBlock();got.forEach(x=>{if(hit(x))out.push(c.b[x.id])})}
  const l=out.map(lqBook);l.more=!c.end;return l}};
-const extUrl=b=>b.kind==='gb'?`https://books.google.com/books?id=${enc(b.ref)}`:b.kind==='sw'?`https://storyweaver.org.in/stories/${b.ref}`:b.kind==='audio'?(b.lvurl||'https://librivox.org'):b.kind==='libiq'?`https://reader.lib.iq/?bookId=${b.ref}&page=1&volume=1&section=1&lang=ar`:b.kind==='wiki'?`https://ar.wikisource.org/wiki/${enc(b.key)}`:b.kind==='ia'?`https://archive.org/details/${enc(b.ref)}`:b.kind==='gut'?`https://www.gutenberg.org/ebooks/${b.ref}`:(b.link||b.html||'#');
+const extUrl=b=>b.kind==='tr'?`https://app.turath.io/book/${b.ref}`:b.kind==='gb'?`https://books.google.com/books?id=${enc(b.ref)}`:b.kind==='sw'?`https://storyweaver.org.in/stories/${b.ref}`:b.kind==='audio'?(b.lvurl||'https://librivox.org'):b.kind==='libiq'?`https://reader.lib.iq/?bookId=${b.ref}&page=1&volume=1&section=1&lang=ar`:b.kind==='wiki'?`https://ar.wikisource.org/wiki/${enc(b.key)}`:b.kind==='ia'?`https://archive.org/details/${enc(b.ref)}`:b.kind==='gut'?`https://www.gutenberg.org/ebooks/${b.ref}`:(b.link||b.html||'#');
 
 /* ---------- الحالة ---------- */
 const seed=()=>({lib:{},books:{},hl:[],recent:[],cust:{},stat:{pages:0},
@@ -609,7 +621,7 @@ const seed=()=>({lib:{},books:{},hl:[],recent:[],cust:{},stat:{pages:0},
 let S;try{S=JSON.parse(localStorage.getItem('midad4'))||seed()}catch(e){S=seed()}
 if(!S.empty)S.empty={};
 if(!S.src.some(s=>s.id==='libiq'))S.src.splice(0,0,{id:'libiq',on:true,sync:0});
-['gb','sw','lv'].forEach(k=>{if(!S.src.some(s=>s.id===k))S.src.push({id:k,on:true,sync:0})});
+['gb','sw','lv','tr'].forEach(k=>{if(!S.src.some(s=>s.id===k))S.src.push({id:k,on:true,sync:0})});
 const save=()=>{try{localStorage.setItem('midad4',JSON.stringify(S))}catch(e){try{S.cust={};localStorage.setItem('midad4',JSON.stringify(S))}catch(_){}}};
 const srcMeta=s=>BUILTIN[s.id]?{...BUILTIN[s.id],...s}:s;
 const srcOf=id=>{const s=S.src.find(x=>x.id===id);return s&&srcMeta(s)};
@@ -670,6 +682,7 @@ const QUO=[['أَعَزُّ مَكانٍ في الدُنى سَرجُ سابِح
 let qi=new Date().getDate()%QUO.length;
 /* الأقسام: كل قسم يجمع كتب مرخّصة أو ملكية عامة من أكثر من مصدر */
 const L=(q)=>({src:'libiq',q,o:{},tr:1}),W=(q)=>({src:'wiki',q,o:{}}),I=(q)=>({src:'ia',q,o:{ar:true,ts:true}}),IE=(q)=>({src:'ia',q,o:{}}),G=(q,topic)=>({src:'gut',q,o:topic?{topic}:{},tr:topic?1:0}),O=(q)=>({src:'ol',q,o:{}}),OS=(subj)=>({src:'ol',q:subj,o:{subj},tr:1}),GB=(q,ar)=>({src:'gb',q:/:/.test(q)?q:(ar?'intitle:'+q:'subject:'+q),o:{ar:!!ar}}),SW=(q,lang)=>({src:'sw',q,o:{lang},tr:1}),LV=(q)=>({src:'lv',q,o:{},tr:1});
+const T=(q)=>({src:'tr',q,o:{},tr:1});
 const SECTIONS=[
  {k:'iraq',g:'عام',t:'من العراق',ic:'tree-palm',c:'#1f6b4f',d:'المكتبة الرقمية العراقية، والمتنبي، والجاحظ، والرصافي، والزهاوي…',jobs:[L(''),W('الرصافي'),W('الزهاوي'),W('أبو نواس'),W('ديوان المتنبي'),W('الجاحظ'),I('العراق'),I('بغداد تاريخ'),GB('العراق',1)]},
  {k:'kids',g:'عام',t:'للأطفال',ic:'balloon',c:'#d0662a',d:'قصص مصوّرة عربية وإنجليزية، وحكايات للصغار',jobs:[SW('','Arabic'),SW('','English'),I('قصص الأطفال'),OS('children'),OS('fairy_tales'),G('','children'),GB('قصص أطفال',1)]},
@@ -685,6 +698,19 @@ const SECTIONS=[
  {k:'philo',g:'عام',t:'فلسفة',ic:'lightbulb',c:'#3d3d5c',d:'فلاسفة العرب والعالم',jobs:[W('فلسفة'),I('فلسفة'),G('','philosophy'),OS('philosophy')]},
  {k:'biog',g:'عام',t:'سير وتراجم',ic:'user-focus',c:'#7a5a2e',d:'حياة العلماء والقادة والأدباء',jobs:[I('سيرة'),W('ترجمة'),OS('biography'),GB('سيرة',1)]},
  {k:'world',g:'عام',t:'الأدب العالمي',ic:'globe',c:'#4a4f6b',d:'روائع الأدب المترجم والعالمي',jobs:[G(''),O('classic literature'),GB('classic novel')]},
+ {k:'quran',g:'المكتبة الإسلامية',t:'القرآن وعلومه',ic:'book-open',c:'#1f5a3a',d:'علوم القرآن، التجويد والقراءات، الإعجاز',jobs:[T('علوم القرآن'),T('التجويد'),W('القرآن'),I('علوم القرآن'),I('التجويد'),OS('koran')]},
+ {k:'tafsir',g:'المكتبة الإسلامية',t:'التفسير',ic:'book-bookmark',c:'#2a4a3a',d:'تفاسير قديمة وحديثة لكل المذاهب',jobs:[T('تفسير القرآن'),L('تفسير'),W('تفسير'),I('تفسير'),T('الميزان في تفسير القرآن'),T('مجمع البيان')]},
+ {k:'hadith',g:'المكتبة الإسلامية',t:'الحديث وشروحه',ic:'scroll',c:'#5a4a1a',d:'الصحاح والسنن والكتب الأربعة وشروحها',jobs:[T('صحيح البخاري'),T('سنن'),T('الكافي للكليني'),T('بحار الأنوار'),W('صحيح'),I('الحديث الشريف'),OS('hadith')]},
+ {k:'fiqh_shia',g:'المكتبة الإسلامية',t:'الفقه الشيعي (الجعفري)',ic:'scales',c:'#1f4e5a',d:'فقه الإمامية، الرسائل العملية، الاستدلال',jobs:[L('فقه'),T('فقه الإمامية'),T('جواهر الكلام'),T('العروة الوثقى'),I('رسالة عملية'),I('الفقه الجعفري'),I('منهاج الصالحين'),OS('shiah')]},
+ {k:'fiqh_sunni',g:'المكتبة الإسلامية',t:'الفقه على المذاهب الأربعة',ic:'scales',c:'#3a4a1f',d:'الحنفي، المالكي، الشافعي، الحنبلي',jobs:[T('الفقه الحنفي'),T('الفقه المالكي'),T('الفقه الشافعي'),T('الفقه الحنبلي'),T('الفقه على المذاهب الأربعة'),I('الفقه الحنفي'),I('الفقه الشافعي'),OS('islamic_law')]},
+ {k:'fiqh_other',g:'المكتبة الإسلامية',t:'الزيدية والإباضية والمذاهب الأخرى',ic:'users-four',c:'#4a3a5a',d:'فقه وعقائد المذاهب الإسلامية الأخرى',jobs:[T('الزيدية'),T('الإباضية'),I('الزيدية'),I('الإباضية'),I('الظاهرية'),T('المحلى')]},
+ {k:'usul',g:'المكتبة الإسلامية',t:'أصول الفقه',ic:'tree-structure',c:'#2e3a5a',d:'أصول الفقه وقواعده عند المذاهب',jobs:[T('أصول الفقه'),L('أصول'),I('أصول الفقه'),T('كفاية الأصول'),T('الرسالة للشافعي')]},
+ {k:'aqida',g:'المكتبة الإسلامية',t:'العقيدة وعلم الكلام',ic:'sun',c:'#5a3a1f',d:'التوحيد، الإمامة، علم الكلام والفرق',jobs:[L('عقائد'),T('العقيدة'),T('علم الكلام'),I('علم الكلام'),I('العقائد'),W('عقيدة')]},
+ {k:'sira',g:'المكتبة الإسلامية',t:'السيرة والتاريخ الإسلامي',ic:'mosque',c:'#2e5a3a',d:'سيرة النبي وأهل البيت والصحابة والتاريخ',jobs:[T('السيرة النبوية'),T('تاريخ الطبري'),I('السيرة النبوية'),I('أهل البيت'),W('سيرة'),OS('islamic_history')]},
+ {k:'akhlaq',g:'المكتبة الإسلامية',t:'الأخلاق والتزكية والعرفان',ic:'heart',c:'#7a2e4f',d:'تهذيب النفس، التصوف، العرفان',jobs:[T('الأخلاق'),T('تزكية النفس'),T('التصوف'),L('أخلاق'),I('العرفان'),I('جامع السعادات')]},
+ {k:'dua',g:'المكتبة الإسلامية',t:'الأدعية والأذكار والزيارات',ic:'hands-praying',c:'#3a5a7a',d:'مفاتيح الجنان، الصحيفة السجادية، الأذكار',jobs:[L('دعاء'),I('مفاتيح الجنان'),I('الصحيفة السجادية'),T('الأذكار'),T('حصن المسلم'),W('دعاء')]},
+ {k:'marja',g:'المكتبة الإسلامية',t:'مراجع وعلماء معاصرون',ic:'graduation-cap',c:'#4a4f6b',d:'مؤلفات المراجع والعلماء المعاصرين من مختلف المذاهب',jobs:[I('السيستاني'),I('الخوئي'),I('محمد باقر الصدر'),I('ابن باز'),I('ابن عثيمين'),I('محمد الغزالي'),I('محمد حسين فضل الله')]},
+ {k:'religions',g:'المكتبة الإسلامية',t:'الأديان والمقارنة',ic:'globe-stand',c:'#5a5a3a',d:'مقارنة الأديان والمذاهب والتاريخ الديني',jobs:[I('مقارنة الأديان'),OS('religions'),OS('christianity'),OS('judaism'),G('','religion')]},
  {k:'sports',g:'الرياضة',t:'الرياضة',ic:'trophy',c:'#c79a2e',d:'تاريخ الرياضة وتدريبها وقوانينها',jobs:[I('الرياضة'),I('التربية الرياضية'),OS('sports'),G('','sports'),GB('رياضة',1)]},
  {k:'football',g:'الرياضة',t:'كرة القدم',ic:'soccer-ball',c:'#2e7a3a',d:'تكتيك وتدريب وتاريخ اللعبة',jobs:[I('كرة القدم'),OS('soccer'),GB('كرة القدم',1),GB('football soccer')]},
  {k:'gym',g:'الرياضة',t:'كمال الأجسام واللياقة',ic:'barbell',c:'#8a2e2e',d:'تمارين، تغذية رياضية، وتشريح القوة',jobs:[I('كمال الأجسام'),I('اللياقة البدنية'),OS('bodybuilding'),OS('physical_fitness'),OS('weight_training'),GB('fitness training')]},
@@ -815,7 +841,7 @@ function sources(){
  return `<h1>المصادر</h1><p class="mut" style="margin:6px 0 0">مداد يبحث في كل المصادر المفعّلة بنفس الوقت. أضف مكتبة رقمية برابطها، وإذا كانت تسمح بالاتصال المباشر تُجلب كتبها فوراً.</p>
  <button class="addsrc" data-act="addsrc"><i><i class="ph-bold ph-plus"></i></i><span><b>إضافة مصدر جديد</b><br><span class="mut">رابط OPDS أو JSON أو API</span></span></button>
  <h2>المصادر <small>${ar(enabled().length)} نشط</small></h2>
- ${S.src.map(x=>{const s=srcMeta(x);const n=s.id==='libiq'?ar(Object.keys(LQ().b).length):BUILTIN[s.id]?'∞':ar((S.cust[s.id]||[]).length);const wait=s.custom&&(s.wait||!(S.cust[s.id]||[]).length);return `<div class="src"><header><em style="background:${s.c}"><i class="ph-duotone ph-${{wiki:'scroll',ia:'archive',ol:'book-bookmark',gut:'books',libiq:'tree-palm',gb:'google-logo',sw:'balloon',lv:'headphones'}[s.id]||'link'}"></i></em><div style="flex:1"><h4>${esc(s.n)}</h4><div class="u">${esc(s.u)}</div></div><button class="sw ${s.on?'on':''}" data-tog="${s.id}" role="switch" aria-checked="${s.on}" aria-label="تفعيل ${esc(s.n)}"></button></header>
+ ${S.src.map(x=>{const s=srcMeta(x);const n=s.id==='libiq'?ar(Object.keys(LQ().b).length):BUILTIN[s.id]?'∞':ar((S.cust[s.id]||[]).length);const wait=s.custom&&(s.wait||!(S.cust[s.id]||[]).length);return `<div class="src"><header><em style="background:${s.c}"><i class="ph-duotone ph-${{wiki:'scroll',ia:'archive',ol:'book-bookmark',gut:'books',libiq:'tree-palm',gb:'google-logo',sw:'balloon',lv:'headphones',tr:'book-bookmark'}[s.id]||'link'}"></i></em><div style="flex:1"><h4>${esc(s.n)}</h4><div class="u">${esc(s.u)}</div></div><button class="sw ${s.on?'on':''}" data-tog="${s.id}" role="switch" aria-checked="${s.on}" aria-label="تفعيل ${esc(s.n)}"></button></header>
  <footer><span class="live ${!s.on?'off':wait?'wait':''}" id="lv-${s.id}">${!s.on?'متوقف':wait?(s.wait?'غير متصل':'بلا فهرس'):'متصل'}</span><span>·</span><span>${s.id==='libiq'?n+' كتاب محفوظ':BUILTIN[s.id]?'بحث مباشر':n+' كتاب'}</span><span>·</span><span class="tag" style="margin:0">${esc(s.type)}</span><span class="sp"></span><span id="sy-${s.id}">${BUILTIN[s.id]&&!s.sync?'':ago(s.sync)}</span>
  <button data-sync="${s.id}"><i class="ph-bold ph-arrows-clockwise"></i> فحص</button>${s.custom?`<button data-del="${s.id}" style="color:var(--bad)">حذف</button>`:''}</footer>${wait?`<p class="hint">${s.wait?'تعذّر الوصول للمصدر. اضغط «فحص» للمحاولة مرة ثانية.':'الموقع اشتغل بس ما بيه فهرس كتب يقرأه التطبيق (OPDS أو JSON). جرّب رابط الفهرس بدل الصفحة الرئيسية.'}</p>`:''}</div>`}).join('')}`;
 }
@@ -877,7 +903,7 @@ function openBook(id,keep){
  const b=getB(id);if(!b)return;const e=S.lib[id],s=srcOf(b.src);
  const sb=(st,l)=>`<button class="chip ${e&&e.s===st?'on':''}" data-shelf="${st}" data-id="${esc(id)}">${l}</button>`;
  const sc=$('#sheet').scrollTop;
- const how=b.kind==='gb'?'قارئ كتب Google داخل التطبيق':b.kind==='sw'?'قصة مصوّرة بقارئ StoryWeaver':b.kind==='audio'?'كتاب صوتي بمشغّل مداد':b.kind==='libiq'?'قارئ المكتبة الرقمية العراقية الرسمي':b.kind==='wiki'?'نص كامل داخل قارئ مداد':b.kind==='gut'?'نص كامل، أو صفحة Gutenberg':b.kind==='ia'?'قارئ أرشيف الإنترنت داخل التطبيق':'من المصدر';
+ const how=b.kind==='tr'?'نص كامل داخل قارئ مداد، مع فهرس الأبواب':b.kind==='gb'?'قارئ كتب Google داخل التطبيق':b.kind==='sw'?'قصة مصوّرة بقارئ StoryWeaver':b.kind==='audio'?'كتاب صوتي بمشغّل مداد':b.kind==='libiq'?'قارئ المكتبة الرقمية العراقية الرسمي':b.kind==='wiki'?'نص كامل داخل قارئ مداد':b.kind==='gut'?'نص كامل، أو صفحة Gutenberg':b.kind==='ia'?'قارئ أرشيف الإنترنت داخل التطبيق':'من المصدر';
  sheetOn(`<div class="dhead">${cover(b)}<div>${sbadge(b)}<h3>${esc(b.t)}</h3><div class="mut">${esc(b.a)}</div></div></div>
  <div class="meta"><div><b>${b.lang==='ar'?'عربي':'أجنبي'}</b><span>اللغة</span></div><div><b>${b.year?esc(b.year):'—'}</b><span>السنة</span></div><div><b>${e&&e.pages?ar(e.pages):'—'}</b><span>صفحة</span></div><div><b>${e&&e.s==='reading'&&e.pages?ar(pctOf(id))+'٪':'—'}</b><span>التقدم</span></div></div>
  ${b.d?`<p style="margin:0 0 14px">${esc(b.d)}</p>`:''}
@@ -1213,7 +1239,7 @@ async function openReader(id,jump){
  if(S.dl[id]&&S.dl[id].kind==='pdf'&&!jump){openPDF(id);return}
  ensureEntry(b);closeSheet();
  const e=S.lib[id];if(jump){e.part=jump.part;e.p=jump.p}
- R={id,b,parts:null,pages:null};
+ R={id,b,parts:null,pages:null,lazy:false,toc:null};
  const rd=$('#reader');rd.classList.remove('fr');$('#frame').innerHTML='';
  $('#rtitle').textContent=b.t;$('#rext').href=extUrl(b);
  applyR();rd.classList.add('on');rStart=Date.now();
@@ -1221,7 +1247,13 @@ async function openReader(id,jump){
  if(b.kind==='ia'||b.kind==='libiq'||b.kind==='gb'||b.kind==='sw'||b.kind==='link'||(b.kind==='gut'&&!b.txt)){openFrame(b);return}
  $('#page').innerHTML=`<div class="pw skl">${'<i></i>'.repeat(14)}</div>`;
  try{
-  if(b.kind==='wiki'){
+  if(b.kind==='tr'){
+   const g=await getVia(`${TRB}/book?id=${b.ref}&include=indexes&ver=3`,20000);const j=await g.r.json();
+   const hs=((j.indexes||{}).headings||[]).filter(h=>h.page&&h.title);const est=Math.max(e.trTotal||0,...hs.map(h=>+h.page),20)+10;
+   R.parts=[{t:b.t}];R.toc=hs;R.lazy=true;R.pages=new Array(e.trTotal||est).fill(null);e.parts=1;e.pages=R.pages.length;
+   if(!b.a&&j.meta&&j.meta.info){const m=String(j.meta.info).match(/المؤلف[:：]\s*([^\n]+)/);if(m){b.a=m[1].trim().slice(0,60);remember(b)}}
+   e.p=Math.max(1,Math.min(e.p||1,R.pages.length));await ensurePage(e.p);save();drawPage(0);prefetchTr(e.p);
+  }else if(b.kind==='wiki'){
    const root=await wikiParse(b.key);
    const txtLen=root.blocks.reduce((s,x)=>s+x.t.length,0);
    if(root.parts.length>=2&&txtLen<1500){R.parts=root.parts;e.parts=root.parts.length}else{R.parts=[{t:b.t,ref:b.key}];R.root=root;e.parts=1}
@@ -1273,12 +1305,16 @@ function drawPage(dir){
  $('#rleft').textContent=`${ar(Math.round(e.pct))}٪`;$('#rib').style.width=e.pct+'%';
  $('#rmark').classList.toggle('on',(e.marks||[]).includes(part+':'+p));
 }
+async function ensurePage(p){if(!R||!R.lazy||R.pages[p-1])return true;
+ try{R.pages[p-1]=await trPage(R.b.ref,p);return true}catch(err){const e=S.lib[R.id];if(p>1){R.pages.length=p-1;e.trTotal=p-1;e.pages=p-1;save()}return false}}
+function prefetchTr(p){if(!R||!R.lazy)return;[p+1,p+2].forEach(n=>{if(n<=R.pages.length&&!R.pages[n-1])trPage(R.b.ref,n).then(bl=>{if(R&&R.lazy)R.pages[n-1]=bl}).catch(()=>{})})}
 async function turn(d){
  if(!R||!R.pages)return;stopTTS();closeAnn();
  const e=S.lib[R.id],n=e.p+d;
  if(n>R.pages.length){if((e.part||0)<R.parts.length-1){await loadPart((e.part||0)+1,1);return}e.s='done';save();toast('مبروك! أنهيت الكتاب 🎉');return}
  if(n<1){if((e.part||0)>0){await loadPart((e.part||0)-1,-1)}return}
- e.p=n;e.last=Date.now();if(d>0)S.stat.pages=(S.stat.pages||0)+1;save();drawPage(d);
+ if(R.lazy&&!(await ensurePage(n))){if(d>0){e.s='done';save();toast('وصلت لنهاية الكتاب 🎉')}return}
+ e.p=n;e.last=Date.now();if(d>0)S.stat.pages=(S.stat.pages||0)+1;save();drawPage(d);if(R.lazy)prefetchTr(n);
 }
 function stopTTS(){try{speechSynthesis.cancel()}catch(e){}$('#tts').classList.remove('on')}
 function closeReader(){
@@ -1290,7 +1326,8 @@ function closeReader(){
 }
 function toc(){
  const e=S.lib[R.id];let h='<h6>الفهرس</h6>';
- if(R.parts.length>1)h+=R.parts.map((pt,i)=>`<button class="${(e.part||0)===i?'cur':''}" data-tpart="${i}"><span>${esc(pt.t)}</span><span class="mut">${ar(i+1)}</span></button>`).join('');
+ if(R.toc&&R.toc.length)h+=R.toc.map(t=>`<button class="${e.p===+t.page?'cur':''}" data-tj="${t.page}" style="${t.level>1?'padding-inline-start:18px;font-size:14px':''}"><span>${esc(t.title)}</span><span class="mut">ص ${ar(t.page)}</span></button>`).join('');
+ else if(R.parts.length>1)h+=R.parts.map((pt,i)=>`<button class="${(e.part||0)===i?'cur':''}" data-tpart="${i}"><span>${esc(pt.t)}</span><span class="mut">${ar(i+1)}</span></button>`).join('');
  else{const hs=[];(R.pages||[]).forEach((pg,i)=>pg.forEach(b=>{if(b.k==='h')hs.push([b.t,i+1])}));h+=hs.length?hs.map(([t,p])=>`<button class="${e.p===p?'cur':''}" data-tj="${p}"><span>${esc(t)}</span><span class="mut">ص ${ar(p)}</span></button>`).join(''):'<p class="mut">لا يوجد فهرس لهذا الكتاب. استخدم شريط التقدم بالأسفل.</p>'}
  $('#rtocp').innerHTML=h;
 }
@@ -1302,7 +1339,7 @@ document.addEventListener('click',async ev=>{
  if(d.open){openBook(d.open);return}
  if(d.read){openReader(d.read);return}
  if(d.hj){openReader(d.hj,{part:+d.part,p:+d.p});return}
- if(d.tj){S.lib[R.id].p=+d.tj;save();drawPage(1);$('#rtocp').classList.remove('on');return}
+ if(d.tj){const p=Math.min(+d.tj,R.pages.length);$('#rtocp').classList.remove('on');if(R.lazy&&!(await ensurePage(p)))return;S.lib[R.id].p=p;save();drawPage(1);if(R.lazy)prefetchTr(p);return}
  if(d.tpart){$('#rtocp').classList.remove('on');await loadPart(+d.tpart,1);return}
  if(d.sec){openSection(d.sec);return}
  if(d.fl){fLang=d.fl;render();if(q)searchAll(q);return}
@@ -1378,7 +1415,7 @@ document.addEventListener('click',async ev=>{
  else if(a==='reset'){const c=S.cust,src=S.src;S=seed();S.src=src;S.cust=c;save();render();toast('تم المسح')}
 });
 $('#scrim').onclick=closeSheet;
-$('#rprog').oninput=e=>{if(!R||!R.pages)return;S.lib[R.id].p=+e.target.value;save();drawPage(0)};
+$('#rprog').oninput=e=>{if(!R||!R.pages)return;const p=+e.target.value;if(R.lazy){clearTimeout(R.st);$('#rpg').textContent=`صفحة ${ar(p)}`;R.st=setTimeout(async()=>{if(await ensurePage(p)){S.lib[R.id].p=p;save();drawPage(0);prefetchTr(p)}},250);return}S.lib[R.id].p=p;save();drawPage(0)};
 $('#page').onclick=e=>{
  if(!R||!R.pages)return;
  const nb=e.target.closest('[data-note]');if(nb){const i=+nb.dataset.note;rmodal('ملاحظتك',annGet(i).note,v=>annSet(i,{note:v.trim()}));return}

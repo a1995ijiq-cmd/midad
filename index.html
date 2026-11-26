@@ -1425,19 +1425,13 @@ async function openScan(b){
  const id=b.id;closeSheet();R={id,b,pdf:true,parts:[],pages:null};ensureEntry(b);
  const rd=$('#reader');rd.classList.add('fr','on');applyR();rStart=Date.now();$('#rtitle').textContent=b.t;$('#rext').href=extUrl(b);
  $('#frame').innerHTML='<div class="lstate"><div class="spin"></div><p>جارٍ تجهيز صفحات الكتاب…</p></div>';
- const isIA=b.kind==='ia';let n=isIA?0:(b.np||0),svc=null;
- if(isIA){/* IIIF: كل صفحات كل المجلدات (الكتب المقسّمة لعدة ملفات ما عندها imagecount) */
-  try{const getM=async u=>(await getVia(u,25000)).r.json();let m=await getM(`https://iiif.archive.org/iiif/3/${enc(b.ref)}/manifest.json`);
-   const canv=[];const eat=mm=>(mm.items||[]).forEach(c=>{if(c.type!=='Canvas')return;const body=(((c.items||[])[0]||{}).items||[])[0]?.body||{};const sv=(Array.isArray(body.service)?body.service[0]:body.service)||{};const sid=sv.id||sv['@id'];if(sid)canv.push(sid);else if(body.id)canv.push('IMG:'+body.id)});
-   if(m.type==='Collection'){for(const sub of (m.items||[]).slice(0,20)){try{eat(await getM(sub.id))}catch(e){}}}else eat(m);
-   if(canv.length>1){svc=canv.slice(0,3000);n=svc.length}}catch(e){}
-  if(!n){try{const m=await(await getVia(`https://archive.org/metadata/${enc(b.ref)}`,20000)).r.json();n=Math.min(2000,+((m.metadata||{}).imagecount)||0)}catch(e){}}}
- else if(!n){try{const j=await getJSON(`/api/acon?id=${enc(b.ref)}`,20000);n=j.n||0}catch(e){}}
+ const isIA=b.kind==='ia';let n=b.np||0;
+ if(!n){try{if(isIA){const m=await(await getVia(`https://archive.org/metadata/${enc(b.ref)}`,20000)).r.json();n=Math.min(2000,+((m.metadata||{}).imagecount)||0)}else{const j=await getJSON(`/api/acon?id=${enc(b.ref)}`,20000);n=j.n||0}}catch(e){}}
  if(!R||R.id!==id)return;
  if(isIA&&n<2){openFrame(Object.assign({},b,{noscan:1}));return}
  if(!n){$('#frame').innerHTML=`<div class="lstate"><p>تعذّر جلب صفحات هذا الكتاب الآن.</p><button class="btn" data-acopdf="${esc(id)}">تحميل PDF ⤓</button></div>`;return}
- const IMG=(i,w)=>svc?(svc[i-1].startsWith('IMG:')?svc[i-1].slice(4):`${svc[i-1]}/full/${w},/0/default.jpg`):isIA?`https://archive.org/download/${enc(b.ref)}/page/n${i-1}_w${w}.jpg`:ACO_IMG(b.ref,i,w);
- if(!isIA)b.np=n;S.books[id]=b;const e=S.lib[id];if(e){e.pages=n}save();
+ const IMG=(i,w)=>isIA?`https://archive.org/download/${enc(b.ref)}/page/n${i-1}_w${w}.jpg`:ACO_IMG(b.ref,i,w);
+ b.np=n;S.books[id]=b;const e=S.lib[id];if(e){e.pages=n}save();
  $('#frame').innerHTML=`<div class="pdfv scanv" id="pdfv"></div><div class="scanbar"><span id="scpos">١ / ${ar(n)}</span><input type="range" id="scr" min="1" max="${n}" value="1" dir="rtl" aria-label="انتقال إلى صفحة"><button ${isIA?`data-dl="${esc(id)}"`:`data-acopdf="${esc(id)}"`} aria-label="تحميل"><i class="ph-bold ph-download-simple"></i></button></div>`;
  const v=$('#pdfv');const frag=document.createDocumentFragment();
  for(let i=1;i<=n;i++){const el=document.createElement('div');el.className='pp';el.dataset.n=i;el.style.aspectRatio='0.69';el.innerHTML=`<span class="pn">${ar(i)}</span>`;frag.appendChild(el)}

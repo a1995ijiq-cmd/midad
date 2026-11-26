@@ -1593,26 +1593,37 @@ async function loadTafsir(key){const x=$('#qtafx');if(!x||!S.quran.tid)return;x.
  try{const j=await qget(`/tafsirs/${S.quran.tid}/by_ayah/${key}`,`q:t:${S.quran.tid}:${key}`);x.textContent=strip((j.tafsir||{}).text||'')||'لا يوجد تفسير لهذه الآية بهذا التفسير.'}catch(e){x.textContent='تعذّر تحميل التفسير.'}}
 const QHIDE=/alafasy|afasy|sudais|sudays|العفاسي|السديس/i;
 async function quranReciters(){try{return ((await qget('/resources/recitations?language=ar','q:recs')).recitations||[]).filter(r=>!QHIDE.test((r.reciter_name||'')+' '+(r.translated_name&&r.translated_name.name||'')))}catch(e){return []}}
-let QTS=null,qLastK='',qUserScroll=0;
+let QTS=null,qLastK='',qUserScroll=0,QMODE='ch',QV=null,QVi=0;
 function qFollow(ms){const v=$('#qview');if(!v)return;
  if(ms==null||!QTS||!QTS.length){v.querySelectorAll('.qa.qon').forEach(e=>e.classList.remove('qon'));qLastK='';return}
  let lo=0,hi=QTS.length-1,hit=null;while(lo<=hi){const m=(lo+hi)>>1;if(ms<QTS[m].f)hi=m-1;else if(ms>=QTS[m].t)lo=m+1;else{hit=QTS[m];break}}
- if(!hit||hit.k===qLastK)return;qLastK=hit.k;
- v.querySelectorAll('.qa.qon').forEach(e=>e.classList.remove('qon'));const el=v.querySelector(`.qa[data-k="${hit.k}"]`);if(!el)return;el.classList.add('qon');
- S.quran.ay=+hit.k.split(':')[1];
+ if(!hit)return;qMark(hit.k)}
+function qMark(k){const v=$('#qview');if(!v||k===qLastK)return;qLastK=k;
+ v.querySelectorAll('.qa.qon').forEach(e=>e.classList.remove('qon'));const el=v.querySelector(`.qa[data-k="${k}"]`);if(!el)return;el.classList.add('qon');
+ S.quran.ay=+k.split(':')[1];
  /* يمرّر فقط إذا الآية خرجت من الثلث الأوسط، وما يتدخّل إذا المستخدم يمرّر بيده */
  if(Date.now()-qUserScroll<3500)return;const r=el.getBoundingClientRect(),vr=v.getBoundingClientRect();
  if(r.top<vr.top+vr.height*.18||r.bottom>vr.top+vr.height*.72){v.scrollTo({top:v.scrollTop+(r.top-vr.top)-vr.height*.28,behavior:'smooth'})}}
+async function qVerseMode(fromAy){const au=$('#qaudio');if(!au)return;const ch=S.quran.ch,rid=S.quran.rid;
+ try{const j=await qget(`/recitations/${rid}/by_chapter/${ch}?per_page=300`,`q:vb:${rid}:${ch}`);
+  const fix=u=>/^https?:/.test(u)?u:u.startsWith('//')?'https:'+u:'https://verses.quran.com/'+u.replace(/^\//,'');
+  QV=(j.audio_files||[]).map(x=>({k:x.verse_key,u:fix(x.url||'')})).filter(x=>x.u).sort((a,c)=>+a.k.split(':')[1]-+c.k.split(':')[1]);
+  if(!QV.length)throw 0;QMODE='v';S.quran.cur=ch+':'+rid;QVi=Math.max(0,QV.findIndex(x=>+x.k.split(':')[1]===fromAy));
+  au.src=QV[QVi].u;qMark(QV[QVi].k);await au.play()}catch(e){toast('تعذّر تشغيل تلاوة هذا القارئ — جرّب قارئاً آخر')}}
 async function quranPlay(){{const rs=await quranReciters();if(rs.length&&!rs.some(r=>r.id===S.quran.rid)){S.quran.rid=rs.some(r=>r.id===8)?8:rs[0].id;S.quran.cur=0;save()}}
  const ch=S.quran.ch;if(!ch)return;let au=$('#qaudio');
  if(au&&!au.paused){au.pause();return}
  const recs=await quranReciters();
  if(!au){au=document.createElement('audio');au.id='qaudio';au.preload='none';$('#frame').appendChild(au);
   au.onplay=()=>{const b=$('#qplay');if(b)b.innerHTML='<i class="ph-fill ph-pause-circle"></i>'};au.onpause=()=>{const b=$('#qplay');if(b)b.innerHTML='<i class="ph-fill ph-play-circle"></i>'};
-  au.onended=()=>{qFollow(null);if(S.quran.ch<114){quranSurah(S.quran.ch+1).then(()=>{S.quran.cur=0;quranPlay()})}};
+  au.onended=()=>{if(QMODE==='v'&&QV&&QVi+1<QV.length){QVi++;au.src=QV[QVi].u;qMark(QV[QVi].k);au.play().catch(()=>{});if(QV[QVi+1]){const n=new Audio();n.preload='auto';n.src=QV[QVi+1].u}return}
+   qFollow(null);if(S.quran.ch<114){quranSurah(S.quran.ch+1).then(()=>{S.quran.cur=0;quranPlay()})}};
+  /* إذا ملف السورة الكاملة غير موجود عند القارئ: ننتقل تلقائياً للتشغيل آية بآية */
+  au.onerror=()=>{if(QMODE==='ch'&&au.src)qVerseMode(S.quran.ay||1)};
   /* متابعة الآية المتلوّة: تمييزها وتمرير الصفحة معها */
-  const tick=()=>{if(!au.paused&&!au.ended){qFollow(au.currentTime*1000);requestAnimationFrame(tick)}};au.addEventListener('play',()=>requestAnimationFrame(tick));au.addEventListener('seeked',()=>qFollow(au.currentTime*1000))}
- if(S.quran.cur!==ch+':'+S.quran.rid||!QTS){try{const j=await qget(`/chapter_recitations/${S.quran.rid}/${ch}?segments=true`,`q:cr2:${S.quran.rid}:${ch}`);const af=j.audio_file||{};if(S.quran.cur!==ch+':'+S.quran.rid)au.src=(af.audio_url||'').replace('http:','https:');QTS=(af.timestamps||[]).map(t=>({k:t.verse_key,f:+t.timestamp_from,t:+t.timestamp_to}));S.quran.cur=ch+':'+S.quran.rid}catch(e){toast('تعذّر تحميل التلاوة');return}}
+  const tick=()=>{if(!au.paused&&!au.ended){if(QMODE==='ch')qFollow(au.currentTime*1000);requestAnimationFrame(tick)}};au.addEventListener('play',()=>requestAnimationFrame(tick));au.addEventListener('seeked',()=>qFollow(au.currentTime*1000))}
+ if(S.quran.cur===ch+':'+S.quran.rid&&QMODE==='v'&&QV){au.play().catch(()=>{});return}
+ if(S.quran.cur!==ch+':'+S.quran.rid||!QTS){QMODE='ch';QV=null;try{const j=await qget(`/chapter_recitations/${S.quran.rid}/${ch}?segments=true`,`q:cr2:${S.quran.rid}:${ch}`);const af=j.audio_file||{};if(S.quran.cur!==ch+':'+S.quran.rid)au.src=(af.audio_url||'').replace('http:','https:');QTS=(af.timestamps||[]).map(t=>({k:t.verse_key,f:+t.timestamp_from,t:+t.timestamp_to}));S.quran.cur=ch+':'+S.quran.rid}catch(e){toast('تعذّر تحميل التلاوة');return}}
  au.play().catch(()=>toast('اضغط مرة ثانية للتشغيل'));
  const r=recs.find(x=>x.id===S.quran.rid);if(r)toast('القارئ: '+(r.translated_name&&r.translated_name.name||r.reciter_name)+(r.style?' — '+r.style:''));
 }

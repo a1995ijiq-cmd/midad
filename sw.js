@@ -1,5 +1,5 @@
 // مداد — يشتغل بدون إنترنت بعد أول فتح
-const CACHE = 'midad-v7';
+const CACHE = 'midad-v8';
 const CORE = ['./', './index.html', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png'];
 
 self.addEventListener('install', e => {
@@ -14,7 +14,7 @@ self.addEventListener('fetch', e => {
   if (e.request.method !== 'GET') return;
   const url = new URL(e.request.url);
   // الخطوط: من الكاش أولاً
-  if (url.host.includes('fonts.googleapis.com') || url.host.includes('fonts.gstatic.com') || url.host.includes('unpkg.com')) {
+  if (url.host.includes('fonts.googleapis.com') || url.host.includes('fonts.gstatic.com') || url.host.includes('unpkg.com') || url.host.includes('cdnjs.cloudflare.com')) {
     e.respondWith(caches.match(e.request).then(r => r || fetch(e.request).then(res => {
       const copy = res.clone(); caches.open(CACHE).then(c => c.put(e.request, copy)); return res;
     })));

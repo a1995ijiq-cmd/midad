@@ -541,6 +541,7 @@ html[dir=rtl] .npill{right:auto;left:0}
 .scanv.zoom{overflow:auto}.scanv.zoom .pp{width:200%;max-width:none}
 .scanbar{position:absolute;inset-inline:12px;bottom:calc(12px + env(safe-area-inset-bottom));display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:16px;background:rgb(28 16 44/.88);color:#fff;backdrop-filter:blur(10px);z-index:5;box-shadow:0 8px 24px rgb(0 0 0/.3)}
 .scanbar span{font-size:13px;min-width:70px;text-align:center}.scanbar input{flex:1;accent-color:#e9c46a}.scanbar button{width:36px;height:36px;border-radius:11px;background:rgb(255 255 255/.12);color:#e9c46a;display:grid;place-items:center}
+#pdfbar select{margin-inline-start:10px;background:rgb(255 255 255/.14);color:#fff;border:0;border-radius:9px;padding:4px 6px;font:inherit;font-size:12px}#pdfbar select option{color:#222}
 </style>
 <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
 </head>
@@ -1291,13 +1292,18 @@ async function bookParts(b,onp){
 /* ---------- تحميل للمكتبة: نص للقراءة بدون نت، أو PDF من المصدر ---------- */
 let busy={},dlProg={};
 /* تنزيل ملف مع عداد: يجرب مباشرة، وإذا انمنع يمر عبر خادم مداد */
+const volNo=f=>{const t=norm(f).replace(/[٠-٩]/g,d=>d.charCodeAt(0)-1632);let m=t.match(/(?:ج|جزء|الجزء|مجلد|المجلد|vol|part|v)\.?\s*_?(\d{1,3})/i);if(m)return +m[1];
+ const W=['الاول','الثاني','الثالث','الرابع','الخامس','السادس','السابع','الثامن','التاسع','العاشر'];for(let k=0;k<W.length;k++)if(t.includes(W[k]))return k+1;m=t.match(/(\d{1,3})(?!.*\d)/);return m?+m[1]:999};
 async function fetchProg(url,onp){
- let r;try{r=await fetch(url);if(!r.ok)throw 0}catch(e){r=await fetch(PROXY+enc(url));if(!r.ok)throw new Error('net')}
- const total=+r.headers.get('content-length')||0,type=r.headers.get('content-type')||'application/pdf';
- if(!r.body||!r.body.getReader){const b=await r.blob();onp(b.size,b.size);return b}
- const rd=r.body.getReader(),chunks=[];let got=0,lt=0;
- for(;;){const {done,value}=await rd.read();if(done)break;chunks.push(value);got+=value.length;if(Date.now()-lt>150){lt=Date.now();onp(got,total)}}
- onp(got,total||got);return new Blob(chunks,{type});
+ /* تنزيل بتقدّم مع مهلة: إذا ما وصل شي ٢٠ ثانية أو توقّف ٤٥ ثانية، يعيد المحاولة عبر الخادم */
+ const attempt=async(u,firstMs)=>{const ac=new AbortController();let tm=setTimeout(()=>ac.abort(),firstMs);
+  try{const r=await fetch(u,{signal:ac.signal});if(!r.ok)throw new Error('http '+r.status);
+   const total=+r.headers.get('content-length')||0,type=r.headers.get('content-type')||'application/pdf';
+   if(!r.body||!r.body.getReader){clearTimeout(tm);const b=await r.blob();onp(b.size,b.size);return b}
+   const rd=r.body.getReader(),chunks=[];let got=0,lt=0;
+   for(;;){clearTimeout(tm);tm=setTimeout(()=>ac.abort(),45000);const {done,value}=await rd.read();if(done)break;chunks.push(value);got+=value.length;if(Date.now()-lt>150){lt=Date.now();onp(got,total)}}
+   clearTimeout(tm);onp(got,total||got);return new Blob(chunks,{type})}finally{clearTimeout(tm)}};
+ try{return await attempt(url,20000)}catch(e){return await attempt(PROXY+enc(url),40000)}
 }
 function showProg(id,pct,label){dlProg[id]={pct,label};const b=getB(id)||{};
  const bar=$('#dlp-'+cssId(id));if(bar)bar.style.width=Math.max(3,pct)+'%';const tx=$('#dlt-'+cssId(id));if(tx)tx.textContent=label;
@@ -1320,9 +1326,14 @@ async function downloadBook(id){
     if(fails>n*.1)throw new Error('net');
     S.dl[id]={kind:'pages',n,at:Date.now(),size};toast('حُمّل الكتاب بصفحاته الأصلية للقراءة بدون نت ✓');return true})()){}
   else if(b.kind==='ia'){pr(10);const m=b._meta||await(await getVia(`https://archive.org/metadata/${enc(b.ref)}`,20000)).r.json();const pdfs=(m.files||[]).filter(f=>/\.pdf$/i.test(f.name)).sort((x,y)=>((x.format==='Text PDF'?0:1)-(y.format==='Text PDF'?0:1))||((+x.size||9e9)-(+y.size||9e9)));
-   if(!pdfs.length)throw new Error('nopdf');const f=pdfs[0];if(+f.size>60*1048576)throw new Error('big');pr(2,'بدأ التنزيل…');
-   const blob=await fetchProg(`https://archive.org/download/${enc(b.ref)}/${f.name.split('/').map(enc).join('/')}`,(g,t)=>fileProg(g,t||+f.size));if(blob.size<1000)throw new Error('bad');
-   await IDB.set('pdf:'+id,blob);S.dl[id]={kind:'pdf',at:Date.now(),size:blob.size};toast('حُمّل ملف PDF إلى مكتبتك ✓')}
+   if(!pdfs.length)throw new Error('nopdf');
+   const stem=n=>n.replace(/\.pdf$/i,'').replace(/_text$/i,'');const byStem={};pdfs.forEach(f=>{const k=stem(f.name);if(!byStem[k]||(f.format==='Text PDF'&&byStem[k].format!=='Text PDF'))byStem[k]=f});
+   let vols=Object.values(byStem).map((f,k)=>({f,no:volNo(f.name),k})).sort((a,c)=>a.no-c.no||a.k-c.k);if(vols.length>12)vols=vols.slice(0,12);
+   const tot=vols.reduce((a,v)=>a+(+v.f.size||0),0)||1;let base=0,out=[];pr(2,'بدأ التنزيل…');
+   for(let k=0;k<vols.length;k++){const f=vols[k].f,lbl=vols.length>1?(vols[k].no<999?`الجزء ${ar(vols[k].no)}`:`الملف ${ar(k+1)}`):'';
+    const blob=await fetchProg(`https://archive.org/download/${enc(b.ref)}/${f.name.split('/').map(enc).join('/')}`,(g,t)=>pr(Math.max(2,Math.min(99,(base+g)/tot*100)),`${lbl?lbl+' · ':''}${fmtSize(base+g)} من ${fmtSize(tot)}`));
+    if(blob.size<1000)throw new Error('bad');await IDB.set(k?`pdf:${id}:${k}`:'pdf:'+id,blob);base+=+f.size||blob.size;out.push({l:lbl||'الكتاب',size:blob.size})}
+   S.dl[id]={kind:'pdf',at:Date.now(),size:out.reduce((a,v)=>a+v.size,0),vols:out.length>1?out:undefined};toast(out.length>1?`حُمّلت ${ar(out.length)} أجزاء إلى مكتبتك ✓`:'حُمّل ملف PDF إلى مكتبتك ✓')}
   else if(b.kind==='aco'){const blob=await fetchProg(b.pdf,fileProg);if(blob.size<1000)throw new Error('bad');await IDB.set('pdf:'+id,blob);S.dl[id]={kind:'pdf',at:Date.now(),size:blob.size};toast('حُمّل ملف PDF إلى مكتبتك ✓')}
   else if(b.kind==='gb'&&b.pdf){const blob=await fetchProg(b.pdf,fileProg);if(blob.size<1000||!/pdf/i.test(blob.type||'pdf'))throw new Error('bad');await IDB.set('pdf:'+id,blob);S.dl[id]={kind:'pdf',at:Date.now(),size:blob.size};toast('حُمّل ملف PDF ✓')}
   else if(b.kind==='link'&&/pdf/i.test((b.ltype||'')+b.link)){const blob=await fetchProg(b.link,fileProg);await IDB.set('pdf:'+id,blob);S.dl[id]={kind:'pdf',at:Date.now(),size:blob.size};toast('حُمّل ملف PDF ✓')}
@@ -1332,7 +1343,7 @@ async function downloadBook(id){
  delete busy[id];setTimeout(()=>hideProg(id),900);if(document.querySelector('#sheet.on'))openBook(id,1);if(tab==='library')render();
 }
 const cssId=id=>id.replace(/[^a-z0-9]/gi,'_');
-async function removeDownload(id){const d=S.dl[id];if(!d)return;if(d.kind==='pages'){for(let i=0;i<d.n;i++)await IDB.del(`pg:${id}:${i}`).catch(()=>{})}if(d.kind==='pdf'||d.pdf)await IDB.del('pdf:'+id).catch(()=>{});delete S.dl[id];save();toast('حُذف التحميل');if(document.querySelector('#sheet.on'))openBook(id,1);if(tab==='library')render()}
+async function removeDownload(id){const d=S.dl[id];if(!d)return;if(d.vols)for(let k=1;k<d.vols.length;k++)await IDB.del(`pdf:${id}:${k}`).catch(()=>{});if(d.kind==='pages'){for(let i=0;i<d.n;i++)await IDB.del(`pg:${id}:${i}`).catch(()=>{})}if(d.kind==='pdf'||d.pdf)await IDB.del('pdf:'+id).catch(()=>{});delete S.dl[id];save();toast('حُذف التحميل');if(document.querySelector('#sheet.on'))openBook(id,1);if(tab==='library')render()}
 
 /* ---------- تصدير PDF مع تظليلاتك وملاحظاتك وتعديلاتك ---------- */
 const HLC={y:'rgba(245,215,110,.55)',g:'rgba(143,209,158,.5)',b:'rgba(140,196,240,.5)',p:'rgba(243,163,196,.5)'};
@@ -1389,11 +1400,12 @@ async function exportPDF(id){
 
 /* ---------- عارض PDF داخل التطبيق (pdf.js) ---------- */
 let pdfIO=null;
-async function openPDF(id){
- const b=S.books[id]||getB(id);const blob=await IDB.get('pdf:'+id).catch(()=>null);if(!blob){toast('ملف PDF غير موجود');return}
+async function openPDF(id,vk){
+ vk=+vk||0;const b=S.books[id]||getB(id);const vols=(S.dl[id]||{}).vols;const blob=await IDB.get(vk?`pdf:${id}:${vk}`:'pdf:'+id).catch(()=>null);if(!blob){toast('ملف PDF غير موجود');return}
  closeSheet();R={id,b,pdf:true,parts:[],pages:null};ensureEntry(b);
  const rd=$('#reader');rd.classList.add('fr','on');applyR();rStart=Date.now();$('#rtitle').textContent=b.t;$('#rext').href=extUrl(b);
- $('#frame').innerHTML='<div class="pdfv" id="pdfv"><div class="lstate" style="color:#eee"><span class="spin">◌</span><b style="color:#fff">جارٍ فتح الملف…</b></div></div><div class="pdfbar" id="pdfbar"></div>';
+ $('#frame').innerHTML='<div class="pdfv" id="pdfv"><div class="lstate" style="color:#eee"><span class="spin">◌</span><b style="color:#fff">جارٍ فتح الملف…</b></div></div><div class="pdfbar" id="pdfbar"><span id="pdfpos"></span>'+(vols?`<select id="pdfvol" aria-label="اختر الجزء">${vols.map((v,k)=>`<option value="${k}" ${k===vk?'selected':''}>${esc(v.l)}</option>`).join('')}</select>`:'')+'</div>';
+ const pv=$('#pdfvol');if(pv)pv.onchange=()=>openPDF(id,pv.value);
  try{
   await loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js');
   pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
@@ -1402,7 +1414,7 @@ async function openPDF(id){
   for(let i=1;i<=doc.numPages;i++){const d=document.createElement('div');d.className='pp';d.dataset.n=i;d.style.aspectRatio=`${vp1.width}/${vp1.height}`;d.innerHTML=`<span class="pn">${ar(i)}</span>`;v.appendChild(d)}
   const draw=async el=>{if(el.dataset.done)return;el.dataset.done=1;const pg=await doc.getPage(+el.dataset.n);const sc=el.clientWidth*(window.devicePixelRatio||1)/pg.getViewport({scale:1}).width;const vp=pg.getViewport({scale:Math.min(sc,3)});const c=document.createElement('canvas');c.width=vp.width;c.height=vp.height;el.style.aspectRatio='';el.prepend(c);await pg.render({canvasContext:c.getContext('2d'),viewport:vp}).promise};
   if(pdfIO)pdfIO.disconnect();
-  pdfIO=new IntersectionObserver(en=>en.forEach(x=>{if(x.isIntersecting){draw(x.target);const n=+x.target.dataset.n;const e=S.lib[id];if(e){e.pdfp=n;e.pages=doc.numPages;e.p=n;e.pct=n/doc.numPages*100;save()}const bar=$('#pdfbar');if(bar)bar.textContent=`${ar(n)} / ${ar(doc.numPages)}`}}),{root:v,rootMargin:'600px 0px'});
+  pdfIO=new IntersectionObserver(en=>en.forEach(x=>{if(x.isIntersecting){draw(x.target);const n=+x.target.dataset.n;const e=S.lib[id];if(e){e.pdfp=n;e.pages=doc.numPages;e.p=n;e.pct=n/doc.numPages*100;save()}const bar=$('#pdfpos');if(bar)bar.textContent=`${ar(n)} / ${ar(doc.numPages)}`}}),{root:v,rootMargin:'600px 0px'});
   v.querySelectorAll('.pp').forEach(el=>pdfIO.observe(el));
   const last=(S.lib[id]||{}).pdfp;if(last>1)setTimeout(()=>{const el=v.querySelector(`.pp[data-n="${last}"]`);if(el)el.scrollIntoView()},120);
  }catch(e){const url=URL.createObjectURL(blob);$('#frame').innerHTML=`<iframe src="${url}" title="PDF"></iframe>`}

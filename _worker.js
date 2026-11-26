@@ -43,7 +43,7 @@ async function onRequestGet({ request }) {
   if (body.byteLength > MAX) return err('too large', 413);
 
   if (new URL(request.url).searchParams.get('raw') === '1') {
-    const head = `HTTP ${r.status}\nfinal-url: ${r.url}\ncontent-type: ${ct}\n\n`;
+    const head = `HTTP ${r.status}\nfinal-url: ${r.url}\ncontent-type: ${ct}\nx-frame-options: ${r.headers.get('x-frame-options') || '-'}\ncsp: ${(r.headers.get('content-security-policy') || '-').slice(0, 300)}\n\n`;
     const txt = new TextDecoder().decode(body);
     return new Response(head + `bytes: ${body.byteLength}\n\n` + txt.slice(0, 20000), { status: 200, headers: { ...CORS, 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'no-store' } });
   }

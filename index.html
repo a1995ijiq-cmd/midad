@@ -1272,7 +1272,7 @@ async function openQuran(ch){
  closeSheet();R={id:'quran',b:{t:'القرآن الكريم',a:'',kind:'quran'},parts:[],pages:null,quran:true};
  if(!document.querySelector('link[href*="Amiri+Quran"]')){const l=document.createElement('link');l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?family=Amiri+Quran&display=swap';document.head.appendChild(l)}
  const rd=$('#reader');rd.classList.add('fr','on');applyR();rStart=Date.now();$('#rtitle').textContent='القرآن الكريم';$('#rext').href='https://quran.com/ar';
- S.quran=S.quran||{ch:0,ay:0,rid:7,tid:0};
+ S.quran=S.quran||{ch:0,ay:0,rid:8,tid:0};if(S.quran.rid===7){S.quran.rid=8;S.quran.cur=0}
  $('#frame').innerHTML='<div class="qv" id="qview"><div class="lstate"><span class="spin">◌</span><b>جارٍ فتح المصحف…</b></div></div>';
  try{QS=QS||(await qget('/chapters?language=ar','q:ch')).chapters;if(ch)return quranSurah(ch);quranList()}catch(e){$('#qview').innerHTML=`<div class="lstate"><b>تعذّر فتح المصحف</b><span>تأكد من الإنترنت للمرة الأولى.</span><button class="btn" data-act="qopen">إعادة المحاولة</button></div>`}
 }
@@ -1308,8 +1308,9 @@ async function quranAyah(n,key){
 }
 async function loadTafsir(key){const x=$('#qtafx');if(!x||!S.quran.tid)return;x.innerHTML='<span class="spin">◌</span>';
  try{const j=await qget(`/tafsirs/${S.quran.tid}/by_ayah/${key}`,`q:t:${S.quran.tid}:${key}`);x.textContent=strip((j.tafsir||{}).text||'')||'لا يوجد تفسير لهذه الآية بهذا التفسير.'}catch(e){x.textContent='تعذّر تحميل التفسير.'}}
-async function quranReciters(){try{return ((await qget('/resources/recitations?language=ar','q:recs')).recitations||[])}catch(e){return []}}
-async function quranPlay(){
+const QHIDE=/alafasy|afasy|sudais|sudays|العفاسي|السديس/i;
+async function quranReciters(){try{return ((await qget('/resources/recitations?language=ar','q:recs')).recitations||[]).filter(r=>!QHIDE.test((r.reciter_name||'')+' '+(r.translated_name&&r.translated_name.name||'')))}catch(e){return []}}
+async function quranPlay(){{const rs=await quranReciters();if(rs.length&&!rs.some(r=>r.id===S.quran.rid)){S.quran.rid=rs.some(r=>r.id===8)?8:rs[0].id;S.quran.cur=0;save()}}
  const ch=S.quran.ch;if(!ch)return;let au=$('#qaudio');
  if(au&&!au.paused){au.pause();return}
  const recs=await quranReciters();

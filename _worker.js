@@ -17,6 +17,10 @@ async function onRequestGet({ request }) {
   const low = target.href.toLowerCase();
   if (BLOCK.some(b => low.includes(b))) return err('blocked source', 403);
 
+  if (RAW && new URL(request.url).searchParams.get('head') === '1') {
+    try { const h = await fetch(target.href, { method: 'HEAD', redirect: 'follow', headers: { 'user-agent': 'Mozilla/5.0 MidadReader/1.0' } });
+      return new Response(`HTTP ${h.status}\nfinal-url: ${h.url}\ncontent-type: ${h.headers.get('content-type')}\ncontent-length: ${h.headers.get('content-length')}\naccept-ranges: ${h.headers.get('accept-ranges')}\nacao: ${h.headers.get('access-control-allow-origin')}\n`, { headers: { ...CORS, 'content-type': 'text/plain' } });
+    } catch (e) { return err('head failed ' + e.message, 502); } }
   let r;
   try {
     r = await fetch(target.href, {
@@ -133,7 +137,7 @@ export default {
         return new Response(JSON.stringify({ ok: !!n, id, n }), { headers: { ...CORS, 'content-type': 'application/json', 'cache-control': 'public, max-age=2592000' } });
       } catch (e) { return err('acon failed', 502); }
     }
-    if (url.pathname.startsWith('/api/r/')) { const u = new URL(request.url); u.pathname = '/api/fetch'; u.search = '?raw=1&u64=' + url.pathname.slice(7) + (url.searchParams.get('grep') ? '&grep=' + encodeURIComponent(url.searchParams.get('grep')) : ''); return onRequestGet({ request: new Request(u.toString()) }); }
+    if (url.pathname.startsWith('/api/r/')) { const u = new URL(request.url); u.pathname = '/api/fetch'; u.search = '?raw=1&u64=' + url.pathname.slice(7) + (url.searchParams.get('grep') ? '&grep=' + encodeURIComponent(url.searchParams.get('grep')) : '') + (url.searchParams.get('head') ? '&head=1' : ''); return onRequestGet({ request: new Request(u.toString()) }); }
     if (url.pathname === '/api/health') return new Response(JSON.stringify({ ok: true, server: 'midad' }), { headers: { 'content-type': 'application/json', 'access-control-allow-origin': '*' } });
     return env.ASSETS.fetch(request);
   }

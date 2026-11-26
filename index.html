@@ -489,6 +489,46 @@ html[dir=rtl] .npill{right:auto;left:0}
 .swcard p{max-width:420px;line-height:1.8;margin:0}
 .swcard .btn{max-width:360px;margin-top:6px;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:8px}
 .swcard small{max-width:340px;font-size:12px}
+
+/* ===== نهج البلاغة ===== */
+.njcard{background:linear-gradient(135deg,#0f5257,#082c30);margin-top:10px;box-shadow:0 12px 28px rgb(8 44 48/.3)}
+.njtop{display:flex;align-items:center;gap:10px;color:var(--mute);font-size:13px;margin-bottom:10px}
+.njhero{position:relative;overflow:hidden;border-radius:26px;padding:26px 20px 20px;color:#f6efe0;text-align:center;background:radial-gradient(120% 90% at 50% 0%,#17707a 0%,#0b3c42 55%,#062226 100%);box-shadow:0 18px 40px rgb(6 34 38/.35);isolation:isolate}
+.njorn{position:absolute;inset:0;z-index:-1;opacity:.16;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Cg fill='none' stroke='%23e9c46a' stroke-width='1.2'%3E%3Cpath d='M32 4l8 20 20 8-20 8-8 20-8-20-20-8 20-8z'/%3E%3Ccircle cx='32' cy='32' r='6'/%3E%3C/g%3E%3C/svg%3E");animation:njdrift 40s linear infinite}
+@keyframes njdrift{to{background-position:64px 128px}}
+.njhero small{font-size:12.5px;letter-spacing:.3px;color:#e9c46a}
+.njhero h1{font:700 46px/1.25 Amiri;margin:6px 0 4px;color:#fff;text-shadow:0 4px 18px rgb(0 0 0/.35)}
+.njhero p{font-size:14px;line-height:1.8;opacity:.9;margin:0 auto;max-width:460px}
+.njstats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:18px 0 16px}
+.njstats div{background:rgb(255 255 255/.08);border:1px solid rgb(233 196 106/.25);border-radius:16px;padding:10px 4px;backdrop-filter:blur(6px)}
+.njstats b{display:block;font:700 26px Amiri;color:#e9c46a}.njstats span{font-size:12px;opacity:.85}
+.njacts{display:flex;gap:8px}.njacts .btn{flex:1;display:flex;align-items:center;justify-content:center;gap:6px}
+.njhero .btn{background:#e9c46a;color:#2a1d00}.njhero .btn.alt{background:rgb(255 255 255/.12);color:#fff}
+.njhikma{position:relative;margin-top:14px;padding:16px 18px 16px 56px;border-radius:20px;background:var(--card);border:1px solid var(--line)}
+.njhikma>i{position:absolute;top:10px;left:14px;font-size:30px;color:var(--gold);opacity:.35}
+.njhikma p{font:700 21px/1.6 Amiri;margin:4px 0 0;color:var(--plum);transition:opacity .22s}
+.njhikma button{position:absolute;bottom:10px;left:10px;width:38px;height:38px;border-radius:12px;background:var(--soft);display:grid;place-items:center}
+.njchips{padding-top:2px}.njchips .chip{display:inline-flex;align-items:center;gap:6px}
+.njlist{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+.njc{border-radius:20px;background:var(--card);border:1px solid var(--line);overflow:hidden;transition:border-color .25s,box-shadow .3s;animation:njin .45s var(--d) both cubic-bezier(.2,.8,.2,1)}
+@keyframes njin{from{opacity:0;transform:translateY(12px)}}
+.njc.open{border-color:color-mix(in srgb,var(--gold) 55%,var(--line));box-shadow:0 14px 30px rgb(40 20 70/.12)}
+.njh{display:flex;align-items:center;gap:12px;width:100%;padding:14px;text-align:start}
+.njh em{flex:none;width:48px;height:48px;border-radius:15px;display:grid;place-items:center;font-size:24px;color:#fff;box-shadow:inset 0 -3px 0 rgb(0 0 0/.18)}
+.njt-matn .njh em{background:linear-gradient(135deg,#17707a,#0b3c42)}.njt-old .njh em{background:linear-gradient(135deg,#8a5a12,#4a2e06)}.njt-new .njh em{background:linear-gradient(135deg,#3b2157,#1a0d2b)}.njt-src .njh em{background:linear-gradient(135deg,#2e5a3a,#0e2414)}.njt-idx .njh em{background:linear-gradient(135deg,#7a2e4f,#3a0f22)}
+.njh>span{flex:1;display:grid;gap:3px;min-width:0}
+.njh b{font:700 18px/1.4 Amiri}.njh small{color:var(--mute);font-size:13px}
+.njstar{color:var(--gold);font-size:14px;vertical-align:middle}
+.njtags{display:flex;flex-wrap:wrap;gap:5px;margin-top:3px}.njtags i{font-style:normal;font-size:11px;padding:2px 8px;border-radius:99px;background:var(--soft);color:var(--mute)}
+.njcar{transition:transform .35s cubic-bezier(.3,1.4,.5,1);color:var(--mute)}.njc.open .njcar{transform:rotate(180deg);color:var(--gold)}
+.njb{display:grid;grid-template-rows:0fr;transition:grid-template-rows .38s cubic-bezier(.2,.8,.2,1)}.njc.open .njb{grid-template-rows:1fr}
+.njb>div{overflow:hidden;padding:0 16px;opacity:0;transition:opacity .3s,padding .38s}.njc.open .njb>div{padding:0 16px 16px;opacity:1}
+.njb h4{display:flex;align-items:center;gap:6px;font-size:14px;margin:6px 0 6px;color:var(--plum)}.njb h4 i{color:var(--gold);font-size:18px}
+.njb p{margin:0 0 10px;line-height:1.9;font-size:14.5px}
+.njb ul{list-style:none;padding:0;margin:0 0 12px;display:grid;gap:7px}.njb li{display:flex;gap:8px;line-height:1.7;font-size:14px}.njb li i{color:#2e8a5a;margin-top:4px;flex:none}
+.njbtn{display:flex;gap:8px}.njbtn .btn{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;font-size:14px}
+.njnote{font-size:12px;text-align:center;margin:18px 8px 8px;line-height:1.7}
+@media (prefers-reduced-motion:reduce){.njorn,.njc{animation:none}}
 </style>
 <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
 </head>
@@ -766,6 +806,7 @@ const SECTIONS=[
  {k:'edu',g:'المعرفة والمجتمع',t:'التربية والتعليم',ic:'chalkboard-teacher',c:'#2e6b6b',d:'طرق التدريس، تربية الأطفال، المناهج',jobs:[I('التربية'),I('طرق التدريس'),I('تربية الأطفال'),OS('education'),OS('teaching'),GB('تربية',1),AC('التربية'),AC('التعليم'),AC('المدارس'),I('مناهج'),I('التعليم الابتدائي'),OS('teaching_methods'),OS('educational_psychology')]},
  {k:'encyc',g:'المعرفة والمجتمع',t:'معاجم وموسوعات',ic:'books',c:'#5a4a3a',d:'المعاجم اللغوية والموسوعات العامة',jobs:[T('معجم'),T('القاموس المحيط'),I('موسوعة'),I('معجم'),W('معجم'),OS('encyclopedias_and_dictionaries'),AC('معجم'),AC('قاموس'),AC('دائرة المعارف'),T('تاج العروس'),T('الصحاح'),T('مقاييس اللغة'),I('دائرة المعارف'),OS('encyclopedias')]},
  {k:'world',g:'المعرفة والمجتمع',t:'الأدب العالمي',ic:'globe',c:'#4a4f6b',d:'روائع الأدب المترجم والعالمي',jobs:[G(''),O('classic literature'),GB('classic novel'),G('','adventure'),G('','science fiction'),G('','drama'),OS('classic_literature'),OS('english_literature'),OS('french_literature'),OS('russian_literature')]},
+ {k:'nahj',g:'المكتبة الإسلامية',t:'نهج البلاغة وشروحه',ic:'scroll',c:'#0f5257',d:'المتن وشروحه التراثية والمعاصرة، والأسانيد والمستدركات',jobs:[T('نهج البلاغة'),T('شرح نهج البلاغة'),T('منهاج البراعة'),T('بهج الصباغة'),T('مصباح السالكين'),W('نهج البلاغة'),I('نهج البلاغة'),I('شرح نهج البلاغة'),I('في ظلال نهج البلاغة'),L('نهج البلاغة'),AC('نهج البلاغة'),GB('نهج البلاغة',1),IE('Nahj al-Balagha')]},
  {k:'religion',g:'المكتبة الإسلامية',t:'الدين والفقه',ic:'mosque',c:'#2e5a3a',d:'الفقه والعقيدة والحديث والتفسير لكل المذاهب',jobs:[L('عقائد'),T('الفقه'),T('العقيدة'),W('تفسير'),W('صحيح'),I('تفسير القرآن'),I('فقه'),I('السيرة النبوية'),GB('تفسير',1),OS('islam'),AC('الإسلام'),AC('فقه'),AC('القرآن'),T('الحديث'),I('أهل البيت'),I('الأخلاق الإسلامية')]},
  {k:'quran',g:'المكتبة الإسلامية',t:'القرآن: المصاحف والتلاوات والتعليم',ic:'book-open',c:'#1f5a3a',d:'مصاحف بكل الروايات، تلاوات مرتلة ومجودة وتعليمية، والتجويد',jobs:[I('مصحف'),I('المصحف الشريف'),I('مصحف التجويد'),I('رواية ورش'),I('تفسير القرآن'),I('أحكام التجويد'),T('علوم القرآن'),T('التجويد'),T('القراءات'),W('القرآن'),OS('koran'),AC('القرآن'),AC('تجويد'),AC('مصحف'),T('النشر في القراءات العشر'),T('الإتقان في علوم القرآن'),T('البرهان في علوم القرآن'),I('القراءات العشر'),I('رسم المصحف'),I('حفظ القرآن')]},
  {k:'tafsir',g:'المكتبة الإسلامية',t:'التفسير',ic:'book-bookmark',c:'#2a4a3a',d:'تفاسير قديمة وحديثة لكل المذاهب',jobs:[T('تفسير القرآن'),L('تفسير'),W('تفسير'),I('تفسير'),T('الميزان في تفسير القرآن'),T('مجمع البيان'),T('تفسير الطبري'),T('تفسير ابن كثير'),AC('تفسير'),T('تفسير القرطبي'),T('تفسير الرازي'),T('الكشاف'),T('التبيان في تفسير القرآن'),T('تفسير العياشي'),T('تفسير القمي'),T('روح المعاني'),I('تفسير الميزان'),I('في ظلال القرآن')]},
@@ -803,7 +844,7 @@ const SECTIONS=[
  {k:'cook',g:'العلوم والمهارات',t:'الطبخ',ic:'cooking-pot',c:'#b5651d',d:'أكلات عربية وعالمية',jobs:[I('الطبخ'),I('أكلات'),OS('cooking'),GB('طبخ',1),AC('الطبخ'),T('كتاب الطبيخ'),I('الحلويات'),I('المطبخ العراقي'),I('المطبخ العربي'),OS('baking'),OS('recipes')]},
  {k:'travel',g:'العلوم والمهارات',t:'سفر وجغرافيا',ic:'airplane-tilt',c:'#2a7a8a',d:'بلدان، خرائط، ورحلات',jobs:[I('جغرافيا'),W('رحلة'),T('معجم البلدان'),OS('travel'),OS('geography'),AC('رحلة'),AC('جغرافيا'),T('رحلة ابن بطوطة'),T('المسالك والممالك'),I('أطلس'),I('الرحلات'),OS('voyages_and_travels'),OS('maps')]}];
 /* كلمات كل قسم: الكتاب لازم يحتوي وحدة منها بالعنوان أو الوصف حتى ينحط بالقسم */
-const KW={kids:'طفل|اطفال|قصص|قصه|حكايه|حكايات|صغار|child|kid|fairy|stories|tale|picture book',
+const KW={nahj:'نهج البلاغه|نهج السعاده|منهاج البراعه|بهج الصباغه|مصباح السالكين|معارج نهج|حدائق الحقائق|نفحات الولايه|nahj|balagha|peak of eloquence',kids:'طفل|اطفال|قصص|قصه|حكايه|حكايات|صغار|child|kid|fairy|stories|tale|picture book',
  poetry:'ديوان|شعر|قصيد|معلق|ارجوز|poem|poetry|verse',
  religion:'تفسير|قران|حديث|فقه|سيره|صحيح|عقيد|عقائد|اسلام|نبي|دين|سنن|شريعه|توحيد|quran|islam|hadith|religio|bible|prophet',
  novels:'روايه|قصه|قصص|حكايه|novel|fiction|stories|tale|romance',
@@ -867,6 +908,90 @@ function observeShelves(){
 function openSection(k){const sec=SECTIONS.find(s=>s.k===k);if(!sec)return;q='';fSrc='all';tab='explore';render();searchAll('',{jobs:secJobs(sec),title:sec.t,sec});$('#view').scrollTop=0}
 const pctOf=id=>Math.round((S.lib[id]||{}).pct||0);
 
+/* ---------- نهج البلاغة: دليل منسّق للمتن وشروحه ودراساته ---------- */
+const NJ_TYPES=[['all','الكل','squares-four'],['matn','المتن وتحقيقاته','scroll'],['old','الشروح التراثية','books'],['new','الشروح المعاصرة','book-open-text'],['src','الأسانيد والمستدركات','tree-structure'],['idx','الفهارس والدراسات','magnifying-glass']];
+const NJ=[
+ {id:'matn',ty:'matn',t:'نهج البلاغة',a:'جمع الشريف الرضي',era:'ت ٤٠٦هـ',v:'مجلد واحد',ic:'scroll',q:'نهج البلاغة',wiki:'نهج البلاغة',
+  w:'المتن نفسه: مختارات من كلام أمير المؤمنين علي بن أبي طالب (ع) جمعها الشريف الرضي وأتمّها سنة ٤٠٠هـ، واختارها لبلاغتها، فسمّاها «نهج البلاغة».',
+  c:['باب الخطب والأوامر: خطب التوحيد وخلق الكون، والشقشقية، والجهاد، وذم الدنيا','باب الكتب والرسائل: ومنها عهده لمالك الأشتر في الحكم والإدارة، ووصيته لابنه الحسن','باب الحِكَم والكلمات القصار: مئات الحكم الموجزة في الأخلاق والمعرفة','مقدمة الشريف الرضي يشرح فيها سبب الجمع وطريقته']},
+ {id:'salih',ty:'matn',t:'نهج البلاغة — ضبط وفهرسة صبحي الصالح',a:'د. صبحي الصالح',era:'معاصر',v:'مجلد واحد',ic:'list-numbers',q:'نهج البلاغة صبحي الصالح',
+  w:'أشهر طبعة محققة ومرقّمة للمتن؛ ضبط فيها النص بالشكل، ورقّم الخطب والرسائل والحكم، وعلى ترقيمها تحيل أكثر الدراسات الحديثة.',
+  c:['متن مضبوط بالشكل مع شرح موجز للغريب','ترقيم موحّد: ٢٤١ خطبة و٧٩ كتاباً و٤٨٠ حكمة','فهارس فنية للأعلام والأماكن والموضوعات والقوافي']},
+ {id:'abduh',ty:'matn',t:'نهج البلاغة بشرح الشيخ محمد عبده',a:'الشيخ محمد عبده',era:'ت ١٣٢٣هـ',v:'مجلد واحد (أو أجزاء صغيرة)',ic:'feather',q:'نهج البلاغة محمد عبده',
+  w:'تعليقات مختصرة تشرح الألفاظ الغريبة والمعاني الغامضة دون إطالة، وهي التي نشرت الكتاب على نطاق واسع في مصر والعالم العربي.',
+  c:['مقدمة أدبية مشهورة لمحمد عبده عن بلاغة الكتاب','حواشٍ لغوية قصيرة تحت النص','مناسبة للقارئ المبتدئ ولمن يريد فهم المعنى بسرعة']},
+ {id:'bayhaqi',ty:'old',t:'معارج نهج البلاغة',a:'ظهير الدين أبو الحسن البيهقي (فريد خراسان)',era:'ت ٥٦٥هـ',v:'مجلد واحد',ic:'stairs',q:'معارج نهج البلاغة',
+  w:'من أقدم الشروح الواصلة إلينا؛ شرح موجز يهتم بحلّ الألفاظ وبيان المعنى العام، ويُعدّ وثيقة مهمة لتاريخ تلقّي الكتاب.',
+  c:['شرح لغوي مختصر لكل خطبة ورسالة','إشارات إلى النسخ القديمة واختلاف الروايات','قيمة تاريخية لقربه من عصر الشريف الرضي']},
+ {id:'rawandi',ty:'old',t:'منهاج البراعة في شرح نهج البلاغة',a:'قطب الدين الراوندي',era:'ت ٥٧٣هـ',v:'٣ مجلدات',ic:'compass',q:'منهاج البراعة الراوندي',
+  w:'من أوائل الشروح الكاملة؛ يجمع بين التفسير اللغوي وبيان المسائل الكلامية والفقهية التي تشير إليها النصوص.',
+  c:['شرح الألفاظ والتراكيب','مسائل العقيدة والإمامة الواردة في الخطب','ردّ عليه بعض الشرّاح اللاحقين ومنهم ابن أبي الحديد']},
+ {id:'kaydari',ty:'old',t:'حدائق الحقائق في شرح نهج البلاغة',a:'قطب الدين الكيدري البيهقي',era:'ق ٦هـ',v:'مجلدان',ic:'plant',q:'حدائق الحقائق نهج البلاغة',
+  w:'شرح متوسط يستفيد من الشرحين السابقين (البيهقي والراوندي) ويضيف إليهما بياناً أدبياً وكلامياً.',
+  c:['تلخيص ومناقشة الشروح السابقة','بيان البلاغة والصور الأدبية','مسائل عقدية مختصرة']},
+ {id:'hadid',ty:'old',t:'شرح نهج البلاغة',a:'ابن أبي الحديد المعتزلي',era:'ت ٦٥٦هـ',v:'٢٠ جزءاً',ic:'books',q:'شرح نهج البلاغة ابن أبي الحديد',star:1,
+  w:'أشهر الشروح وأوسعها، كتبه عالم معتزلي في نحو خمس سنوات، فجاء موسوعة في التاريخ والأدب والكلام انطلاقاً من نص النهج.',
+  c:['أخبار مفصّلة عن السقيفة وصفين والجمل والنهروان','مختارات شعرية وأدبية ولغوية واسعة','مناقشات كلامية على مذهب المعتزلة','تراجم الصحابة والأعلام المذكورين في النص']},
+ {id:'maytham',ty:'old',t:'مصباح السالكين (الشرح الكبير)',a:'كمال الدين ابن ميثم البحراني',era:'ق ٧هـ',v:'٥ مجلدات',ic:'lamp',q:'شرح نهج البلاغة ابن ميثم البحراني',star:1,
+  w:'شرح فلسفي عرفاني دقيق، يحلّل الخطب بمنهج المنطق والحكمة ويهتم بالبلاغة وأسرار التعبير؛ وله أيضاً شرح متوسط وآخر صغير.',
+  c:['مقدمة طويلة في علم البلاغة وأصول الفصاحة','تحليل فلسفي للتوحيد وصفات الله وخلق العالم','شرح أخلاقي وسلوكي للمواعظ','منهج عقلي يقابل منهج ابن أبي الحديد التاريخي']},
+ {id:'khoei',ty:'old',t:'منهاج البراعة في شرح نهج البلاغة',a:'الميرزا حبيب الله الهاشمي الخوئي',era:'ت ١٣٢٤هـ',v:'٢١ مجلداً',ic:'stack',q:'منهاج البراعة الخوئي',
+  w:'شرح موسوعي يجمع أقوال الشرّاح قبله ويضيف التحقيق اللغوي والروائي والكلامي؛ توفي المؤلف قبل إتمامه فأكمله غيره من العلماء.',
+  c:['شرح الألفاظ ثم المعنى ثم الإعراب في كثير من المواضع','روايات مؤيدة من كتب الحديث','مناقشة آراء ابن أبي الحديد وغيره','تكملة الشرح لعلماء لاحقين']},
+ {id:'tustari',ty:'old',t:'بهج الصباغة في شرح نهج البلاغة',a:'الشيخ محمد تقي التستري',era:'ت ١٤١٥هـ',v:'١٤ مجلداً',ic:'shapes',q:'بهج الصباغة التستري',
+  w:'يتميّز بإعادة ترتيب نصوص النهج حسب الموضوعات (التوحيد، النبوة، الإمامة، الأخلاق…) بدل ترتيب الشريف الرضي، مع تحقيق تاريخي ورجالي دقيق.',
+  c:['ترتيب موضوعي يسهّل دراسة كل قضية كاملة','تحقيق في صحة الأخبار والأسانيد','نقد ومراجعة لأقوال الشرّاح السابقين']},
+ {id:'mughniyya',ty:'new',t:'في ظلال نهج البلاغة',a:'الشيخ محمد جواد مغنية',era:'ت ١٤٠٠هـ',v:'٤ مجلدات',ic:'sun',q:'في ظلال نهج البلاغة مغنية',star:1,
+  w:'شرح معاصر بلغة سهلة يربط كلام الإمام بقضايا العصر: العدالة الاجتماعية والحكم والحرية والأخلاق، مع بيان المفردات.',
+  c:['شرح الكلمات الصعبة باختصار','قراءة اجتماعية وفكرية حديثة للنصوص','أسلوب أدبي واضح مناسب لعامة القرّاء']},
+ {id:'shirazi',ty:'new',t:'نفحات الولاية',a:'الشيخ ناصر مكارم الشيرازي ومجموعة من الباحثين',era:'معاصر',v:'عدة مجلدات',ic:'wind',q:'نفحات الولاية شرح نهج البلاغة',
+  w:'شرح معاصر مفصّل يجمع بين التفسير اللغوي والبحث العقائدي والاجتماعي، ويهتم بإيضاح الدروس العملية من كل خطبة.',
+  c:['سند كل خطبة ومصادرها','شرح مقطعي مع عناوين فرعية','بحوث موضوعية ملحقة بالخطب المهمة']},
+ {id:'musawi',ty:'new',t:'شرح نهج البلاغة',a:'السيد عباس علي الموسوي',era:'معاصر',v:'٥ مجلدات',ic:'notebook',q:'شرح نهج البلاغة عباس علي الموسوي',
+  w:'شرح متوسط الحجم واضح العبارة، يشرح النص مقطعاً مقطعاً ويبيّن المعنى والفائدة دون إطالة.',
+  c:['شرح الألفاظ ثم المعنى الإجمالي','ملاحظات تربوية وأخلاقية','مناسب للدراسة المنهجية والحلقات']},
+ {id:'tawdih',ty:'new',t:'توضيح نهج البلاغة',a:'السيد محمد الحسيني الشيرازي',era:'ت ١٤٢٢هـ',v:'٤ مجلدات',ic:'lightbulb',q:'توضيح نهج البلاغة',
+  w:'شرح تبسيطي يوضّح المعنى بعبارة قريبة، يمزج الشرح بالنص ليقرأه القارئ كأنه نص واحد متصل.',
+  c:['شرح ممزوج بالمتن','عبارة سهلة للقارئ العام','تعليقات قصيرة على المسائل المهمة']},
+ {id:'mutahhari',ty:'new',t:'في رحاب نهج البلاغة',a:'الشهيد مرتضى مطهري',era:'ت ١٣٩٩هـ',v:'مجلد واحد',ic:'path',q:'في رحاب نهج البلاغة مطهري',
+  w:'ليس شرحاً مقطعياً بل دراسة موضوعية تعرّف بالكتاب وأبرز محاوره، كتبها المؤلف بالفارسية وتُرجمت إلى العربية.',
+  c:['جاذبية نهج البلاغة وأسباب خلوده','الإلهيات وما وراء الطبيعة في النهج','الزهد والعبادة والدنيا في كلام الإمام','الحكومة والعدالة']},
+ {id:'masadir',ty:'src',t:'مصادر نهج البلاغة وأسانيده',a:'السيد عبد الزهراء الحسيني الخطيب',era:'معاصر',v:'٤ مجلدات',ic:'tree-structure',q:'مصادر نهج البلاغة وأسانيده',star:1,
+  w:'يتتبّع كل خطبة ورسالة وحكمة إلى الكتب التي روتها قبل الشريف الرضي أو بعده من غير طريقه، ليثبت أصالة نسبتها إلى الإمام علي (ع).',
+  c:['مصادر كل نص بأرقامه','الرد على الشبهات حول نسبة النهج','تراجم المؤلفين الذين رووا النصوص']},
+ {id:'sa3ada',ty:'src',t:'نهج السعادة في مستدرك نهج البلاغة',a:'الشيخ محمد باقر المحمودي',era:'ت ١٤٢٧هـ',v:'عدة مجلدات',ic:'plus-circle',q:'نهج السعادة في مستدرك نهج البلاغة',
+  w:'يجمع خطب الإمام ورسائله وكلماته التي لم يذكرها الشريف الرضي، مع ذكر مصادرها، فهو تكملة لنهج البلاغة.',
+  c:['خطب ورسائل غير موجودة في النهج','الأسانيد والمصادر لكل نص','ترتيب على أبواب النهج نفسها']},
+ {id:'tamam',ty:'src',t:'تمام نهج البلاغة',a:'السيد صادق الموسوي',era:'معاصر',v:'مجلد واحد',ic:'puzzle-piece',q:'تمام نهج البلاغة',
+  w:'محاولة لإعادة الخطب إلى صورتها الكاملة كما وردت في المصادر، لأن الشريف الرضي اختار مقاطع منها فقط.',
+  c:['النصوص الكاملة للخطب المقتطعة','الإشارة إلى مواضع الاقتطاع','المصادر المعتمدة لكل إكمال']},
+ {id:'mujam',ty:'idx',t:'المعجم المفهرس لألفاظ نهج البلاغة',a:'كاظم محمدي ومحمد دشتي',era:'معاصر',v:'مجلد واحد',ic:'magnifying-glass',q:'المعجم المفهرس لألفاظ نهج البلاغة',
+  w:'أداة بحث تعرض كل كلمة وردت في النهج ومواضعها، مفيدة للباحث الذي يريد جمع النصوص حول لفظ أو موضوع.',
+  c:['ترتيب ألفبائي حسب الجذر','الإحالة إلى رقم الخطبة أو الرسالة أو الحكمة','سياق قصير لكل موضع']},
+ {id:'shahrastani',ty:'idx',t:'ما هو نهج البلاغة',a:'السيد هبة الدين الشهرستاني',era:'ت ١٣٨٦هـ',v:'رسالة صغيرة',ic:'question',q:'ما هو نهج البلاغة الشهرستاني',
+  w:'رسالة تعريفية موجزة بالكتاب وجامعه وقيمته الأدبية والعلمية، والرد على من شكّك في نسبته.',
+  c:['التعريف بالشريف الرضي','أدلة نسبة النصوص إلى الإمام','مكانة النهج عند الأدباء والعلماء']}];
+const NJ_HIKAM=[['قيمةُ كلِّ امرئٍ ما يُحسِنُه'],['النّاسُ أعداءُ ما جَهِلوا'],['إذا تمَّ العقلُ نقصَ الكلام'],['المرءُ مخبوءٌ تحتَ لسانه'],['لا غِنى كالعقلِ، ولا فقرَ كالجهل'],['الفرصةُ تمرُّ مرَّ السَّحاب، فانتهزوا فُرصَ الخير'],['مَن لانَ عُودُه كثُفَت أغصانُه'],['قلوبُ الرجالِ وحشيّة، فمَن تألّفها أقبلت عليه']];
+function openNahj(){tab='nahj';render();$('#view').scrollTop=0}
+let njF='all',njH=Math.floor(Math.random()*8),njOpen='';
+function nahj(){
+ const list=NJ.filter(x=>njF==='all'||x.ty===njF);const T=Object.fromEntries(NJ_TYPES.map(x=>[x[0],x]));
+ return `<div class="njtop"><button class="ib" data-act="nhome" aria-label="رجوع"><i class="ph-bold ph-arrow-right"></i></button><span>المكتبة الإسلامية</span></div>
+ <section class="njhero"><div class="njorn"></div><small>كلام أمير المؤمنين علي بن أبي طالب (ع)</small><h1>نهج البلاغة</h1><p>جمعه الشريف الرضي سنة ٤٠٠هـ، وشرحه عشرات العلماء من كل المذاهب على مدى ألف عام.</p>
+  <div class="njstats"><div><b data-count="241">٠</b><span>خطبة</span></div><div><b data-count="79">٠</b><span>كتاباً ورسالة</span></div><div><b data-count="480">٠</b><span>حكمة</span></div></div>
+  <div class="njacts"><button class="btn" data-njread="1"><i class="ph-fill ph-book-open-text"></i> اقرأ المتن</button><button class="btn alt" data-act="njall"><i class="ph-bold ph-books"></i> كل الكتب</button></div></section>
+ <div class="njhikma"><i class="ph-fill ph-quotes"></i><span class="mut">من حِكَمه</span><p id="njh">${NJ_HIKAM[njH%NJ_HIKAM.length][0]}</p><button data-act="njnext" aria-label="حكمة أخرى"><i class="ph-bold ph-arrows-clockwise"></i></button></div>
+ <h2 style="margin-top:22px">دليل الكتب <small class="mut" style="font:500 13px inherit">${ar(list.length)} كتاباً</small></h2>
+ <div class="chips njchips">${NJ_TYPES.map(([k,l,ic])=>`<button class="chip ${njF===k?'on':''}" data-njf="${k}"><i class="ph${njF===k?'-fill':''} ph-${ic}"></i>${l}</button>`).join('')}</div>
+ <div class="njlist">${list.map((x,i)=>`<article class="njc ${njOpen===x.id?'open':''} njt-${x.ty}" style="--d:${i*40}ms">
+  <button class="njh" data-njo="${x.id}" aria-expanded="${njOpen===x.id}"><em><i class="ph-duotone ph-${x.ic}"></i></em><span><b>${esc(x.t)}${x.star?' <i class="ph-fill ph-star njstar"></i>':''}</b><small>${esc(x.a)}</small><span class="njtags"><i>${T[x.ty][1]}</i><i>${esc(x.era)}</i><i>${esc(x.v)}</i></span></span><i class="ph-bold ph-caret-down njcar"></i></button>
+  <div class="njb"><div><h4><i class="ph-duotone ph-info"></i> ماذا يشرح؟</h4><p>${esc(x.w)}</p><h4><i class="ph-duotone ph-list-checks"></i> أبرز المحتويات</h4><ul>${x.c.map(c=>`<li><i class="ph-fill ph-check-circle"></i>${esc(c)}</li>`).join('')}</ul>
+  <div class="njbtn">${x.wiki?`<button class="btn" data-njread="1"><i class="ph-fill ph-book-open-text"></i> اقرأ الآن</button>`:''}<button class="btn ${x.wiki?'alt':''}" data-njq="${esc(x.q)}"><i class="ph-bold ph-magnifying-glass"></i> ابحث عنه في المكتبات</button></div></div></div></article>`).join('')}</div>
+ <section><h2 style="margin-top:26px"><span><i class="ph-duotone ph-cloud-arrow-down" style="color:var(--gold)"></i> من المكتبات المتاحة</span><button data-act="njall">عرض الكل</button></h2>
+ <div id="sh-nahj">${'<div class="skel-c"></div>'.repeat(3)}</div></section>
+ <p class="mut njnote">الأوصاف أعلاه تعريف موجز بكل كتاب. توفّر نسخة رقمية من كل كتاب يعتمد على المصادر المفتوحة المربوطة بالتطبيق.</p>`;
+}
+
 function home(){
  const reading=Object.entries(S.lib).filter(([id,e])=>e.s==='reading'&&S.books[id]).sort((a,b)=>(b[1].last||0)-(a[1].last||0)).map(([id])=>S.books[id]);
  const m=S.days[today()]||0,g=S.set.goal,fr=Math.min(1,m/g),C=2*Math.PI*29,h=new Date().getHours();
@@ -875,7 +1000,7 @@ function home(){
  const n=reading.length||1;
  return `<div class="top"><div class="logo"><i><i class="ph-fill ph-feather"></i></i>مداد</div><span class="mut greet"><i class="ph-duotone ph-${h<12?'sun-horizon':h<18?'sun':'moon-stars'}"></i>${h<12?'صباح الخير':h<18?'نهارك سعيد':'مساء الخير'}</span></div>
  ${installCard()}
- <button class="qcard" data-act="qopen"><span class="qstar"><i class="ph-fill ph-book-open"></i></span><span><b>القرآن الكريم</b><small>١١٤ سورة · تلاوات مرتّلة ومجوّدة وتعليمية · تفاسير</small></span><i class="ph-bold ph-caret-left"></i></button>
+ <button class="qcard" data-act="qopen"><span class="qstar"><i class="ph-fill ph-book-open"></i></span><span><b>القرآن الكريم</b><small>١١٤ سورة · تلاوات مرتّلة ومجوّدة وتعليمية · تفاسير</small></span><i class="ph-bold ph-caret-left"></i></button><button class="qcard njcard" data-act="nahj"><span class="qstar"><i class="ph-fill ph-scroll"></i></span><span><b>نهج البلاغة</b><small>المتن · ٢٠ كتاباً بين شرح ودراسة مع شرح محتوى كل كتاب</small></span><i class="ph-bold ph-caret-left"></i></button>
  <button class="sbar" data-tab="explore" data-focus="1"><i class="ph-duotone ph-magnifying-glass"></i>ابحث في ${ar(enabled().length)} مصادر…</button>
  <div class="feat" id="feat">${hero}</div>
  ${n>1?`<div class="dots">${[...Array(Math.min(n,3))].map((_,i)=>`<i class="${i?'':'on'}"></i>`).join('')}</div>`:''}
@@ -961,10 +1086,11 @@ function movePill(){const a=document.querySelector('.nav button.on'),p=$('#npill
 addEventListener('resize',movePill);
 $('#nav').addEventListener('transitionend',movePill);
 function render(){
- $('#view').innerHTML=({home,explore,library,sources,profile})[tab]();
+ $('#view').innerHTML=({home,explore,library,sources,profile,nahj})[tab]();
  document.querySelectorAll('.nav button').forEach(b=>{const on=b.dataset.tab===tab;b.classList.toggle('on',on);b.firstElementChild.className=(on?'ph-fill ph-':'ph-duotone ph-')+b.dataset.ic});countUp();movePill();
  if(lastTab!==tab){const v=$('#view');v.classList.remove('vin');void v.offsetWidth;v.classList.add('vin');lastTab=tab}
  if(tab==='home')observeShelves();
+ if(tab==='nahj'){const sc=SECTIONS.find(x=>x.k==='nahj');if(sc)loadShelf(sc)}
  if(tab==='explore'&&(q||curTitle)){if(results.length||Object.keys(rstat).length)drawResults();else if(q)searchAll(q)}
  const qi=$('#q');if(qi){qi.oninput=()=>{q=qi.value;curTitle='';clearTimeout(qt);if(!q.trim()){render();return}qt=setTimeout(()=>searchAll(q.trim()),500)};qi.onkeydown=e=>{if(e.key==='Enter'&&q.trim()){clearTimeout(qt);S.recent=[q.trim(),...S.recent.filter(x=>x!==q.trim())].slice(0,6);save();searchAll(q.trim());qi.blur()}}}
  const gi=$('#goal');if(gi)gi.oninput=()=>{S.set.goal=+gi.value;$('#gv').textContent=ar(gi.value)+' دقيقة';save()};
@@ -1489,6 +1615,11 @@ document.addEventListener('click',async ev=>{
  if(d.hj){openReader(d.hj,{part:+d.part,p:+d.p});return}
  if(d.tj){const p=Math.min(+d.tj,R.pages.length);$('#rtocp').classList.remove('on');if(R.lazy&&!(await ensurePage(p)))return;S.lib[R.id].p=p;save();drawPage(1);if(R.lazy)prefetchTr(p);return}
  if(d.tpart){$('#rtocp').classList.remove('on');await loadPart(+d.tpart,1);return}
+ if(d.sec==='nahj'&&tab==='home'){openNahj();return}
+ if(d.njf){njF=d.njf;njOpen='';const y=$('#view').scrollTop;render();$('#view').scrollTop=y;return}
+ if(d.njo){const c=t.closest('.njc');const was=c.classList.contains('open');document.querySelectorAll('.njc.open').forEach(x=>{x.classList.remove('open');x.querySelector('.njh').setAttribute('aria-expanded','false')});if(!was){c.classList.add('open');t.setAttribute('aria-expanded','true')||0;njOpen=d.njo;setTimeout(()=>c.scrollIntoView({behavior:'smooth',block:'nearest'}),280)}else njOpen='';buzz();return}
+ if(d.njq){doSearch(d.njq);return}
+ if(d.njread){const b=mkB({src:'wiki',key:'نهج البلاغة',t:'نهج البلاغة',a:'الشريف الرضي',lang:'ar',kind:'wiki'});remember(b);openReader(b.id);return}
  if(d.sec){openSection(d.sec);return}
  if(d.fl){fLang=d.fl;render();if(q)searchAll(q);return}
  if(d.fs){fSrc=d.fs;render();return}
@@ -1529,6 +1660,10 @@ document.addEventListener('click',async ev=>{
  if(d.annj){const [id,pt,pp]=d.annj.split('|');openReader(id,{part:+pt,p:+pp});return}
  const a=d.act;
  if(a==='qopen'){openQuran();return}
+ if(a==='nahj'){openNahj();return}
+ if(a==='nhome'){tab='home';render();return}
+ if(a==='njall'){openSection('nahj');return}
+ if(a==='njnext'){njH++;const p=$('#njh');if(p){p.style.opacity=0;setTimeout(()=>{p.textContent=NJ_HIKAM[njH%NJ_HIKAM.length][0];p.style.opacity=1},220)}return}
  if(a==='qlist'){quranList();$('#qview').scrollTop=0;return}
  if(a==='qplay'){quranPlay();return}
  if(a==='qrec'){quranPickReciter();return}

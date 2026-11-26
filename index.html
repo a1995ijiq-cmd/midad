@@ -901,7 +901,11 @@ function kwRe(src){const P='(?:^|[^\\p{L}\\p{N}])(?:[وف])?(?:[بل])?(?:ال|�
   return P+w});
  return new RegExp(alts.join('|'),'iu')}
 SECTIONS.forEach(s=>{if(KW[s.k])s.re=kwRe(KW[s.k]);if(NX[s.k])s.nx=kwRe(NX[s.k])});
-const fits=(sec,b,j)=>{const isAud=b.kind==='audio'||b.media==='audio';if(sec&&sec.k==='audio')return isAud;if(isAud)return false;if(sec&&sec.strict&&sec.re){const tt=norm(b.t||'');if(sec.k==='nahj'&&b.src==='aco'&&/^"?نهج البلاغه"?\s*(:|v\.|للامام|للإمام|$)/.test(tt))return false;return sec.re.test(tt)&&!(sec.nx&&sec.nx.test(tt))}if(!sec||!sec.re||(j&&j.tr))return true;const t=norm([b.t,b.a,b.d].join(' '));return sec.re.test(t)&&!(sec.nx&&sec.nx.test(t))};
+const fits=(sec,b,j)=>{const isAud=b.kind==='audio'||b.media==='audio';if(sec&&sec.k==='audio')return isAud;if(isAud)return false;if(sec&&sec.strict&&sec.re){const tt=norm(b.t||'');if(sec.k==='nahj'&&b.src==='aco'&&/^"?نهج البلاغه"?\s*(:|v\.|للامام|للإمام|$)/.test(tt))return false;return sec.re.test(tt)&&!(sec.nx&&sec.nx.test(tt))}if(!sec)return true;
+ /* تراث والمكتبة العراقية يبحثان داخل نص الكتاب: نقبل الكتاب فقط إذا عنوانه/مؤلفه يحتوي عبارة البحث أو كلمات القسم */
+ if(j&&(j.src==='tr'||(j.src==='libiq'&&sec.k!=='iraq'))){const tt=norm((b.t||'')+' '+(b.a||''));if(sec.nx&&sec.nx.test(tt))return false;if(titleQ(tt,j.q))return true;return !!(sec.re&&sec.re.test(tt))}
+ if(!sec.re||(j&&j.tr))return true;const t=norm([b.t,b.a,b.src==='tr'||b.src==='libiq'?'':b.d].join(' '));return sec.re.test(t)&&!(sec.nx&&sec.nx.test(t))};
+const titleQ=(tt,q)=>{const toks=norm(q||'').replace(/[^\p{L}\p{N}\s]+/gu,' ').split(/\s+/).filter(Boolean).map(w=>w.replace(/^(وال|بال|فال|كال|لل|ال)(?=...)/,'')).filter(w=>w.length>=3&&!/^(كتاب|شرح|في|من|علي|الي)$/.test(w));if(!toks.length)return false;const hit=toks.filter(w=>tt.includes(w)).length;return hit>=Math.ceil(toks.length/2)};
 let curSec=null;
 /* مفتاح عدم التكرار: نفس العنوان من مصادر مختلفة = كتاب واحد */
 const dkey=b=>{const t=norm(b.t||'').replace(/[^\p{L}\p{N}]+/gu,'');return t.length>10?t:t+'|'+norm(b.a||'').replace(/[^\p{L}\p{N}]+/gu,'').slice(0,8)};

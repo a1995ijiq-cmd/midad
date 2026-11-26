@@ -1,7 +1,7 @@
 // خادم مداد: يجلب فهارس المكتبات (OPDS / JSON / RSS / HTML) نيابة عن التطبيق
 // لأن أغلب المواقع ما تسمح للمتصفح يتصل بيها مباشرة (CORS).
 const BLOCK = ['welib', 'annas-archive', 'annas-', 'libgen', 'library.lol', 'z-lib', 'zlib', '1lib', 'pdfdrive', 'sci-hub', 'b-ok', 'singlelogin'];
-const MAX = 8 * 1024 * 1024;
+const MAX = 30 * 1024 * 1024;
 const CORS = { 'access-control-allow-origin': '*', 'access-control-expose-headers': 'x-final-url' };
 const err = (msg, status) => new Response(JSON.stringify({ error: msg }), { status, headers: { ...CORS, 'content-type': 'application/json; charset=utf-8' } });
 
@@ -35,7 +35,8 @@ export async function onRequestGet({ request }) {
 
   if (new URL(request.url).searchParams.get('raw') === '1') {
     const head = `HTTP ${r.status}\nfinal-url: ${r.url}\ncontent-type: ${ct}\n\n`;
-    return new Response(head + new TextDecoder().decode(body), { status: 200, headers: { ...CORS, 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'no-store' } });
+    const txt = new TextDecoder().decode(body);
+    return new Response(head + `bytes: ${body.byteLength}\n\n` + txt.slice(0, 20000), { status: 200, headers: { ...CORS, 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'no-store' } });
   }
   return new Response(body, {
     status: r.status,

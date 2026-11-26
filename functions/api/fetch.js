@@ -35,7 +35,7 @@ export async function onRequestGet({ request }) {
 
   return new Response(body, {
     status: r.status,
-    headers: { ...CORS, 'content-type': ct, 'cache-control': 'public, max-age=3600', 'x-final-url': r.url }
+    headers: { ...CORS, 'content-type': new URL(request.url).searchParams.get('raw') === '1' ? 'text/plain; charset=utf-8' : ct, 'cache-control': 'public, max-age=3600', 'x-final-url': r.url }
   });
 }
 

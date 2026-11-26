@@ -603,7 +603,7 @@ const A={
    const keep=new Set([...big.map(r=>r.title),...withParts]);
    const l=all.filter(r=>keep.has(r.title)).map(r=>mkB({src:'wiki',key:r.title,t:r.title,a:'',lang:'ar',kind:'wiki',d:strip(r.snippet).slice(0,240)}));l.more=!!j.continue;l.total=((j.query||{}).searchinfo||{}).totalhits||0;return l}},
  ia:{async search(q,o){const pg=o.page||1;
-   const qq=`${o.ts&&q?`(title:(${q}) OR subject:(${q}))`:`(${q||'*'})`} AND mediatype:(${o.media||'texts'}) AND NOT collection:(inlibrary OR printdisabled OR lendinglibrary OR americana_restricted)`+(o.ar?' AND language:(ara OR arabic OR Arabic)':'');
+   const qq=`${o.ts&&q?`(title:(${q}) OR creator:(${q}) OR subject:(${q}))`:`(${q||'*'})`} AND mediatype:(${o.media||'texts'}) AND NOT collection:(inlibrary OR printdisabled OR lendinglibrary OR americana_restricted)`+(o.ar?' AND language:(ara OR arabic OR Arabic)':'');
    const j=await getJSON(`https://archive.org/advancedsearch.php?q=${enc(qq)}&fl%5B%5D=identifier&fl%5B%5D=title&fl%5B%5D=creator&fl%5B%5D=year&fl%5B%5D=language&fl%5B%5D=description&rows=30&page=${pg}&sort%5B%5D=downloads+desc&output=json`);
    const R=j.response||{};const l=(R.docs||[]).filter(d=>d.title&&!/^[a-z_\-]*\d+[a-z0-9_\-]*$/i.test(String(first(d.title)).trim())).map(d=>{const L=[].concat(d.language||[]).join(' ').toLowerCase();return mkB({src:'ia',media:o.media||'texts',key:d.identifier,t:first(d.title),a:first(d.creator)||'',year:d.year,lang:/ara|arab/.test(L)||isAr(first(d.title))?'ar':'en',kind:'ia',ref:d.identifier,cover:`https://archive.org/services/img/${enc(d.identifier)}`,d:strip(first(d.description)).slice(0,300)})});l.more=(R.numFound||0)>pg*30;l.total=R.numFound||0;return l}},
  ol:{async search(q,o){const pg=o.page||1;
@@ -684,6 +684,16 @@ let results=[],rstat={},stoken=0,shelfCache={};
 const cover=b=>{const c=b.c||pal(b.t);return `<div class="cv ${b.cover?'img':''} ${b.lang==='en'?'en':''}" style="--c1:${c[0]};--c2:${c[1]}"><svg aria-hidden="true"><rect width="100%" height="100%" fill="url(#pt)"/></svg><b>${esc(String(b.t).slice(0,60))}</b><i>${esc(b.a)}</i>${b.cover?`<img src="${esc(b.cover)}" alt="" loading="lazy" onerror="this.remove()">`:''}</div>`};
 const sbadge=b=>{const s=srcOf(b.src);return s?`<span class="sb" style="background:${s.c}">${esc(s.n)}</span>`:''};
 const card=(b,i)=>`<button class="bk${i!=null?' pop':''}" ${i!=null?`style="--d:${Math.min(i,11)*45}ms"`:''} data-open="${esc(b.id)}">${cover(b)}<p>${esc(b.t)}</p>${b.a?`<span>${esc(b.a)}</span>`:''}${sbadge(b)}</button>`;
+/* ترتيب ذكي حسب الصلة بكلمة البحث: العنوان المطابق أولاً ثم المؤلف ثم الباقي */
+const qToks=q=>{const n=norm(q).replace(/[^\p{L}\p{N}\s]+/gu,' ').trim();const st=new Set(['في','من','على','عن','الى','و','او','ما','the','of','and','a','to','in']);return {n,t:n.split(/\s+/).filter(w=>w&&!st.has(w)).map(w=>w.replace(/^(وال|بال|فال|كال|لل|ال)(?=..)/,''))}};
+function relScore(b,Q){if(!Q.n)return 0;const T=norm(b.t||''),A=norm(b.a||''),D=norm(b.d||''),Tc=T.replace(/[^\p{L}\p{N}\s]+/gu,' ').replace(/\s+/g,' ').trim();
+ let s=0;if(Tc===Q.n)s+=120;else if(Tc.startsWith(Q.n))s+=90;else if(Tc.includes(Q.n))s+=70;
+ if(Tc.includes(Q.n))s+=20*Q.n.length/Math.max(Tc.length,1);if(A.includes(Q.n))s+=55;
+ const n=Q.t.length||1;let it=0,ia=0,id=0;Q.t.forEach(w=>{if(T.includes(w))it++;else if(A.includes(w))ia++;else if(D.includes(w))id++});
+ s+=40*it/n+25*ia/n+8*id/n;if(it+ia===n)s+=20;
+ if(!it&&!ia&&!id&&s===0)return -1;
+ if(S.set.arFirst&&b.lang==='ar')s+=10;if(b.cover)s+=2;s-=Math.min(10,Math.max(0,T.length-60)/12);return s}
+function rankRes(l,query){const Q=qToks(query);const sc=new Map(l.map(b=>[b,relScore(b,Q)]));return l.sort((x,y)=>(x._bk||1)-(y._bk||1)||sc.get(y)-sc.get(x))}
 const ordered=l=>S.set.arFirst?[...l].sort((a,b)=>(a.lang==='ar'?0:1)-(b.lang==='ar'?0:1)):l;
 const skel=n=>`<div class="skel">${'<i></i>'.repeat(n)}</div>`;
 const streak=()=>{let n=0;for(let i=0;i<365;i++){if((S.days[dayKey(i)]||0)>0)n++;else if(i>0)break}return n};
@@ -695,7 +705,7 @@ const runJob=(j,page)=>BUILTIN[j.src]?A[j.src].search(j.q,{...j.o,page}):Promise
 let seenCards=new Set();
 function searchAll(query,opt={}){seenCards=new Set();
  const ar=opt.ar||fLang==='ar';
- const jobs=opt.jobs||enabled().map(s=>({src:s.id,q:query,o:{ar}}));
+ const jobs=opt.jobs||enabled().map(s=>({src:s.id,q:query,o:{ar,ts:s.id==='ia'}}));
  curJobs=jobs.filter(j=>S.src.some(s=>s.id===j.src&&s.on)).map(j=>({...j,page:0,more:true}));
  curTitle=opt.title||'';curSec=opt.sec||null;
  const tk=++stoken;results=[];rstat={};
@@ -709,7 +719,7 @@ function loadMore(tk=stoken){
  curJobs.filter(j=>j.more&&!j.busy).forEach(j=>{
   j.busy=true;j.page++;scount[j.src]=scount[j.src]||0;upd(j.src);
   runJob(j,j.page).then(list=>{if(tk!==stoken)return;j.busy=false;j.more=!!list.more&&list.length>0;
-    const seen=new Set(results.map(dkey));if(list.total&&j.page===1)j.total=list.total;list.forEach(b=>{const k=dkey(b);if(!seen.has(k)&&fits(curSec,b,j)){seen.add(k);results.push(b);scount[j.src]++}});upd(j.src);drawResults()})
+    const seen=new Set(results.map(dkey));if(list.total&&j.page===1)j.total=list.total;list.forEach(b=>{const k=dkey(b);if(!seen.has(k)&&fits(curSec,b,j)){seen.add(k);b._bk=Math.ceil(j.page/1);results.push(b);scount[j.src]++}});upd(j.src);drawResults()})
    .catch(()=>{if(tk!==stoken)return;j.busy=false;j.more=false;sfail[j.src]=1;upd(j.src);drawResults()});
  });
  drawResults();
@@ -720,7 +730,7 @@ function drawResults(){
  const pending=Object.values(rstat).some(v=>v==='…');
  setTimeout(()=>{const mb=el.querySelector('[data-act=more]');if(moreIO)moreIO.disconnect();if(mb&&'IntersectionObserver' in window){moreIO=new IntersectionObserver(en=>{if(en[0].isIntersecting){moreIO.disconnect();loadMore()}},{root:$('#view'),rootMargin:'500px'});moreIO.observe(mb)}},50);
  let r=results.filter(b=>!S.empty[b.id]&&(fLang==='all'||b.lang===fLang)&&(fSrc==='all'||b.src===fSrc));
- r=ordered(r);
+ r=q&&!curSec&&!curTitle?rankRes(r,q):ordered(r);
  const more=curJobs&&curJobs.some(j=>j.more);
  if(more&&r.length>3)r=r.slice(0,r.length-r.length%3);
  const ent=Object.entries(rstat),bad=ent.filter(([,v])=>v==='x'||v===0).length;

@@ -714,7 +714,7 @@ A.libiq={async search(q,o){const pg=o.page||1,c=LQ();
  if(pg===1)out=Object.values(c.b).filter(hit);
  for(let k=0;k<3&&!c.end;k++){const got=await lqBlock();got.forEach(x=>{if(hit(x))out.push(c.b[x.id])})}
  const l=out.map(lqBook);l.more=!c.end;return l}};
-const extUrl=b=>b.kind==='nahj'?'https://github.com/OpenITI/0425AH/tree/master/data/0406SharifRadi/0406SharifRadi.NahjBalagha':b.kind==='aco'?`https://aco.dlib.nyu.edu/book/${b.ref}/1?lang=ar`:b.kind==='tr'?`https://app.turath.io/book/${b.ref}`:b.kind==='gb'?`https://books.google.com/books?id=${enc(b.ref)}`:b.kind==='sw'?`https://storyweaver.org.in/stories/${b.ref}`:b.kind==='audio'?(b.lvurl||'https://librivox.org'):b.kind==='libiq'?`https://reader.lib.iq/?bookId=${b.ref}&page=1&volume=1&section=1&lang=ar`:b.kind==='wiki'?`https://ar.wikisource.org/wiki/${enc(b.key)}`:b.kind==='ia'?`https://archive.org/details/${enc(b.ref)}`:b.kind==='gut'?`https://www.gutenberg.org/ebooks/${b.ref}`:(b.link||b.html||'#');
+const extUrl=b=>b.kind==='scribd'?b.link:b.kind==='nahj'?'https://github.com/OpenITI/0425AH/tree/master/data/0406SharifRadi/0406SharifRadi.NahjBalagha':b.kind==='aco'?`https://aco.dlib.nyu.edu/book/${b.ref}/1?lang=ar`:b.kind==='tr'?`https://app.turath.io/book/${b.ref}`:b.kind==='gb'?`https://books.google.com/books?id=${enc(b.ref)}`:b.kind==='sw'?`https://storyweaver.org.in/stories/${b.ref}`:b.kind==='audio'?(b.lvurl||'https://librivox.org'):b.kind==='libiq'?`https://reader.lib.iq/?bookId=${b.ref}&page=1&volume=1&section=1&lang=ar`:b.kind==='wiki'?`https://ar.wikisource.org/wiki/${enc(b.key)}`:b.kind==='ia'?`https://archive.org/details/${enc(b.ref)}`:b.kind==='gut'?`https://www.gutenberg.org/ebooks/${b.ref}`:(b.link||b.html||'#');
 
 /* ---------- الحالة ---------- */
 const seed=()=>({lib:{},books:{},hl:[],recent:[],cust:{},stat:{pages:0},
@@ -1128,13 +1128,22 @@ function render(){
  if(tab==='home')observeShelves();
  if(tab==='nahj'){const sc=SECTIONS.find(x=>x.k==='nahj');if(sc)loadShelf(sc)}
  if(tab==='explore'&&(q||curTitle)){if(results.length||Object.keys(rstat).length)drawResults();else if(q)searchAll(q)}
- const qi=$('#q');if(qi){qi.oninput=()=>{q=qi.value;curTitle='';clearTimeout(qt);if(!q.trim()){render();return}qt=setTimeout(()=>searchAll(q.trim()),500)};qi.onkeydown=e=>{if(e.key==='Enter'&&q.trim()){clearTimeout(qt);S.recent=[q.trim(),...S.recent.filter(x=>x!==q.trim())].slice(0,6);save();searchAll(q.trim());qi.blur()}}}
+ const qi=$('#q');if(qi){qi.oninput=()=>{q=qi.value;curTitle='';clearTimeout(qt);if(!q.trim()){render();return}if(SCRIBD_RE.test(q)){const u=q.trim();q='';qi.value='';openScribd(u);return}qt=setTimeout(()=>searchAll(q.trim()),500)};qi.onkeydown=e=>{if(e.key==='Enter'&&q.trim()){clearTimeout(qt);S.recent=[q.trim(),...S.recent.filter(x=>x!==q.trim())].slice(0,6);save();searchAll(q.trim());qi.blur()}}}
  const gi=$('#goal');if(gi)gi.oninput=()=>{S.set.goal=+gi.value;$('#gv').textContent=ar(gi.value)+' دقيقة';save()};
  const yi=$('#yg');if(yi)yi.oninput=()=>{S.set.yearGoal=+yi.value;$('#ygv').textContent=ar(yi.value)+' كتاباً';save()};
  const f=$('#feat');if(f)f.onscroll=()=>{const i=Math.round(Math.abs(f.scrollLeft)/f.clientWidth);document.querySelectorAll('.dots i').forEach((d,j)=>d.classList.toggle('on',i===j))};
 }
 function go(t,focus){tab=t;render();$('#view').scrollTop=0;$('#nav').classList.remove('mini');if(focus)setTimeout(()=>$('#q')?.focus(),60)}
-function doSearch(term){q=term;curTitle='';curSec=null;tab='explore';S.recent=[term,...S.recent.filter(x=>x!==term)].slice(0,6);save();render();searchAll(term);$('#view').scrollTop=0}
+/* Scribd: لا يوفّر فهرساً عاماً؛ أي مستند عام يُلصق رابطه يُفتح بالتضمين الرسمي داخل التطبيق */
+const SCRIBD_RE=/scribd\.com\/(?:[a-z]{2}\/)?(document|doc|presentation|book|read|audiobook)\/(\d+)(?:\/([^/?#\s]+))?/i;
+async function openScribd(url){const m=String(url).match(SCRIBD_RE);
+ if(!m){toast('الصق رابط مستند محدّد من Scribd، مثل scribd.com/document/123456/…');return false}
+ const [,ty,id,slug]=m;let t=slug?decodeURIComponent(slug).replace(/[-_]+/g,' ').trim():'مستند Scribd '+id,cover='',a='';
+ const b=mkB({src:'scribd',key:id,t,a,lang:/[؀-ۿ]/.test(t)?'ar':'',kind:'scribd',ref:id,stype:ty.toLowerCase(),link:`https://www.scribd.com/${ty.toLowerCase()==='doc'?'document':ty.toLowerCase()}/${id}${slug?'/'+slug:''}`});
+ remember(b);ensureEntry(b);save();closeSheet();openReader(b.id);
+ getVia(`https://www.scribd.com/services/oembed/?url=${enc(b.link)}&format=json`,12000).then(x=>x.r.json()).then(j=>{if(j&&j.title){b.t=j.title;if(j.thumbnail_url)b.cover=j.thumbnail_url;if(j.author_name)b.a=j.author_name;S.books[b.id]=b;save();if(R&&R.id===b.id)$('#rtitle').textContent=b.t}}).catch(()=>{});
+ return true}
+function doSearch(term){if(SCRIBD_RE.test(term)){openScribd(term);return}q=term;curTitle='';curSec=null;tab='explore';S.recent=[term,...S.recent.filter(x=>x!==term)].slice(0,6);save();render();searchAll(term);$('#view').scrollTop=0}
 const sheetOn=h=>{$('#sheet').innerHTML='<div class="grab"></div>'+h;$('#sheet').classList.add('on');$('#scrim').classList.add('on')};
 const closeSheet=()=>{$('#sheet').classList.remove('on');$('#scrim').classList.remove('on');add=null};
 
@@ -1581,7 +1590,7 @@ async function openReader(id,jump){
  $('#rtitle').textContent=b.t;$('#rext').href=extUrl(b);
  applyR();rd.classList.add('on');rStart=Date.now();
  if(b.kind==='audio'){openAudio(b);return}
- if(b.kind==='ia'||b.kind==='libiq'||b.kind==='gb'||b.kind==='sw'||b.kind==='aco'||b.kind==='link'||(b.kind==='gut'&&!b.txt)){openFrame(b);return}
+ if(b.kind==='ia'||b.kind==='libiq'||b.kind==='gb'||b.kind==='sw'||b.kind==='aco'||b.kind==='scribd'||b.kind==='link'||(b.kind==='gut'&&!b.txt)){openFrame(b);return}
  $('#page').innerHTML=`<div class="pw skl">${'<i></i>'.repeat(14)}</div>`;
  try{
   if(b.kind==='tr'){
@@ -1619,11 +1628,12 @@ async function loadPart(i,p){
 }
 function openFrame(b){
  if(b.kind==='aco'){openScan(b);return}
+ if(b.kind==='scribd'&&/book|audiobook/.test(b.stype||''))setTimeout(()=>toast('كتب Scribd الإلكترونية تحتاج اشتراك؛ المستندات العامة تنفتح مجاناً'),900);
  const rd=$('#reader');rd.classList.add('fr');
  if(b.kind==='sw'){/* StoryWeaver لا يسمح بالعرض داخل التطبيقات: تُفتح القصة في موقعه */
   const u=`https://storyweaver.org.in/ar/stories/${b.ref}`;const e=S.lib[b.id];if(e){e.pages=0;save()}
   $('#frame').innerHTML=`<div class="swcard">${b.cover?`<img src="${esc(b.cover)}" alt="">`:cover(b)}<h3>${esc(b.t)}</h3>${b.a?`<div class="mut">${esc(b.a)}</div>`:''}${b.d?`<p>${esc(b.d)}</p>`:''}<a class="btn full" href="${esc(u)}" target="_blank" rel="noopener"><i class="ph-fill ph-book-open-text"></i> اقرأ القصة المصوّرة</a><small class="mut">تُفتح في موقع StoryWeaver المجاني (قصص بترخيص مفتوح)، ثم ارجع للتطبيق بسهولة.</small></div>`;return}
- const src=b.kind==='gb'?`https://books.google.com/books?id=${enc(b.ref)}&printsec=frontcover&output=embed&hl=ar`:b.kind==='sw'?`https://storyweaver.org.in/stories/${b.ref}`:b.kind==='aco'?`https://sites.dlib.nyu.edu/viewer/books/${enc(b.ref)}/1?embed=1&lang=ar`:b.kind==='libiq'?extUrl(b):b.kind==='ia'?`https://archive.org/embed/${enc(b.ref)}`:b.kind==='gut'?b.html:b.link;
+ const src=b.kind==='gb'?`https://books.google.com/books?id=${enc(b.ref)}&printsec=frontcover&output=embed&hl=ar`:b.kind==='sw'?`https://storyweaver.org.in/stories/${b.ref}`:b.kind==='aco'?`https://sites.dlib.nyu.edu/viewer/books/${enc(b.ref)}/1?embed=1&lang=ar`:b.kind==='scribd'?`https://www.scribd.com/embeds/${enc(b.ref)}/content?start_page=1&view_mode=scroll`:b.kind==='libiq'?extUrl(b):b.kind==='ia'?`https://archive.org/embed/${enc(b.ref)}`:b.kind==='gut'?b.html:b.link;
  const e=S.lib[b.id];e.pages=0;save();
  if(!src){$('#frame').innerHTML=`<div class="lstate" style="color:#555"><b>لا يوجد رابط قراءة لهذا الكتاب</b></div>`;return}
  if(b.kind==='link'&&/epub/i.test(b.ltype||src)){$('#frame').innerHTML=`<div class="lstate" style="color:#555"><b>هذا الكتاب بصيغة EPUB</b><span>افتحه بتطبيق الكتب في جهازك.</span><a class="btn" href="${esc(src)}" target="_blank" rel="noopener">فتح / تحميل ↗</a></div>`;return}
@@ -1755,6 +1765,7 @@ document.addEventListener('click',async ev=>{
   const low=add.u.toLowerCase();
   if(BLOCK.some(b=>low.includes(b))){add.err='<b>هذا المصدر غير مدعوم.</b> ينشر كتباً محمية بحقوق النشر بدون إذن أصحابها، لذلك لا يمكن ربطه بمداد.';addSheet();return}
   let host;try{host=new URL(/^https?:/i.test(add.u)?add.u:'https://'+add.u).hostname}catch(e){}
+  if(host&&/(^|\.)scribd\.com$/i.test(host)){if(SCRIBD_RE.test(add.u)){openScribd(add.u);return}add.err='<b>Scribd ما يوفّر فهرس عام للربط.</b> الصق رابط مستند محدّد (مثل scribd.com/document/123456/اسم-المستند) أو الصقه بمربع البحث، وينفتح داخل التطبيق.';addSheet();return}
   if(!host||!host.includes('.')){add.err='الرابط غير صحيح، تأكد منه';addSheet();return}
   const bi=Object.keys(BUILTIN).find(k=>BUILTIN[k].hosts.some(h=>host.endsWith(h))&&!/opds|catalog|bookserver/i.test(low));
   if(bi){const s=S.src.find(x=>x.id===bi);if(s)s.on=true;else S.src.push({id:bi,on:true});save();closeSheet();render();toast(`${BUILTIN[bi].n} مدمج بالفعل — تم تفعيله`);return}

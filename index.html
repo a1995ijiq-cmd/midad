@@ -1628,7 +1628,9 @@ async function loadPart(i,p){
 }
 function openFrame(b){
  if(b.kind==='aco'){openScan(b);return}
- if(b.kind==='scribd'&&/book|audiobook/.test(b.stype||''))setTimeout(()=>toast('كتب Scribd الإلكترونية تحتاج اشتراك؛ المستندات العامة تنفتح مجاناً'),900);
+ if(b.kind==='scribd'){/* Scribd يضع تحقّقاً من المتصفح يمنع عرضه داخل التطبيقات على آيفون: يُفتح في موقعه */
+  const rd=$('#reader');rd.classList.add('fr');const paid=/book|audiobook/.test(b.stype||'');
+  $('#frame').innerHTML=`<div class="swcard">${b.cover?`<img src="${esc(b.cover)}" alt="" style="aspect-ratio:.75">`:cover(b)}<h3>${esc(b.t)}</h3>${b.a?`<div class="mut">${esc(b.a)}</div>`:''}<a class="btn full" href="${esc(b.link)}" target="_blank" rel="noopener"><i class="ph-fill ph-arrow-square-out"></i> افتح المستند في Scribd</a><small class="mut">${paid?'هذا كتاب من مكتبة Scribd المدفوعة ويحتاج اشتراكاً.':'Scribd لا يسمح بعرض مستنداته داخل التطبيقات على آيفون، فيفتح في موقعه أو تطبيقه. المستند محفوظ في مكتبتك للرجوع إليه.'}</small></div>`;return}
  const rd=$('#reader');rd.classList.add('fr');
  if(b.kind==='sw'){/* StoryWeaver لا يسمح بالعرض داخل التطبيقات: تُفتح القصة في موقعه */
   const u=`https://storyweaver.org.in/ar/stories/${b.ref}`;const e=S.lib[b.id];if(e){e.pages=0;save()}

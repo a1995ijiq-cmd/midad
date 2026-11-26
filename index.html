@@ -483,8 +483,16 @@ const mkB=o=>{o.id=o.src+':'+o.key;if(!o.lang)o.lang=isAr(o.t)?'ar':'en';o.c=pal
 const getB=id=>MEM[id]||S.books[id];
 const A={
  wiki:{async search(q,o){const pg=o.page||1;
-   const j=await getJSON(`https://ar.wikisource.org/w/api.php?action=query&list=search&srsearch=${enc(q)}&srnamespace=0&srlimit=30&sroffset=${(pg-1)*30}&format=json&origin=*`);
-   const l=(j.query&&j.query.search||[]).filter(r=>!r.title.includes('/')).map(r=>mkB({src:'wiki',key:r.title,t:r.title,a:'',lang:'ar',kind:'wiki',d:strip(r.snippet).slice(0,240)}));l.more=!!j.continue;return l}},
+   const j=await getJSON(`https://ar.wikisource.org/w/api.php?action=query&list=search&srsearch=${enc(q)}&srnamespace=0&srlimit=40&sroffset=${(pg-1)*40}&srprop=wordcount|snippet&format=json&origin=*`);
+   const all=(j.query&&j.query.search||[]).filter(r=>!r.title.includes('/')&&!S.empty[`wiki:${r.title}`]);
+   /* نبقي بس الكتب اللي بيها نص فعلي: صفحات طويلة، أو صفحات فهرس إلها أجزاء */
+   const big=all.filter(r=>(r.wordcount||0)>=400),small=all.filter(r=>(r.wordcount||0)<400);
+   let withParts=new Set();
+   if(small.length){try{const lj=await getJSON(`https://ar.wikisource.org/w/api.php?action=query&prop=links&plnamespace=0&pllimit=max&titles=${small.map(r=>enc(r.title)).join('|')}&format=json&origin=*&redirects=1`);
+     Object.values(lj.query&&lj.query.pages||{}).forEach(pg=>{const n=(pg.links||[]).filter(l=>l.title.startsWith(pg.title+'/')).length;if(n>=2)withParts.add(pg.title)});
+     (lj.query&&lj.query.redirects||[]).forEach(r=>{if(withParts.has(r.to))withParts.add(r.from)})}catch(e){}}
+   const keep=new Set([...big.map(r=>r.title),...withParts]);
+   const l=all.filter(r=>keep.has(r.title)).map(r=>mkB({src:'wiki',key:r.title,t:r.title,a:'',lang:'ar',kind:'wiki',d:strip(r.snippet).slice(0,240)}));l.more=!!j.continue;return l}},
  ia:{async search(q,o){const pg=o.page||1;
    const qq=`(${q||'*'}) AND mediatype:(texts) AND NOT collection:(inlibrary OR printdisabled OR lendinglibrary OR americana_restricted)`+(o.ar?' AND language:(ara OR arabic OR Arabic)':'');
    const j=await getJSON(`https://archive.org/advancedsearch.php?q=${enc(qq)}&fl%5B%5D=identifier&fl%5B%5D=title&fl%5B%5D=creator&fl%5B%5D=year&fl%5B%5D=language&fl%5B%5D=description&rows=30&page=${pg}&sort%5B%5D=downloads+desc&output=json`);
@@ -517,6 +525,7 @@ const seed=()=>({lib:{},books:{},hl:[],recent:[],cust:{},stat:{pages:0},
  src:Object.keys(BUILTIN).map(k=>({id:k,on:true,sync:0})),
  set:{fs:20,lh:2,font:'Amiri',theme:'sepia',arFirst:true,goal:20,yearGoal:24},days:{}});
 let S;try{S=JSON.parse(localStorage.getItem('midad4'))||seed()}catch(e){S=seed()}
+if(!S.empty)S.empty={};
 if(!S.src.some(s=>s.id==='libiq'))S.src.splice(0,0,{id:'libiq',on:true,sync:0});
 const save=()=>{try{localStorage.setItem('midad4',JSON.stringify(S))}catch(e){try{S.cust={};localStorage.setItem('midad4',JSON.stringify(S))}catch(_){}}};
 const srcMeta=s=>BUILTIN[s.id]?{...BUILTIN[s.id],...s}:s;
@@ -562,7 +571,7 @@ function loadMore(tk=stoken){
 function drawResults(){
  const el=$('#res');if(!el)return;
  const pending=Object.values(rstat).some(v=>v==='…');
- let r=results.filter(b=>(fLang==='all'||b.lang===fLang)&&(fSrc==='all'||b.src===fSrc));
+ let r=results.filter(b=>!S.empty[b.id]&&(fLang==='all'||b.lang===fLang)&&(fSrc==='all'||b.src===fSrc));
  r=ordered(r);
  const more=curJobs&&curJobs.some(j=>j.more);
  const st=`<div class="sstat">${Object.entries(rstat).map(([id,v])=>{const s=srcOf(id);return s?`<span class="${v==='x'?'err':v==='…'?'':'ok'}">${esc(s.n)}: ${v==='…'?'<span class="spin">◌</span>':v==='x'?'تعذّر':ar(v)}</span>`:''}).join('')}</div>`;
@@ -597,7 +606,7 @@ function loadShelf(sec){
   for(let i=0;i<20;i++)lists.forEach(l=>{const b=l[i];if(b&&!seen.has(norm(b.t))){seen.add(norm(b.t));out.push(b)}});
   shelfCache[sec.k]=out;fillShelf(sec)});
 }
-function fillShelf(sec){const el=$('#sh-'+sec.k);if(!el)return;const l=shelfCache[sec.k];l.forEach(b=>MEM[b.id]=b);el.className='rail';el.innerHTML=l.length?ordered(l).slice(0,16).map(card).join(''):'<span class="mut">تعذّر التحميل — تأكد من الإنترنت</span>'}
+function fillShelf(sec){const el=$('#sh-'+sec.k);if(!el)return;const l=shelfCache[sec.k].filter(b=>!S.empty[b.id]);l.forEach(b=>MEM[b.id]=b);el.className='rail';el.innerHTML=l.length?ordered(l).slice(0,16).map(card).join(''):'<span class="mut">تعذّر التحميل — تأكد من الإنترنت</span>'}
 let shelfIO=null;
 function observeShelves(){
  if(shelfIO)shelfIO.disconnect();
@@ -973,6 +982,10 @@ function ensureEntry(b){
  if(!S.lib[b.id]||S.lib[b.id].s!=='reading'){const o=S.lib[b.id];S.lib[b.id]={...(o||{}),s:'reading',p:o&&o.s!=='done'&&o.p?o.p:1,part:o&&o.s!=='done'?o.part||0:0,marks:o&&o.marks||[]}}
  S.lib[b.id].last=Date.now();save();
 }
+function markEmpty(id){
+ S.empty[id]=1;delete S.lib[id];delete S.dl[id];save();results=results.filter(b=>b.id!==id);Object.keys(shelfCache).forEach(k=>{shelfCache[k]=shelfCache[k].filter(b=>b.id!==id)});
+ lstate(`<i class="ph-duotone ph-book-open" style="font-size:48px;color:var(--gold)"></i><b>هذا الكتاب فارغ بالمصدر</b><span>ما بيه نص أو بيه صفحة وحدة بس، فشلناه من النتائج حتى ما يطلعلك مرة ثانية.</span><button class="btn" data-act="rclose">رجوع</button>`);
+}
 function lstate(html){$('#page').innerHTML=`<div class="lstate">${html}</div>`}
 async function openReader(id,jump){
  const b=getB(id);if(!b)return;
@@ -989,7 +1002,8 @@ async function openReader(id,jump){
   if(b.kind==='wiki'){
    const root=await wikiParse(b.key);
    const txtLen=root.blocks.reduce((s,x)=>s+x.t.length,0);
-   if(root.parts.length&&txtLen<1500){R.parts=root.parts;e.parts=root.parts.length}else{R.parts=[{t:b.t,ref:b.key}];R.root=root;e.parts=1}
+   if(root.parts.length>=2&&txtLen<1500){R.parts=root.parts;e.parts=root.parts.length}else{R.parts=[{t:b.t,ref:b.key}];R.root=root;e.parts=1}
+   if(e.parts===1&&txtLen<1300){markEmpty(id);return}
    await loadPart(e.part||0,e.p||1);
   }else if(b.kind==='gut'){
    let txt=await IDB.get('g:'+b.ref).catch(()=>null);if(!txt){const g=await getVia(b.txt,20000);txt=await g.r.text();IDB.set('g:'+b.ref,txt).catch(()=>{})}const blocks=gutText(txt);

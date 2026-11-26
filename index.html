@@ -437,6 +437,14 @@ html[dir=rtl] .npill{right:auto;left:0}
 .grab{width:44px;height:5px;cursor:grab}
 .sheet .grab{margin-bottom:14px}
 @media(prefers-reduced-motion:reduce){#view.vin>*,.bk.pop,.empty>i{animation:none!important}.npill,.sheet,.toast{transition:none!important}}
+
+.dlpill{position:absolute;left:12px;right:12px;bottom:calc(96px + env(safe-area-inset-bottom) * .45);z-index:7;display:flex;align-items:center;gap:10px;background:var(--plumbg);color:#fff;border-radius:18px;padding:10px 14px 14px;box-shadow:0 12px 30px rgb(0 0 0/.3);transform:translateY(140%);opacity:0;transition:transform .4s var(--spring),opacity .3s;overflow:hidden;pointer-events:none}
+.dlpill.on{transform:none;opacity:1}
+.dlpill>i:first-child{font-size:20px;color:var(--gold)}
+.dlpill span{flex:1;display:grid;min-width:0}.dlpill b{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.dlpill small{font-size:12px;opacity:.8}
+.dlpill em{font-style:normal;font-weight:700;font-size:16px;color:var(--gold)}
+.dlpill .bar{position:absolute;bottom:0;right:0;height:4px;background:var(--gold);transition:width .25s}
+.reader.on~.dlpill{bottom:calc(16px + env(safe-area-inset-bottom))}
 </style>
 <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
 </head>
@@ -840,7 +848,7 @@ function openBook(id,keep){
  <div class="acts"><button class="btn full" data-read="${esc(id)}">${e&&e.s==='reading'?'تابع القراءة':e&&e.s==='done'?'اقرأ مرة أخرى':'ابدأ القراءة'}</button><button class="btn alt" data-act="close" aria-label="إغلاق"><i class="ph-bold ph-x"></i></button></div>
  <div class="shelf">${sb('want','أريد قراءتها')}${sb('reading','أقرأ الآن')}${sb('done','قرأتها')}</div>
  ${(()=>{const d=S.dl[id],txt=b.kind==='wiki'||(b.kind==='gut'&&b.txt),canPdf=(b.kind==='gb'&&b.pdf)||b.kind==='ia'||(b.kind==='link'&&/pdf/i.test((b.ltype||'')+(b.link||'')));if(!txt&&!canPdf)return b.kind==='libiq'?'<p class="mut" style="font-size:13px;margin:12px 0 0">التحميل غير متاح لكتب هذا المصدر، تُقرأ بقارئه الرسمي.</p>':'';
-  return `<div class="dlrow">${busy[id]?`<span class="mut" style="flex:1">جارٍ التحميل…<div class="prog"><b id="dlp-${cssId(id)}"></b></div></span>`:
+  return `<div class="dlrow">${busy[id]?`<span class="mut" style="flex:1"><span style="display:flex;justify-content:space-between"><span id="dlt-${cssId(id)}">${esc((dlProg[id]||{}).label||'جارٍ التحميل…')}</span><b>${ar(Math.round((dlProg[id]||{}).pct||0))}٪</b></span><div class="prog"><b id="dlp-${cssId(id)}" style="width:${(dlProg[id]||{}).pct||3}%"></b></div></span>`:
   d?`${d.kind==='text'?`<span class="tag" style="align-self:center"><i class="ph-fill ph-check-circle"></i> محفوظ بدون نت</span>`:''}${d.kind==='pdf'||d.pdf?`<button class="btn" data-pdfo="${esc(id)}"><i class="ph-bold ph-file-pdf"></i> فتح PDF</button><button class="btn alt" data-pdfs="${esc(id)}"><i class="ph-bold ph-share-network"></i> حفظ/مشاركة</button>`:''}${txt?`<button class="btn alt" data-pdfx="${esc(id)}"><i class="ph-bold ph-file-pdf"></i> ${d.pdf?'تحديث PDF':'إنشاء PDF بملاحظاتي'}</button>`:''}<button class="btn alt" data-dlx="${esc(id)}" aria-label="حذف التحميل"><i class="ph-bold ph-trash"></i></button>`:
   `<button class="btn alt" data-dl="${esc(id)}"><i class="ph-bold ph-download-simple"></i> ${txt?'تحميل للقراءة بدون نت':'تحميل PDF للمكتبة'}</button>${txt?`<button class="btn alt" data-pdfx="${esc(id)}"><i class="ph-bold ph-file-pdf"></i> PDF</button>`:''}`}</div>`})()}
  ${e&&e.marks&&e.marks.length?`<h2 style="font-size:18px">العلامات</h2><div class="shelf">${e.marks.map(m=>{const [pt,p]=m.split(':');return `<button class="chip" data-hj="${esc(id)}" data-part="${pt}" data-p="${p}"><i class="ph-fill ph-bookmark-simple"></i> ${+pt?`ج${ar(+pt+1)} · `:''}ص ${ar(p)}</button>`}).join('')}</div>`:''}
@@ -969,21 +977,37 @@ async function bookParts(b,onp){
 }
 
 /* ---------- تحميل للمكتبة: نص للقراءة بدون نت، أو PDF من المصدر ---------- */
-let busy={};
+let busy={},dlProg={};
+/* تنزيل ملف مع عداد: يجرب مباشرة، وإذا انمنع يمر عبر خادم مداد */
+async function fetchProg(url,onp){
+ let r;try{r=await fetch(url);if(!r.ok)throw 0}catch(e){r=await fetch(PROXY+enc(url));if(!r.ok)throw new Error('net')}
+ const total=+r.headers.get('content-length')||0,type=r.headers.get('content-type')||'application/pdf';
+ if(!r.body||!r.body.getReader){const b=await r.blob();onp(b.size,b.size);return b}
+ const rd=r.body.getReader(),chunks=[];let got=0,lt=0;
+ for(;;){const {done,value}=await rd.read();if(done)break;chunks.push(value);got+=value.length;if(Date.now()-lt>150){lt=Date.now();onp(got,total)}}
+ onp(got,total||got);return new Blob(chunks,{type});
+}
+function showProg(id,pct,label){dlProg[id]={pct,label};const b=getB(id)||{};
+ const bar=$('#dlp-'+cssId(id));if(bar)bar.style.width=Math.max(3,pct)+'%';const tx=$('#dlt-'+cssId(id));if(tx)tx.textContent=label;
+ let pill=$('#dlpill');if(!pill){pill=document.createElement('div');pill.id='dlpill';pill.className='dlpill';$('#app').appendChild(pill)}
+ pill.innerHTML=`<i class="ph-bold ph-download-simple"></i><span><b>${esc(String(b.t||'').slice(0,28))}</b><small>${esc(label)}</small></span><em>${ar(Math.round(pct))}٪</em><i class="bar" style="width:${pct}%"></i>`;pill.classList.add('on')}
+function hideProg(id){delete dlProg[id];if(!Object.keys(dlProg).length){const p=$('#dlpill');if(p)p.classList.remove('on')}}
 async function downloadBook(id){
- const b=getB(id);if(!b||busy[id])return;remember(b);busy[id]=1;const pr=p=>{const el=$('#dlp-'+cssId(id));if(el)el.style.width=p+'%'};
+ const b=getB(id);if(!b||busy[id])return;remember(b);busy[id]=1;const pr=(p,l)=>showProg(id,p,l||'جارٍ التحميل…');
+ if(document.querySelector('#sheet.on'))openBook(id,1);pr(1,'جارٍ التحضير…');
+ const fileProg=(got,tot)=>pr(tot?Math.min(99,got/tot*100):Math.min(95,got/1048576*4),tot?`${fmtSize(got)} من ${fmtSize(tot)}`:fmtSize(got));
  try{
-  if(b.kind==='wiki'||(b.kind==='gut'&&b.txt)){const parts=await bookParts(b,(i,n)=>pr(i/n*100));S.dl[id]={kind:'text',at:Date.now(),parts:parts.length,size:JSON.stringify(parts).length};toast('حُفظ الكتاب للقراءة بدون إنترنت ✓')}
-  else if(b.kind==='ia'){pr(10);const m=await(await getVia(`https://archive.org/metadata/${enc(b.ref)}`,20000)).r.json();const pdfs=(m.files||[]).filter(f=>/\.pdf$/i.test(f.name)).sort((x,y)=>(+x.size||9e9)-(+y.size||9e9));
-   if(!pdfs.length)throw new Error('nopdf');const f=pdfs[0];if(+f.size>60*1048576)throw new Error('big');pr(30);
-   const g=await getVia(`https://archive.org/download/${enc(b.ref)}/${f.name.split('/').map(enc).join('/')}`,90000);const blob=await g.r.blob();if(blob.size<1000)throw new Error('bad');
+  if(b.kind==='wiki'||(b.kind==='gut'&&b.txt)){const parts=await bookParts(b,(i,n)=>pr(i/n*100,`الجزء ${ar(i+1)} من ${ar(n)}`));S.dl[id]={kind:'text',at:Date.now(),parts:parts.length,size:JSON.stringify(parts).length};toast('حُفظ الكتاب للقراءة بدون إنترنت ✓')}
+  else if(b.kind==='ia'){pr(10);const m=await(await getVia(`https://archive.org/metadata/${enc(b.ref)}`,20000)).r.json();const pdfs=(m.files||[]).filter(f=>/\.pdf$/i.test(f.name)).sort((x,y)=>((x.format==='Text PDF'?0:1)-(y.format==='Text PDF'?0:1))||((+x.size||9e9)-(+y.size||9e9)));
+   if(!pdfs.length)throw new Error('nopdf');const f=pdfs[0];if(+f.size>60*1048576)throw new Error('big');pr(2,'بدأ التنزيل…');
+   const blob=await fetchProg(`https://archive.org/download/${enc(b.ref)}/${f.name.split('/').map(enc).join('/')}`,(g,t)=>fileProg(g,t||+f.size));if(blob.size<1000)throw new Error('bad');
    await IDB.set('pdf:'+id,blob);S.dl[id]={kind:'pdf',at:Date.now(),size:blob.size};toast('حُمّل ملف PDF إلى مكتبتك ✓')}
-  else if(b.kind==='gb'&&b.pdf){const g=await getVia(b.pdf,90000);const blob=await g.r.blob();if(blob.size<1000||!/pdf/i.test(blob.type||'pdf'))throw new Error('bad');await IDB.set('pdf:'+id,blob);S.dl[id]={kind:'pdf',at:Date.now(),size:blob.size};toast('حُمّل ملف PDF ✓')}
-  else if(b.kind==='link'&&/pdf/i.test((b.ltype||'')+b.link)){const g=await getVia(b.link,90000);const blob=await g.r.blob();await IDB.set('pdf:'+id,blob);S.dl[id]={kind:'pdf',at:Date.now(),size:blob.size};toast('حُمّل ملف PDF ✓')}
+  else if(b.kind==='gb'&&b.pdf){const blob=await fetchProg(b.pdf,fileProg);if(blob.size<1000||!/pdf/i.test(blob.type||'pdf'))throw new Error('bad');await IDB.set('pdf:'+id,blob);S.dl[id]={kind:'pdf',at:Date.now(),size:blob.size};toast('حُمّل ملف PDF ✓')}
+  else if(b.kind==='link'&&/pdf/i.test((b.ltype||'')+b.link)){const blob=await fetchProg(b.link,fileProg);await IDB.set('pdf:'+id,blob);S.dl[id]={kind:'pdf',at:Date.now(),size:blob.size};toast('حُمّل ملف PDF ✓')}
   else throw new Error('na');
-  pr(100);save();
- }catch(e){toast(e.message==='nopdf'?'هذا الكتاب ما عنده ملف PDF بالمصدر':e.message==='big'?'ملف PDF أكبر من ٦٠ م.ب، افتحه من المصدر':e.message==='na'?'التحميل غير متاح لهذا المصدر':'تعذّر التحميل، حاول مرة ثانية')}
- delete busy[id];if(document.querySelector('#sheet.on'))openBook(id,1);if(tab==='library')render();
+  pr(100,'اكتمل ✓');save();
+ }catch(e){hideProg(id);toast(e.message==='nopdf'?'هذا الكتاب ما عنده ملف PDF بالمصدر':e.message==='big'?'ملف PDF أكبر من ٦٠ م.ب، افتحه من المصدر':e.message==='na'?'التحميل غير متاح لهذا المصدر':'تعذّر التحميل، حاول مرة ثانية')}
+ delete busy[id];setTimeout(()=>hideProg(id),900);if(document.querySelector('#sheet.on'))openBook(id,1);if(tab==='library')render();
 }
 const cssId=id=>id.replace(/[^a-z0-9]/gi,'_');
 async function removeDownload(id){const d=S.dl[id];if(!d)return;if(d.kind==='pdf'||d.pdf)await IDB.del('pdf:'+id).catch(()=>{});delete S.dl[id];save();toast('حُذف التحميل');if(document.querySelector('#sheet.on'))openBook(id,1);if(tab==='library')render()}
@@ -992,9 +1016,10 @@ async function removeDownload(id){const d=S.dl[id];if(!d)return;if(d.kind==='pdf
 const HLC={y:'rgba(245,215,110,.55)',g:'rgba(143,209,158,.5)',b:'rgba(140,196,240,.5)',p:'rgba(243,163,196,.5)'};
 async function exportPDF(id){
  const b=getB(id);if(!b||busy[id])return;remember(b);busy[id]=1;
- const pr=p=>{const el=$('#dlp-'+cssId(id));if(el)el.style.width=p+'%'};
+ const pr=p=>showProg(id,p,'إنشاء PDF…');
+ if(document.querySelector('#sheet.on'))openBook(id,1);
  try{
-  toast('جارٍ تجهيز PDF…');
+  pr(1);
   await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
   const parts=await bookParts(b,(i,n)=>pr(i/n*30));
   const ann=ANN()[id]||{};
@@ -1035,8 +1060,8 @@ async function exportPDF(id){
   await flush(++pno);
   const blob=pdf.output('blob');await IDB.set('pdf:'+id,blob);
   S.dl[id]={...(S.dl[id]||{kind:'text'}),pdf:true,pdfAt:Date.now(),pdfSize:blob.size,pdfPages:pno+1};save();pr(100);
-  toast(pno>=420?'تم تصدير أول ٤٢٠ صفحة إلى PDF ✓':'تم إنشاء PDF وحفظه بمكتبتك ✓');
- }catch(e){console.warn(e);toast('تعذّر إنشاء PDF، تأكد من الإنترنت للمرة الأولى')}
+  toast(pno>=420?'تم تصدير أول ٤٢٠ صفحة إلى PDF ✓':'تم إنشاء PDF وحفظه بمكتبتك ✓');setTimeout(()=>hideProg(id),900);
+ }catch(e){console.warn(e);hideProg(id);toast('تعذّر إنشاء PDF، تأكد من الإنترنت للمرة الأولى')}
  delete busy[id];if(document.querySelector('#sheet.on'))openBook(id,1);if(tab==='library')render();
 }
 
@@ -1050,7 +1075,7 @@ async function openPDF(id){
  try{
   await loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js');
   pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-  const doc=await pdfjsLib.getDocument({data:new Uint8Array(await blob.arrayBuffer())}).promise;
+  const PJ='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/';const doc=await pdfjsLib.getDocument({data:new Uint8Array(await blob.arrayBuffer()),cMapUrl:PJ+'cmaps/',cMapPacked:true,standardFontDataUrl:PJ+'standard_fonts/',useSystemFonts:false,disableFontFace:false}).promise;
   const v=$('#pdfv');if(!v)return;v.innerHTML='';const p1=await doc.getPage(1);const vp1=p1.getViewport({scale:1});
   for(let i=1;i<=doc.numPages;i++){const d=document.createElement('div');d.className='pp';d.dataset.n=i;d.style.aspectRatio=`${vp1.width}/${vp1.height}`;d.innerHTML=`<span class="pn">${ar(i)}</span>`;v.appendChild(d)}
   const draw=async el=>{if(el.dataset.done)return;el.dataset.done=1;const pg=await doc.getPage(+el.dataset.n);const sc=el.clientWidth*(window.devicePixelRatio||1)/pg.getViewport({scale:1}).width;const vp=pg.getViewport({scale:Math.min(sc,3)});const c=document.createElement('canvas');c.width=vp.width;c.height=vp.height;el.style.aspectRatio='';el.prepend(c);await pg.render({canvasContext:c.getContext('2d'),viewport:vp}).promise};

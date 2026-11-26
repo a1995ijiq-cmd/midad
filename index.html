@@ -832,7 +832,7 @@ const SECTIONS=[
  {k:'religions',g:'المكتبة الإسلامية',t:'الأديان والمقارنة',ic:'globe-stand',c:'#5a5a3a',d:'مقارنة الأديان والمذاهب والتاريخ الديني',jobs:[I('مقارنة الأديان'),OS('religions'),OS('christianity'),OS('judaism'),G('','religion'),AC('النصرانية'),AC('الأديان'),I('اليهودية'),I('المسيحية'),I('البوذية'),T('الملل والنحل'),T('الفصل في الملل'),OS('comparative_religion')]},
  {k:'sports',g:'الرياضة',t:'الرياضة',ic:'trophy',c:'#c79a2e',d:'تاريخ الرياضة وتدريبها وقوانينها',jobs:[I('الرياضة'),I('التربية الرياضية'),I('التدريب الرياضي'),OS('sports'),G('','sports'),GB('رياضة',1),GB('subject:sports'),I('الألعاب الأولمبية'),I('علم التدريب'),I('فسيولوجيا الرياضة'),I('الإصابات الرياضية'),OS('olympics'),OS('sports_medicine'),OS('coaching')]},
  {k:'football',g:'الرياضة',t:'كرة القدم',ic:'soccer-ball',c:'#2e7a3a',d:'تكتيك وتدريب وتاريخ اللعبة',jobs:[I('كرة القدم'),OS('soccer'),GB('كرة القدم',1),GB('subject:soccer'),I('تدريب كرة القدم'),I('قانون كرة القدم'),I('تاريخ كرة القدم'),OS('soccer_coaching'),OS('world_cup_(soccer)')]},
- {k:'gym',g:'الرياضة',t:'كمال الأجسام واللياقة',ic:'barbell',c:'#8a2e2e',d:'تمارين، تغذية رياضية، وتشريح القوة',jobs:[I('كمال الأجسام'),I('اللياقة البدنية'),OS('bodybuilding'),OS('physical_fitness'),OS('weight_training'),GB('subject:physical fitness'),I('بناء الأجسام'),I('رفع الأثقال'),I('تمارين'),OS('exercise'),OS('yoga'),OS('aerobics'),GB('subject:exercise')]},
+ {k:'gym',g:'الرياضة',t:'كمال الأجسام واللياقة',ic:'barbell',c:'#8a2e2e',d:'تمارين، تغذية رياضية، وتشريح القوة',jobs:[I('كمال الأجسام'),I('اللياقة البدنية'),OS('bodybuilding'),OS('physical_fitness'),OS('weight_training'),GB('subject:physical fitness'),I('بناء الأجسام'),I('رفع الأثقال'),I('تمارين رياضية'),I('تمارين القوة'),I('التغذية الرياضية'),OS('exercise'),OS('yoga'),OS('aerobics'),GB('subject:exercise')]},
  {k:'martial',g:'الرياضة',t:'الفنون القتالية والملاكمة',ic:'hand-fist',c:'#5a2a2a',d:'كاراتيه، جودو، ملاكمة، مصارعة',jobs:[I('الفنون القتالية'),I('الكاراتيه'),OS('martial_arts'),OS('boxing'),OS('wrestling'),I('الملاكمة'),I('الجودو'),I('التايكواندو'),I('المصارعة'),OS('judo'),OS('karate'),OS('self-defense')]},
  {k:'basket',g:'الرياضة',t:'كرة السلة والطائرة',ic:'basketball',c:'#c0602a',d:'مهارات وخطط اللعب',jobs:[I('كرة السلة'),I('الكرة الطائرة'),OS('basketball'),OS('volleyball'),I('كرة اليد'),OS('handball'),OS('baseball'),OS('hockey')]},
  {k:'running',g:'الرياضة',t:'الجري وألعاب القوى',ic:'person-simple-run',c:'#2e6b8a',d:'الجري، الماراثون، والعدو',jobs:[I('ألعاب القوى'),OS('running'),OS('track_and_field'),OS('marathon_running'),I('الجري'),I('الماراثون'),OS('athletics'),OS('walking')]},
@@ -854,40 +854,48 @@ const SECTIONS=[
 /* كلمات كل قسم: الكتاب لازم يحتوي وحدة منها بالعنوان أو الوصف حتى ينحط بالقسم */
 const KW={nahj:'نهج البلاغه|نهج السعاده|منهاج البراعه|بهج الصباغه|مصباح السالكين|معارج نهج|حدائق الحقائق في شرح|نفحات الولايه|الخطبه الشقشقيه|عهد الامام علي|عهد امير المؤمنين|عهد الاشتر|مالك الاشتر|خطب الامام علي|خطب امير المؤمنين|nahj|peak of eloquence',kids:'طفل|اطفال|قصص|قصه|حكايه|حكايات|صغار|child|kid|fairy|stories|tale|picture book',
  poetry:'ديوان|شعر|قصيد|معلق|ارجوز|poem|poetry|verse',
- religion:'تفسير|قران|حديث|فقه|سيره|صحيح|عقيد|عقائد|اسلام|نبي|دين|سنن|شريعه|توحيد|quran|islam|hadith|religio|bible|prophet',
+ religion:'تفسير|قران|حديث|فقه|السيره النبويه|صحيح البخاري|صحيح مسلم|عقيد|عقائد|اسلام|نبي|دين|سنن|شريعه|توحيد|quran|islam|hadith|religio|bible|prophet',
  novels:'روايه|قصه|قصص|حكايه|novel|fiction|stories|tale|romance',
- heritage:'ادب|تراث|كتاب|اغاني|بيان|مقامات|literatur|classic',
+ heritage:'ادب|الادب|تراث|الاغاني|البيان والتبيين|مقامات|literatur|classic',
  history:'تاريخ|رحله|حضار|دوله|دول|خلافه|ملوك|history|historic|civiliz|empire|travel',
- social:'اجتماع|مجتمع|فكر|نهضه|خلدون|سياس|sociolog|societ|social|politic',
+ social:'علم الاجتماع|اجتماع|مجتمع|الفكر|فكري|نهضه|خلدون|سياس|sociolog|societ|social|politic',
  psych:'نفس|سلوك|اخلاق|شخصيه|عقل|psycholog|mind|behavio|ethic|personality',
- self:'ذات|نجاح|تنميه|عادات|تفكير|سعاده|self|success|habit|motivat|happiness',
+ self:'تطوير الذات|تنميه الذات|الذات|النجاح|نجاح|التنميه البشريه|عادات|التفكير|السعاده|self|success|habit|motivat|happiness',
  philo:'فلسف|منطق|حكمه|philosoph|logic|wisdom|stoic',
- biog:'سيره|حياه|ترجمه|مذكرات|اعلام|biograph|life of|memoir|lives',
- sports:'رياضه|رياضي|بدنيه|العاب|تدريب|بطوله|اولمب|sport|athlet|olymp|coach|training|games',
+ biog:'سيره|السيره الذاتيه|تراجم|ترجمه حياه|مذكرات|الاعلام|biograph|life of|memoir|lives',
+ sports:'رياضه|الرياضه|رياضي|الرياضي|التربيه البدنيه|بدنيه|الالعاب الرياضيه|الالعاب الاولمبيه|التدريب الرياضي|بطوله|اولمب|sport|athlet|olymp|coach',
  football:'كره القدم|كرة القدم|القدم|فيفا|كاس العالم|football|soccer|fifa|world cup',
- gym:'اجسام|لياقه|تمارين|عضل|بدنيه|حديد|بناء الجسم|تغذيه الرياضي|bodybuild|fitness|muscle|exercise|weight|strength|gym|workout',
- martial:'قتال|كاراتيه|جودو|ملاكم|مصارع|تايكوندو|دفاع عن النفس|martial|karate|judo|box|wrestl|kung fu|taekwondo|self-defense|jujitsu',
+ gym:'كمال الاجسام|بناء الاجسام|بناء الجسم|لياقه|تمارين رياضيه|تمارين بدنيه|تمارين القوه|تمارين المقاومه|تمارين الاثقال|تمارين الاحماء|تمارين الاطاله|تمارين اللياقه|تمارين العضلات|تمارين عضلات|عضلات|العضلات|رفع الاثقال|الاثقال|حديد|التدريب الرياضي|التدريب البدني|تغذيه الرياضي|الرياضيين|كارديو|يوغا|ايروبكس|bodybuild|fitness|muscle|exercise|weight train|weightlift|strength train|gym|workout|yoga|aerobic|calisthenic',
+ martial:'فنون القتال|القتال الفردي|كاراتيه|جودو|ملاكم|مصارع|تايكوندو|دفاع عن النفس|martial|karate|judo|boxing|wrestl|kung fu|taekwondo|self-defense|jujitsu',
  basket:'سله|طائره|basket|volley',
- running:'جري|عدو|ماراثون|العاب القوى|running|marathon|track|athletic|jogging',
+ running:'الجري|جري|العدو الريفي|ماراثون|العاب القوي|running|marathon|track and field|jogging',
  swim:'سباح|غوص|swim|diving',
  chess:'شطرنج|chess',
  tennis:'تنس|ريشه|tennis|badminton|ping pong',
  horse:'خيل|فروسيه|فرس|رمايه|horse|equestr|archery|riding',
- science:'علوم|علم|طب|كيمياء|احياء|science|medic|biolog|chemi',
+ science:'علوم|العلوم|علم الاحياء|علم الوراثه|طب|كيمياء|احياء|فيزياء|science|medic|biolog|chemi',
  health:'صحه|تغذيه|غذاء|طب|مرض|علاج|health|nutrition|diet|disease|medic',
- tech:'برمج|حاسوب|حاسب|كمبيوتر|شبكات|ذكاء اصطناعي|بايثون|جافا|program|computer|software|code|python|java|network',
- math:'رياضيات|جبر|هندسه|حساب|فيزياء|تفاضل|math|algebra|geometr|physics|calculus',
- space:'فلك|نجوم|كواكب|فضاء|astronom|space|planet|stars',
+ tech:'برمج|حاسوب|الحاسب|كمبيوتر|شبكات الحاسوب|الشبكات|ذكاء اصطناعي|الذكاء الاصطناعي|بايثون|جافا|انترنت|programming|computer|software|coding|python|java|networking|internet',
+ math:'رياضيات|الجبر|جبر|الهندسه التحليليه|هندسه اقليدس|حساب|التفاضل|فيزياء|تفاضل|math|algebra|geometr|physics|calculus',
+ space:'فلك|الفلك|نجوم|النجوم|كواكب|الفضاء|فضاء|astronom|space|planet|stars',
  econ:'اقتصاد|اداره|مال|تسويق|تجاره|محاسب|econom|business|financ|market|manag|account',
- lang:'لغه|نحو|صرف|قواعد|انجليزي|قاموس|معجم|بلاغه|language|grammar|english|dictionar|vocabular',
- art:'فن|رسم|خط|عماره|زخرف|art|paint|drawing|calligraph|architect',
- cook:'طبخ|اكل|اكلات|وصفات|مطبخ|حلويات|cook|recipe|food|kitchen|baking',
+ lang:'لغه|اللغه|نحو|النحو|علم الصرف|الصرف|قواعد اللغه|قواعد النحو|قواعد العربيه|انجليزي|قاموس|معجم|بلاغه|البلاغه|language|grammar|english|dictionar|vocabular',
+ art:'فن|الفن|فنون|الفنون|رسم|الرسم|الخط العربي|عماره|زخرف|موسيقي|art|arts|paint|music|drawing|calligraph|architect',
+ cook:'طبخ|الطبخ|اكلات|وصفات|مطبخ|المطبخ|حلويات|cook|recipe|food|kitchen|baking',
  travel:'سفر|رحله|جغرافي|بلدان|خرائط|travel|geograph|journey|map|atlas'};
 KW.sports+='|'+['football','gym','martial','basket','running','swim','chess','tennis','horse'].map(k=>KW[k]).join('|');
-Object.assign(KW,{politics:'سياس|حكم|دوله|دستور|ديمقراط|انتخاب|حزب|علاقات دوليه|politic|government|democra|state|international',callig:'خط|كراسه|رقعه|نسخ|ثلث|ديواني|كوفي|calligraph|lettering|script',law:'قانون|دستور|حقوق|تشريع|قضاء|محاكم|law|legal|constitution|rights',edu:'تربيه|تعليم|تدريس|مناهج|مدرس|طفل|educat|teach|school|pedagog',encyc:'معجم|قاموس|موسوعه|لسان|dictionar|encyclop|lexicon',eng:'هندس|كهرباء|ميكانيك|صناع|انشاء|engineer|electric|mechanic|industr',nature:'زراع|حيوان|نبات|بيئه|طيور|اشجار|agricult|animal|plant|nature|bird|garden'});
+Object.assign(KW,{politics:'سياس|نظام الحكم|الحكومه|الدوله الحديثه|دستور|ديمقراط|انتخاب|حزب|الاحزاب|علاقات دوليه|العلاقات الدوليه|politic|government|democra|international relations',callig:'الخط العربي|خط|الخطوط|الخطاط|خط الرقعه|خط النسخ|خط الثلث|الديواني|الكوفي|calligraph|lettering',law:'قانون|دستور|حقوق|تشريع|قضاء|محاكم|law|legal|constitution|rights',edu:'التربيه|تربيه|تعليم|التعليم|تدريس|مناهج|مدرس|طفل|educat|teach|school|pedagog',encyc:'معجم|قاموس|موسوعه|لسان|dictionar|encyclop|lexicon',eng:'هندس|كهرباء|ميكانيك|صناع|انشاء|engineer|electric|mechanic|industr',nature:'زراع|حيوان|نبات|بيئه|طيور|اشجار|agricult|animal|plant|nature|bird|garden'});
 KW.science+='|فيزياء|كيمياء|احياء|فلك';KW.space+='|هيئه';KW.lang+='|اعراب|الفيه|شرح ابن عقيل|لسان العرب';KW.history+='|البدايه|الكامل|مروج';KW.econ+='|خراج|اموال';
-const NX={sports:'رياضيات|رياضيه البحته|mathemat',health:'رياضيات',math:'',science:'',psych:'نفسه'};
-SECTIONS.forEach(s=>{if(KW[s.k])s.re=new RegExp(norm(KW[s.k]));if(NX[s.k])s.nx=new RegExp(norm(NX[s.k]))});
+const NX_SCH='محلوله|محلول|الصف|للصفوف|صفوف|سلاسل|سلسله تمارين|الوحده|وحده|العلوم الطبيعيه|علوم|رياضيات|فيزياء|كيمياء|امتحان|اختبار|بكالوريا|باكالوريا|البروفه|ابتدائي|متوسط|اعدادي|ثانوي|السادس|الخامس|الرابع|الثالث|مقياس|مخزونات|محاسبه|المحاسبه|نحو|املاء|اعراب|دروس|درس|حلول|حل |مذكره|منهاج|مناهج|كراسه|فرض|فروض|تسويه|maths|grade|exam|worksheet';
+const NX={sports:'رياضيات|رياضيه البحته|mathemat|'+NX_SCH,gym:NX_SCH,football:NX_SCH,martial:NX_SCH,basket:NX_SCH,running:NX_SCH,swim:NX_SCH,tennis:NX_SCH,horse:NX_SCH,health:'رياضيات',math:'',science:'',psych:'نفسه'};
+/* مطابقة بحدود الكلمة: الكلمة القصيرة لازم تكون كلمة مستقلة (مع ال/و/ب/ل/ف) حتى لا تطابق جزءاً من كلمة أخرى (طب≠طبعة، خط≠خطبة) */
+function kwRe(src){const P='(?:^|[^\\p{L}\\p{N}])(?:[وف])?(?:[بل])?(?:ال|ل)?';
+ const alts=norm(src).split('|').map(w=>w.trim()).filter(Boolean).map(w=>{
+  if(/^[a-z0-9 \-']+$/i.test(w))return w.length<6?`\\b${w}s?\\b`:`\\b${w}`;
+  const ar=w.replace(/[^؀-ۿ]/g,'');if(!/[()\[\]]/.test(w)&&!w.includes(' ')&&ar.length<=3)return P+w+'(?:ي|يه|ه|ات|ون|ين|يات|يين|ا|ها|هم|يه)?(?=$|[^\\p{L}\\p{N}])';
+  return P+w});
+ return new RegExp(alts.join('|'),'iu')}
+SECTIONS.forEach(s=>{if(KW[s.k])s.re=kwRe(KW[s.k]);if(NX[s.k])s.nx=kwRe(NX[s.k])});
 const fits=(sec,b,j)=>{const isAud=b.kind==='audio'||b.media==='audio';if(sec&&sec.k==='audio')return isAud;if(isAud)return false;if(sec&&sec.strict&&sec.re){const tt=norm(b.t||'');if(sec.k==='nahj'&&b.src==='aco'&&/^"?نهج البلاغه"?\s*(:|v\.|للامام|للإمام|$)/.test(tt))return false;return sec.re.test(tt)&&!(sec.nx&&sec.nx.test(tt))}if(!sec||!sec.re||(j&&j.tr))return true;const t=norm([b.t,b.a,b.d].join(' '));return sec.re.test(t)&&!(sec.nx&&sec.nx.test(t))};
 let curSec=null;
 /* مفتاح عدم التكرار: نفس العنوان من مصادر مختلفة = كتاب واحد */

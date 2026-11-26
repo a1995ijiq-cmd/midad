@@ -8,7 +8,9 @@ const err = (msg, status) => RAW ? new Response(`ERR ${status} ${msg}`, { status
 
 export async function onRequestGet({ request }) {
   RAW = new URL(request.url).searchParams.get('raw') === '1';
-  const raw = new URL(request.url).searchParams.get('url');
+  const sp = new URL(request.url).searchParams;
+  let raw = sp.get('url');
+  if (!raw && sp.get('u64')) { try { raw = decodeURIComponent(escape(atob(sp.get('u64').replace(/-/g, '+').replace(/_/g, '/')))); } catch { raw = null; } }
   if (!raw) return err('missing url', 400);
   let target;
   try { target = new URL(raw); } catch { return err('bad url', 400); }

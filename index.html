@@ -449,7 +449,7 @@ html[dir=rtl] .npill{right:auto;left:0}
 
 .avail{margin-top:12px;padding:12px 14px;border-radius:16px;background:linear-gradient(135deg,color-mix(in srgb,var(--gold) 16%,transparent),var(--soft));font-size:14px;display:flex;gap:8px;align-items:flex-start}
 .avail i{font-size:20px;color:var(--gold);flex:none}
-.avail b{color:var(--plum);font-size:16px}
+.avail span{line-height:1.7}.avail b{color:var(--plum);font-size:16px;margin:0 2px}
 
 /* القرآن الكريم */
 .qcard{display:flex;align-items:center;gap:14px;width:100%;margin-top:16px;padding:14px 16px;border-radius:20px;text-align:start;color:#fff;background:linear-gradient(135deg,#1f5a3a,#0f3324);box-shadow:0 12px 28px rgb(15 51 36/.3);position:relative;overflow:hidden}
@@ -479,6 +479,10 @@ html[dir=rtl] .npill{right:auto;left:0}
 .qrecs{max-height:55vh;overflow-y:auto}
 .qrecs button{display:flex;justify-content:space-between;width:100%;padding:12px 6px;border-bottom:1px solid var(--line);min-height:48px;text-align:start}
 .qrecs button.on{color:var(--gold);font-weight:700}.qrecs small{color:var(--mute)}
+
+/* نص مختلط عربي/لاتيني: اتجاه تلقائي لكل سطر حتى لا تنقلب العناوين والنقاط */
+.bk>p,.bk>span,.sb,.row h4,.row .mut,.dhead h3,.dhead .mut,.hero h3,.hero .mut,.aud h3,.aud .mut,.cv b,.cv i,.chip,.src b,.src small,.sstat bdi,#rtitle,.ext{unicode-bidi:plaintext}
+.bk>p,.bk>span,.row h4,.row .mut,.dhead h3,.dhead .mut,.hero h3,.hero .mut,.aud h3{text-align:right}
 </style>
 <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
 </head>
@@ -708,10 +712,10 @@ function drawResults(){
  const more=curJobs&&curJobs.some(j=>j.more);
  if(more&&r.length>3)r=r.slice(0,r.length-r.length%3);
  const ent=Object.entries(rstat),bad=ent.filter(([,v])=>v==='x'||v===0).length;
- const st=`<div class="sstat">${ent.filter(([,v])=>v!=='x'&&v!==0).map(([id,v])=>{const s=srcOf(id);return s?`<span class="${v==='…'?'':'ok'}">${esc(s.n)}: ${v==='…'?'<span class="spin">◌</span>':ar(v)}</span>`:''}).join('')}${bad?`<span>${ar(bad)} مصادر بدون نتائج</span>`:''}</div>`;
+ const st=`<div class="sstat">${ent.filter(([,v])=>v!=='x'&&v!==0).map(([id,v])=>{const s=srcOf(id);return s?`<span class="${v==='…'?'':'ok'}"><bdi>${esc(s.n)}</bdi>: ${v==='…'?'<span class="spin">◌</span>':ar(v)}</span>`:''}).join('')}${bad?`<span>${bad===1?'مصدر واحد':ar(bad)+(bad<11?' مصادر':' مصدراً')} بدون نتائج</span>`:''}</div>`;
  let ni=0;const rc=r.map(b=>{const fresh=!seenCards.has(b.id);seenCards.add(b.id);return card(b,fresh?ni++:null)}).join('');
  const tot=curJobs?curJobs.reduce((n,j)=>n+(j.total||0),0):0,nsrc=curJobs?new Set(curJobs.filter(j=>j.total).map(j=>j.src)).size:0;
- el.innerHTML=st+(curTitle&&tot>100?`<div class="avail"><i class="ph-duotone ph-books"></i> يتوفر بهذا القسم تقريباً <b>${ar(tot)}</b> كتاب من ${ar(nsrc)} مصادر — مرّر للأسفل حتى تتحمّل تلقائياً</div>`:'')+(r.length?`<p class="mut" style="margin:12px 0 0">${ar(r.length)} كتاب معروض بدون تكرار</p><div class="grid">${rc}</div>${pending?`<div class="grid">${'<div class="skel-c"></div>'.repeat(3)}</div>`:more?`<button class="btn alt full" style="margin-top:18px" data-act="more"><i class="ph-bold ph-plus-circle"></i> تحميل المزيد</button>`:`<p class="mut" style="text-align:center;margin-top:18px">وصلت لنهاية النتائج</p>`}`:pending?`<div class="grid">${'<div class="skel-c"></div>'.repeat(6)}</div>`:`<div class="empty"><i class="ph-duotone ph-binoculars"></i><b>ما لگينا نتائج</b>جرّب كلمة ثانية، أو فعّل مصادر أكثر، أو جرّب بالإنجليزي</div>`);
+ el.innerHTML=st+(curTitle&&tot>100?`<div class="avail"><i class="ph-duotone ph-books"></i><span>يتوفر بهذا القسم تقريباً <b>${ar(tot)}</b> كتاب من ${ar(nsrc)} ${nsrc>2&&nsrc<11?'مصادر':'مصدر'} — مرّر للأسفل حتى تتحمّل تلقائياً</span></div>`:'')+(r.length?`<p class="mut" style="margin:12px 0 0">${ar(r.length)} كتاب معروض بدون تكرار</p><div class="grid">${rc}</div>${pending?`<div class="grid">${'<div class="skel-c"></div>'.repeat(3)}</div>`:more?`<button class="btn alt full" style="margin-top:18px" data-act="more"><i class="ph-bold ph-plus-circle"></i> تحميل المزيد</button>`:`<p class="mut" style="text-align:center;margin-top:18px">وصلت لنهاية النتائج</p>`}`:pending?`<div class="grid">${'<div class="skel-c"></div>'.repeat(6)}</div>`:`<div class="empty"><i class="ph-duotone ph-binoculars"></i><b>ما لگينا نتائج</b>جرّب كلمة ثانية، أو فعّل مصادر أكثر، أو جرّب بالإنجليزي</div>`);
 }
 
 /* ---------- الشاشات ---------- */
@@ -741,7 +745,7 @@ const SECTIONS=[
  {k:'encyc',g:'المعرفة والمجتمع',t:'معاجم وموسوعات',ic:'books',c:'#5a4a3a',d:'المعاجم اللغوية والموسوعات العامة',jobs:[T('معجم'),T('القاموس المحيط'),I('موسوعة'),I('معجم'),W('معجم'),OS('encyclopedias_and_dictionaries')]},
  {k:'world',g:'المعرفة والمجتمع',t:'الأدب العالمي',ic:'globe',c:'#4a4f6b',d:'روائع الأدب المترجم والعالمي',jobs:[G(''),O('classic literature'),GB('classic novel')]},
  {k:'religion',g:'المكتبة الإسلامية',t:'الدين والفقه',ic:'mosque',c:'#2e5a3a',d:'الفقه والعقيدة والحديث والتفسير لكل المذاهب',jobs:[L('عقائد'),T('الفقه'),T('العقيدة'),W('تفسير'),W('صحيح'),I('تفسير القرآن'),I('فقه'),I('السيرة النبوية'),GB('تفسير',1),OS('islam')]},
- {k:'quran',g:'المكتبة الإسلامية',t:'القرآن: المصاحف والتلاوات والتعليم',ic:'book-open',c:'#1f5a3a',d:'مصاحف بكل الروايات، تلاوات مرتلة ومجودة وتعليمية، والتجويد',jobs:[I('مصحف'),I('المصحف الشريف'),I('مصحف التجويد'),I('رواية ورش'),IA_A('القرآن الكريم'),IA_A('تلاوة'),IA_A('المصحف المعلم'),T('علوم القرآن'),T('التجويد'),T('القراءات'),W('القرآن'),OS('koran')]},
+ {k:'quran',g:'المكتبة الإسلامية',t:'القرآن: المصاحف والتلاوات والتعليم',ic:'book-open',c:'#1f5a3a',d:'مصاحف بكل الروايات، تلاوات مرتلة ومجودة وتعليمية، والتجويد',jobs:[I('مصحف'),I('المصحف الشريف'),I('مصحف التجويد'),I('رواية ورش'),I('تفسير القرآن'),I('أحكام التجويد'),T('علوم القرآن'),T('التجويد'),T('القراءات'),W('القرآن'),OS('koran')]},
  {k:'tafsir',g:'المكتبة الإسلامية',t:'التفسير',ic:'book-bookmark',c:'#2a4a3a',d:'تفاسير قديمة وحديثة لكل المذاهب',jobs:[T('تفسير القرآن'),L('تفسير'),W('تفسير'),I('تفسير'),T('الميزان في تفسير القرآن'),T('مجمع البيان'),T('تفسير الطبري'),T('تفسير ابن كثير')]},
  {k:'hadith',g:'المكتبة الإسلامية',t:'الحديث وشروحه',ic:'scroll',c:'#5a4a1a',d:'الصحاح والسنن والكتب الأربعة وشروحها',jobs:[T('صحيح البخاري'),T('صحيح مسلم'),T('سنن'),T('الكافي للكليني'),T('من لا يحضره الفقيه'),T('بحار الأنوار'),W('صحيح'),I('الحديث الشريف'),OS('hadith')]},
  {k:'fiqh_shia',g:'المكتبة الإسلامية',t:'الفقه الشيعي (الجعفري)',ic:'scales',c:'#1f4e5a',d:'فقه الإمامية، الرسائل العملية، الاستدلال',jobs:[L('فقه'),T('فقه الإمامية'),T('جواهر الكلام'),T('العروة الوثقى'),T('شرائع الإسلام'),I('رسالة عملية'),I('الفقه الجعفري'),I('منهاج الصالحين'),OS('shiah')]},

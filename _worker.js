@@ -23,9 +23,10 @@ async function onRequestGet({ request }) {
       redirect: 'follow',
       headers: {
         'user-agent': 'MidadReader/1.0 (+https://midad-51j.pages.dev)',
-        'accept': 'application/opds+json, application/atom+xml, application/json, application/xml, text/xml, text/html, text/plain;q=0.9, */*;q=0.3'
+        'accept': 'application/opds+json, application/atom+xml, application/json, application/xml, text/xml, text/html, text/plain;q=0.9, */*;q=0.3',
+        ...(request.headers.get('range') ? { range: request.headers.get('range') } : {})
       },
-      cf: { cacheTtl: 3600, cacheEverything: true }
+      cf: request.headers.get('range') ? {} : { cacheTtl: 3600, cacheEverything: true }
     });
   } catch (e) { return err('fetch failed: ' + (e && e.message), 502); }
 
@@ -34,8 +35,11 @@ async function onRequestGet({ request }) {
   // ملفات الكتب (PDF / EPUB): تمرير مباشر بدون تخزين بالذاكرة
   if (!RAW && /pdf|epub|octet-stream|^image\//i.test(ct)) {
     if (!r.ok) return err('upstream ' + r.status, 502);
-    if (+(r.headers.get('content-length') || 0) > 60 * 1024 * 1024) return err('too large', 413);
-    return new Response(r.body, { status: 200, headers: { ...CORS, 'content-type': ct, 'cache-control': 'public, max-age=86400', 'x-final-url': r.url } });
+    if (r.status !== 206 && +(r.headers.get('content-length') || 0) > 60 * 1024 * 1024) return err('too large', 413);
+    const h = { ...CORS, 'content-type': ct, 'cache-control': 'public, max-age=86400', 'x-final-url': r.url, 'access-control-expose-headers': 'content-length, content-range, x-final-url' };
+    if (r.headers.get('content-length')) h['content-length'] = r.headers.get('content-length');
+    if (r.status === 206 && r.headers.get('content-range')) h['content-range'] = r.headers.get('content-range');
+    return new Response(r.body, { status: r.status === 206 ? 206 : 200, headers: h });
   }
   if (!RAW && !/xml|json|html|text|atom|opds/i.test(ct)) return err('unsupported content type: ' + ct, 415);
   if (+(r.headers.get('content-length') || 0) > MAX) return err('too large', 413);

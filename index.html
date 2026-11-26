@@ -527,6 +527,7 @@ html[dir=rtl] .npill{right:auto;left:0}
 .njb p{margin:0 0 10px;line-height:1.9;font-size:14.5px}
 .njb ul{list-style:none;padding:0;margin:0 0 12px;display:grid;gap:7px}.njb li{display:flex;gap:8px;line-height:1.7;font-size:14px}.njb li i{color:#2e8a5a;margin-top:4px;flex:none}
 .njbtn{display:flex;gap:8px}.njbtn .btn{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;font-size:14px}
+.njeds{display:grid;gap:8px;margin:0 0 12px}.njeds button{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:14px;background:var(--soft);text-align:start;border:1px solid var(--line);transition:transform .15s}.njeds button:active{transform:scale(.98)}.njeds em{width:36px;height:36px;border-radius:11px;display:grid;place-items:center;background:linear-gradient(135deg,#17707a,#0b3c42);color:#e9c46a;font-size:18px;flex:none}.njeds span{flex:1;display:grid}.njeds b{font:700 16px Amiri}.njeds small{font-size:11.5px;color:var(--mute)}
 .njnote{font-size:12px;text-align:center;margin:18px 8px 8px;line-height:1.7}
 @media (prefers-reduced-motion:reduce){.njorn,.njc{animation:none}}
 </style>
@@ -748,7 +749,7 @@ function searchAll(query,opt={}){seenCards=new Set();
  const jobs=opt.jobs||enabled().map(s=>({src:s.id,q:query,o:{ar,ts:s.id==='ia'}}));
  curJobs=jobs.filter(j=>S.src.some(s=>s.id===j.src&&s.on)).map(j=>({...j,page:0,more:true}));
  curTitle=opt.title||'';curSec=opt.sec||null;
- const tk=++stoken;results=[];rstat={};
+ const tk=++stoken;results=opt.sec&&opt.sec.k==='nahj'?njPins():[];rstat={};
  loadMore(tk);
 }
 let scount={},sfail={};
@@ -894,6 +895,7 @@ function loadShelf(sec){
  Promise.allSettled(jobs.map(j=>runJob(j,1))).then(rs=>{
   const seen=new Set(),out=[];const lists=rs.map((r,k)=>r.status==='fulfilled'?r.value.filter(b=>fits(sec,b,jobs[k])):[]);
   for(let i=0;i<30;i++)lists.forEach(l=>{const b=l[i];if(b&&!seen.has(dkey(b))){seen.add(dkey(b));out.push(b)}});
+  if(sec.k==='nahj'){const P=njPins(),pk=new Set(P.map(dkey));out.splice(0,0,...P.filter(()=>true));for(let i=out.length-1;i>=P.length;i--)if(pk.has(dkey(out[i])))out.splice(i,1)}
   shelfCache[sec.k]=out;fillShelf(sec)});
 }
 function fillShelf(sec){const el=$('#sh-'+sec.k);if(!el)return;const l=shelfCache[sec.k].filter(b=>!S.empty[b.id]);l.forEach(b=>MEM[b.id]=b);el.className='rail';el.innerHTML=l.length?ordered(l).slice(0,16).map((b,i)=>card(b,i)).join(''):'<span class="mut">تعذّر التحميل — تأكد من الإنترنت</span>'}
@@ -911,7 +913,7 @@ const pctOf=id=>Math.round((S.lib[id]||{}).pct||0);
 /* ---------- نهج البلاغة: دليل منسّق للمتن وشروحه ودراساته ---------- */
 const NJ_TYPES=[['all','الكل','squares-four'],['matn','المتن وتحقيقاته','scroll'],['old','الشروح التراثية','books'],['new','الشروح المعاصرة','book-open-text'],['src','الأسانيد والمستدركات','tree-structure'],['idx','الفهارس والدراسات','magnifying-glass']];
 const NJ=[
- {id:'matn',ty:'matn',t:'نهج البلاغة',a:'جمع الشريف الرضي',era:'ت ٤٠٦هـ',v:'مجلد واحد',ic:'scroll',q:'نهج البلاغة',wiki:'نهج البلاغة',
+ {id:'matn',ty:'matn',t:'نهج البلاغة (المتن الأصلي)',a:'جمع الشريف الرضي',era:'ت ٤٠٦هـ',v:'مجلد واحد أو أربعة أجزاء',ic:'scroll',q:'نهج البلاغة',eds:1,star:1,
   w:'المتن نفسه: مختارات من كلام أمير المؤمنين علي بن أبي طالب (ع) جمعها الشريف الرضي وأتمّها سنة ٤٠٠هـ، واختارها لبلاغتها، فسمّاها «نهج البلاغة».',
   c:['باب الخطب والأوامر: خطب التوحيد وخلق الكون، والشقشقية، والجهاد، وذم الدنيا','باب الكتب والرسائل: ومنها عهده لمالك الأشتر في الحكم والإدارة، ووصيته لابنه الحسن','باب الحِكَم والكلمات القصار: مئات الحكم الموجزة في الأخلاق والمعرفة','مقدمة الشريف الرضي يشرح فيها سبب الجمع وطريقته']},
  {id:'salih',ty:'matn',t:'نهج البلاغة — ضبط وفهرسة صبحي الصالح',a:'د. صبحي الصالح',era:'معاصر',v:'مجلد واحد',ic:'list-numbers',q:'نهج البلاغة صبحي الصالح',
@@ -973,6 +975,10 @@ const NJ=[
   c:['التعريف بالشريف الرضي','أدلة نسبة النصوص إلى الإمام','مكانة النهج عند الأدباء والعلماء']}];
 const NJ_HIKAM=[['قيمةُ كلِّ امرئٍ ما يُحسِنُه'],['النّاسُ أعداءُ ما جَهِلوا'],['إذا تمَّ العقلُ نقصَ الكلام'],['المرءُ مخبوءٌ تحتَ لسانه'],['لا غِنى كالعقلِ، ولا فقرَ كالجهل'],['الفرصةُ تمرُّ مرَّ السَّحاب، فانتهزوا فُرصَ الخير'],['مَن لانَ عُودُه كثُفَت أغصانُه'],['قلوبُ الرجالِ وحشيّة، فمَن تألّفها أقبلت عليه']];
 function openNahj(){tab='nahj';render();$('#view').scrollTop=0}
+const acoB=(id,t,a,y)=>mkB({src:'aco',key:id,t,a:a||'',year:y||'',lang:'ar',kind:'aco',ref:id,pdf:`http://mc.dlib.nyu.edu/files/books/${id}/${id}_lo.pdf`});
+const NJ_EDS=[['princeton_aco004054','نهج البلاغة — النسخة الكاملة','مجلد واحد'],['aub_aco002946','نهج البلاغة — الجزء ١ و٢','مجلد'],['aub_aco002947','نهج البلاغة — الجزء ٣ و٤','مجلد']];
+const njPins=()=>NJ_EDS.map(([id,t])=>acoB(id,t,'الشريف الرضي (جامع كلام الإمام علي ع)'));
+function njOpenEd(i){const b=njPins()[i||0];remember(b);openReader(b.id)}
 let njF='all',njH=Math.floor(Math.random()*8),njOpen='';
 function nahj(){
  const list=NJ.filter(x=>njF==='all'||x.ty===njF);const T=Object.fromEntries(NJ_TYPES.map(x=>[x[0],x]));
@@ -986,7 +992,7 @@ function nahj(){
  <div class="njlist">${list.map((x,i)=>`<article class="njc ${njOpen===x.id?'open':''} njt-${x.ty}" style="--d:${i*40}ms">
   <button class="njh" data-njo="${x.id}" aria-expanded="${njOpen===x.id}"><em><i class="ph-duotone ph-${x.ic}"></i></em><span><b>${esc(x.t)}${x.star?' <i class="ph-fill ph-star njstar"></i>':''}</b><small>${esc(x.a)}</small><span class="njtags"><i>${T[x.ty][1]}</i><i>${esc(x.era)}</i><i>${esc(x.v)}</i></span></span><i class="ph-bold ph-caret-down njcar"></i></button>
   <div class="njb"><div><h4><i class="ph-duotone ph-info"></i> ماذا يشرح؟</h4><p>${esc(x.w)}</p><h4><i class="ph-duotone ph-list-checks"></i> أبرز المحتويات</h4><ul>${x.c.map(c=>`<li><i class="ph-fill ph-check-circle"></i>${esc(c)}</li>`).join('')}</ul>
-  <div class="njbtn">${x.wiki?`<button class="btn" data-njread="1"><i class="ph-fill ph-book-open-text"></i> اقرأ الآن</button>`:''}<button class="btn ${x.wiki?'alt':''}" data-njq="${esc(x.q)}"><i class="ph-bold ph-magnifying-glass"></i> ابحث عنه في المكتبات</button></div></div></div></article>`).join('')}</div>
+  ${x.eds?`<h4><i class="ph-duotone ph-books"></i> اختر النسخة واقرأ</h4><div class="njeds">${NJ_EDS.map(([id,t,v],k)=>`<button data-njed="${k}"><em><i class="ph-fill ph-book-open-text"></i></em><span><b>${esc(t.replace('نهج البلاغة — ',''))}</b><small>${v} · طبعة مصوّرة من المجموعات العربية (جامعة نيويورك)</small></span><i class="ph-bold ph-caret-left"></i></button>`).join('')}</div>`:''}<div class="njbtn"><button class="btn ${x.eds?'alt':''}" data-njq="${esc(x.q)}"><i class="ph-bold ph-magnifying-glass"></i> ابحث عنه في المكتبات</button></div></div></div></article>`).join('')}</div>
  <section><h2 style="margin-top:26px"><span><i class="ph-duotone ph-cloud-arrow-down" style="color:var(--gold)"></i> من المكتبات المتاحة</span><button data-act="njall">عرض الكل</button></h2>
  <div id="sh-nahj">${'<div class="skel-c"></div>'.repeat(3)}</div></section>
  <p class="mut njnote">الأوصاف أعلاه تعريف موجز بكل كتاب. توفّر نسخة رقمية من كل كتاب يعتمد على المصادر المفتوحة المربوطة بالتطبيق.</p>`;
@@ -1619,7 +1625,8 @@ document.addEventListener('click',async ev=>{
  if(d.njf){njF=d.njf;njOpen='';const y=$('#view').scrollTop;render();$('#view').scrollTop=y;return}
  if(d.njo){const c=t.closest('.njc');const was=c.classList.contains('open');document.querySelectorAll('.njc.open').forEach(x=>{x.classList.remove('open');x.querySelector('.njh').setAttribute('aria-expanded','false')});if(!was){c.classList.add('open');t.setAttribute('aria-expanded','true')||0;njOpen=d.njo;setTimeout(()=>c.scrollIntoView({behavior:'smooth',block:'nearest'}),280)}else njOpen='';buzz();return}
  if(d.njq){doSearch(d.njq);return}
- if(d.njread){const b=mkB({src:'wiki',key:'نهج البلاغة',t:'نهج البلاغة',a:'الشريف الرضي',lang:'ar',kind:'wiki'});remember(b);openReader(b.id);return}
+ if(d.njread){njOpenEd(0);return}
+ if(d.njed){njOpenEd(+d.njed);return}
  if(d.sec){openSection(d.sec);return}
  if(d.fl){fLang=d.fl;render();if(q)searchAll(q);return}
  if(d.fs){fSrc=d.fs;render();return}

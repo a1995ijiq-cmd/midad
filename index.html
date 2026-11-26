@@ -395,6 +395,16 @@ html,body{height:100%;overscroll-behavior:none}
 .reader.imm.idle .immx{opacity:.18}
 .reader.imm .rtop,.reader.imm .rbot,.reader.imm .ribbon,.reader.imm .hlbar,.reader.imm .fbar{display:none!important}
 .reader.imm .page{padding-top:calc(env(safe-area-inset-top) + 18px)}
+
+/* مشغّل الكتب الصوتية */
+.aud{position:absolute;inset:0;overflow-y:auto;background:var(--rbg);color:var(--rink);padding:20px 18px 40px}
+.audtop{display:grid;grid-template-columns:110px 1fr;gap:16px;align-items:end;margin-bottom:16px}
+.audtop h3{font:700 22px/1.3 Amiri;margin:0 0 4px}
+.aud audio{width:100%;margin:8px 0}
+.audbtns{display:flex;justify-content:center;gap:10px;margin:6px 0 14px}
+.audbtns button{min-height:44px;padding:0 14px;border-radius:14px;background:var(--rline);color:var(--rink);font-weight:600;display:flex;align-items:center;gap:6px}
+.audlist button{display:flex;justify-content:space-between;gap:10px;width:100%;text-align:start;padding:12px 6px;border-bottom:1px solid var(--rline);min-height:48px;color:var(--rink)}
+.audlist button.cur{color:var(--gold);font-weight:700}
 </style>
 <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
 </head>
@@ -483,7 +493,10 @@ const BUILTIN={
  ia:{n:'أرشيف الإنترنت',u:'archive.org',type:'Advanced Search API',c:'#1f4e6b',lic:'متاح للقراءة العامة',hosts:['archive.org']},
  ol:{n:'Open Library',u:'openlibrary.org',type:'Search API',c:'#7a2e4f',lic:'نسخ عامة فقط',hosts:['openlibrary.org']},
  gut:{n:'Project Gutenberg',u:'gutendex.com',type:'Gutendex API',c:'#3d3d5c',lic:'ملكية عامة',hosts:['gutenberg.org','gutendex.com']},
- libiq:{n:'المكتبة الرقمية العراقية',u:'dl.lib.iq',type:'lib.iq API',c:'#1f6b8a',lic:'منشورة للعامة من المكتبة (العتبة الحسينية المقدسة)',hosts:['lib.iq']}};
+ libiq:{n:'المكتبة الرقمية العراقية',u:'dl.lib.iq',type:'lib.iq API',c:'#1f6b8a',lic:'منشورة للعامة من المكتبة (العتبة الحسينية المقدسة)',hosts:['lib.iq']},
+ gb:{n:'كتب Google المجانية',u:'books.google.com',type:'Books API',c:'#2f6fb0',lic:'كتب مجانية وملكية عامة فقط',hosts:['books.google.com','googleapis.com']},
+ sw:{n:'StoryWeaver للأطفال',u:'storyweaver.org.in',type:'StoryWeaver API',c:'#d0662a',lic:'قصص أطفال بترخيص مفتوح',hosts:['storyweaver.org.in']},
+ lv:{n:'LibriVox كتب صوتية',u:'librivox.org',type:'LibriVox API',c:'#6b4fa0',lic:'تسجيلات صوتية ملكية عامة',hosts:['librivox.org']}};
 const BLOCK=['welib','annas-archive','annas-','libgen','library.lol','z-lib','zlib','1lib','pdfdrive','sci-hub','b-ok','singlelogin'];
 const SUGG=[['https://standardebooks.org/feeds/opds','Standard Ebooks (OPDS)'],['https://m.gutenberg.org/ebooks.opds/','Gutenberg OPDS'],['https://bookserver.archive.org/catalog/','أرشيف الإنترنت OPDS']];
 
@@ -505,8 +518,10 @@ const A={
  ia:{async search(q,o){const pg=o.page||1;
    const qq=`(${q||'*'}) AND mediatype:(texts) AND NOT collection:(inlibrary OR printdisabled OR lendinglibrary OR americana_restricted)`+(o.ar?' AND language:(ara OR arabic OR Arabic)':'');
    const j=await getJSON(`https://archive.org/advancedsearch.php?q=${enc(qq)}&fl%5B%5D=identifier&fl%5B%5D=title&fl%5B%5D=creator&fl%5B%5D=year&fl%5B%5D=language&fl%5B%5D=description&rows=30&page=${pg}&sort%5B%5D=downloads+desc&output=json`);
-   const R=j.response||{};const l=(R.docs||[]).filter(d=>d.title).map(d=>{const L=[].concat(d.language||[]).join(' ').toLowerCase();return mkB({src:'ia',key:d.identifier,t:first(d.title),a:first(d.creator)||'',year:d.year,lang:/ara|arab/.test(L)||isAr(first(d.title))?'ar':'en',kind:'ia',ref:d.identifier,cover:`https://archive.org/services/img/${enc(d.identifier)}`,d:strip(first(d.description)).slice(0,300)})});l.more=(R.numFound||0)>pg*30;return l}},
+   const R=j.response||{};const l=(R.docs||[]).filter(d=>d.title&&!/^[a-z_\-]*\d+[a-z0-9_\-]*$/i.test(String(first(d.title)).trim())).map(d=>{const L=[].concat(d.language||[]).join(' ').toLowerCase();return mkB({src:'ia',key:d.identifier,t:first(d.title),a:first(d.creator)||'',year:d.year,lang:/ara|arab/.test(L)||isAr(first(d.title))?'ar':'en',kind:'ia',ref:d.identifier,cover:`https://archive.org/services/img/${enc(d.identifier)}`,d:strip(first(d.description)).slice(0,300)})});l.more=(R.numFound||0)>pg*30;return l}},
  ol:{async search(q,o){const pg=o.page||1;
+   if(o.subj){const j=await getJSON(`https://openlibrary.org/subjects/${enc(o.subj)}.json?ebooks=true&limit=30&offset=${(pg-1)*30}`);
+    const l=(j.works||[]).filter(w=>w.availability&&w.availability.status==='open'&&(w.ia||w.availability.identifier)).map(w=>{const ia=w.availability.identifier||w.ia;return mkB({src:'ol',key:w.key.replace('/works/',''),t:w.title,a:((w.authors||[])[0]||{}).name||'',year:w.first_publish_year,kind:'ia',ref:ia,cover:w.cover_id?`https://covers.openlibrary.org/b/id/${w.cover_id}-M.jpg`:`https://archive.org/services/img/${enc(ia)}`,d:''})});l.more=(j.work_count||0)>pg*30;return l}
    const j=await getJSON(`https://openlibrary.org/search.json?q=${enc((q||'classic')+(o.ar?' language:ara':''))}&fields=key,title,author_name,first_publish_year,cover_i,language,ia,ebook_access&limit=60&page=${pg}`);
    const docs=j.docs||[];const l=docs.filter(d=>d.ebook_access==='public'&&d.ia&&d.ia.length).map(d=>mkB({src:'ol',key:d.key.replace('/works/',''),t:d.title,a:(d.author_name||[])[0]||'',year:d.first_publish_year,lang:(d.language||[]).includes('ara')||isAr(d.title)?'ar':'en',kind:'ia',ref:d.ia[0],cover:d.cover_i?`https://covers.openlibrary.org/b/id/${d.cover_i}-M.jpg`:`https://archive.org/services/img/${enc(d.ia[0])}`,d:''}));l.more=docs.length===60;return l}},
  gut:{async search(q,o){const pg=o.page||1;
@@ -514,6 +529,23 @@ const A={
    const j=await getJSON(`https://gutendex.com/books/?${p.join('&')}`);
    const l=(j.results||[]).map(r=>{const f=r.formats||{};return mkB({src:'gut',key:String(r.id),t:r.title,a:(r.authors[0]||{}).name||'',lang:(r.languages||[]).includes('ar')?'ar':(isAr(r.title)?'ar':'en'),kind:'gut',ref:r.id,cover:f['image/jpeg']||'',txt:f['text/plain; charset=utf-8']||f['text/plain; charset=us-ascii']||f['text/plain']||'',html:f['text/html']||f['text/html; charset=utf-8']||`https://www.gutenberg.org/ebooks/${r.id}`,d:(r.subjects||[]).slice(0,3).join(' · ')})});l.more=!!j.next;return l}}
 };
+/* كتب Google المجانية: كتب ملكية عامة أو مجانية بقرار ناشرها */
+A.gb={async search(q,o){const pg=o.page||1;
+ const j=await getJSON(`https://www.googleapis.com/books/v1/volumes?q=${enc(q||'subject:literature')}&filter=free-ebooks&printType=books&maxResults=30&startIndex=${(pg-1)*30}${o.ar?'&langRestrict=ar':''}`);
+ const l=(j.items||[]).map(it=>{const v=it.volumeInfo||{},ac=it.accessInfo||{};return mkB({src:'gb',key:it.id,t:v.title+(v.subtitle?': '+v.subtitle:''),a:(v.authors||[])[0]||'',year:(v.publishedDate||'').slice(0,4),lang:v.language==='ar'||isAr(v.title)?'ar':'en',kind:'gb',ref:it.id,cover:((v.imageLinks||{}).thumbnail||'').replace('http:','https:'),pdf:(ac.pdf||{}).downloadLink||'',d:strip(v.description||'').slice(0,300)})});
+ l.more=(j.totalItems||0)>pg*30&&l.length>0;return l}};
+/* StoryWeaver: قصص أطفال مصوّرة بترخيص مفتوح، عربي وإنجليزي */
+A.sw={async search(q,o){const pg=o.page||1;
+ const g=await getVia(`https://storyweaver.org.in/api/v1/books-search?page=${pg}&per_page=24${q?'&query='+enc(q):''}&languages[]=${enc(o.lang||'Arabic')}`,20000);const j=await g.r.json();
+ const l=(j.data||[]).map(x=>{const js=JSON.stringify(x.coverImage||x.cover_image||x);const cov=(js.match(/https:[^"]+illustration_crops[^"]+size3[^"]+/)||js.match(/https:[^"]+illustration_crops[^"]+/)||[''])[0];
+  return mkB({src:'sw',key:String(x.id),t:x.title,a:((x.authors||[])[0]||{}).name||'',lang:(o.lang||'Arabic')==='Arabic'?'ar':'en',kind:'sw',ref:x.slug||x.id,cover:cov,d:strip(x.description||x.synopsis||'').slice(0,240)})});
+ const md=j.metadata||{};l.more=(md.hits||0)>pg*24||(md.total_pages||0)>pg;return l}};
+/* LibriVox: كتب صوتية ملكية عامة */
+A.lv={async search(q,o){const pg=o.page||1;
+ const g=await getVia(`https://librivox.org/api/feed/audiobooks?format=json&extended=1&limit=20&offset=${(pg-1)*20}${q?'&title='+enc('^'+q):''}`,25000);const j=await g.r.json();
+ const l=(j.books||[]).filter(x=>x.title).map(x=>{const iaid=((x.url_zip_file||'').match(/download\/([^/]+)\//)||[])[1]||'';
+  return mkB({src:'lv',key:String(x.id),t:x.title,a:((x.authors||[])[0]?((x.authors[0].first_name||'')+' '+(x.authors[0].last_name||'')).trim():''),lang:/arab/i.test(x.language||'')?'ar':'en',kind:'audio',ref:x.id,cover:iaid?`https://archive.org/services/img/${enc(iaid)}`:'',lvurl:x.url_librivox,secs:(x.sections||[]).map(s=>({t:s.title,u:s.listen_url,d:+s.playtime||0})).filter(s=>s.u),d:strip(x.description||'').slice(0,300)+(x.totaltime?' · المدة '+x.totaltime:'')})});
+ l.more=l.length===20;return l}};
 /* المكتبة الرقمية العراقية: ما عندها بحث عام، فنجمع فهرسها تدريجياً ونحفظه بالجهاز */
 const LQ=()=>{if(!S.libiq)S.libiq={cur:0,end:false,dead:0,b:{}};return S.libiq};
 const lqBook=x=>mkB({src:'libiq',key:String(x.id),t:x.t,a:x.a,lang:isAr(x.t)?'ar':'en',kind:'libiq',ref:x.id,cover:x.cover,year:x.year,d:[x.subj,x.pub].filter(Boolean).join(' · ')});
@@ -527,7 +559,7 @@ A.libiq={async search(q,o){const pg=o.page||1,c=LQ();
  if(pg===1)out=Object.values(c.b).filter(hit);
  for(let k=0;k<3&&!c.end;k++){const got=await lqBlock();got.forEach(x=>{if(hit(x))out.push(c.b[x.id])})}
  const l=out.map(lqBook);l.more=!c.end;return l}};
-const extUrl=b=>b.kind==='libiq'?`https://reader.lib.iq/?bookId=${b.ref}&page=1&volume=1&section=1&lang=ar`:b.kind==='wiki'?`https://ar.wikisource.org/wiki/${enc(b.key)}`:b.kind==='ia'?`https://archive.org/details/${enc(b.ref)}`:b.kind==='gut'?`https://www.gutenberg.org/ebooks/${b.ref}`:(b.link||b.html||'#');
+const extUrl=b=>b.kind==='gb'?`https://books.google.com/books?id=${enc(b.ref)}`:b.kind==='sw'?`https://storyweaver.org.in/stories/${b.ref}`:b.kind==='audio'?(b.lvurl||'https://librivox.org'):b.kind==='libiq'?`https://reader.lib.iq/?bookId=${b.ref}&page=1&volume=1&section=1&lang=ar`:b.kind==='wiki'?`https://ar.wikisource.org/wiki/${enc(b.key)}`:b.kind==='ia'?`https://archive.org/details/${enc(b.ref)}`:b.kind==='gut'?`https://www.gutenberg.org/ebooks/${b.ref}`:(b.link||b.html||'#');
 
 /* ---------- الحالة ---------- */
 const seed=()=>({lib:{},books:{},hl:[],recent:[],cust:{},stat:{pages:0},
@@ -536,6 +568,7 @@ const seed=()=>({lib:{},books:{},hl:[],recent:[],cust:{},stat:{pages:0},
 let S;try{S=JSON.parse(localStorage.getItem('midad4'))||seed()}catch(e){S=seed()}
 if(!S.empty)S.empty={};
 if(!S.src.some(s=>s.id==='libiq'))S.src.splice(0,0,{id:'libiq',on:true,sync:0});
+['gb','sw','lv'].forEach(k=>{if(!S.src.some(s=>s.id===k))S.src.push({id:k,on:true,sync:0})});
 const save=()=>{try{localStorage.setItem('midad4',JSON.stringify(S))}catch(e){try{S.cust={};localStorage.setItem('midad4',JSON.stringify(S))}catch(_){}}};
 const srcMeta=s=>BUILTIN[s.id]?{...BUILTIN[s.id],...s}:s;
 const srcOf=id=>{const s=S.src.find(x=>x.id===id);return s&&srcMeta(s)};
@@ -583,6 +616,7 @@ function drawResults(){
  let r=results.filter(b=>!S.empty[b.id]&&(fLang==='all'||b.lang===fLang)&&(fSrc==='all'||b.src===fSrc));
  r=ordered(r);
  const more=curJobs&&curJobs.some(j=>j.more);
+ if(more&&r.length>3)r=r.slice(0,r.length-r.length%3);
  const st=`<div class="sstat">${Object.entries(rstat).map(([id,v])=>{const s=srcOf(id);return s?`<span class="${v==='x'?'err':v==='…'?'':'ok'}">${esc(s.n)}: ${v==='…'?'<span class="spin">◌</span>':v==='x'?'تعذّر':ar(v)}</span>`:''}).join('')}</div>`;
  el.innerHTML=st+(r.length?`<p class="mut" style="margin:12px 0 0">${ar(r.length)} كتاب</p><div class="grid">${r.map(card).join('')}</div>${pending?`<div class="grid">${'<div class="skel-c"></div>'.repeat(3)}</div>`:more?`<button class="btn alt full" style="margin-top:18px" data-act="more"><i class="ph-bold ph-plus-circle"></i> تحميل المزيد</button>`:`<p class="mut" style="text-align:center;margin-top:18px">وصلت لنهاية النتائج</p>`}`:pending?`<div class="grid">${'<div class="skel-c"></div>'.repeat(6)}</div>`:`<div class="empty"><i class="ph-duotone ph-binoculars"></i><b>ما لگينا نتائج</b>جرّب كلمة ثانية، أو فعّل مصادر أكثر، أو جرّب بالإنجليزي</div>`);
 }
@@ -591,20 +625,42 @@ function drawResults(){
 const QUO=[['أَعَزُّ مَكانٍ في الدُنى سَرجُ سابِحٍ','وَخَيرُ جَليسٍ في الزَمانِ كِتابُ','المتنبي'],['عَلى قَدرِ أَهلِ العَزمِ تَأتي العَزائِمُ','وَتَأتي عَلى قَدرِ الكِرامِ المَكارِمُ','المتنبي'],['قُم لِلمُعَلِّمِ وَفِّهِ التَبجيلا','كادَ المُعَلِّمُ أَن يَكونَ رَسولا','أحمد شوقي'],['شَكَوتُ إِلى وَكيعٍ سوءَ حِفظي','فَأَرشَدَني إِلى تَركِ المَعاصي','الإمام الشافعي']];
 let qi=new Date().getDate()%QUO.length;
 /* الأقسام: كل قسم يجمع كتب مرخّصة أو ملكية عامة من أكثر من مصدر */
-const L=(q)=>({src:'libiq',q,o:{}}),W=(q)=>({src:'wiki',q,o:{}}),I=(q)=>({src:'ia',q,o:{ar:true}}),G=(q,topic)=>({src:'gut',q,o:topic?{topic}:{}}),O=(q)=>({src:'ol',q,o:{}});
+const L=(q)=>({src:'libiq',q,o:{}}),W=(q)=>({src:'wiki',q,o:{}}),I=(q)=>({src:'ia',q,o:{ar:true}}),IE=(q)=>({src:'ia',q,o:{}}),G=(q,topic)=>({src:'gut',q,o:topic?{topic}:{}}),O=(q)=>({src:'ol',q,o:{}}),OS=(subj)=>({src:'ol',q:subj,o:{subj}}),GB=(q,ar)=>({src:'gb',q,o:{ar:!!ar}}),SW=(q,lang)=>({src:'sw',q,o:{lang}}),LV=(q)=>({src:'lv',q,o:{}});
 const SECTIONS=[
- {k:'iraq',t:'من العراق',ic:'tree-palm',c:'#1f6b4f',d:'المكتبة الرقمية العراقية، والمتنبي، والجاحظ، والرصافي، والزهاوي…',jobs:[L(''),W('الرصافي'),W('الزهاوي'),W('أبو نواس'),W('ديوان المتنبي'),W('الجاحظ'),I('العراق'),I('بغداد تاريخ')]},
- {k:'poetry',t:'الشعر العربي',ic:'feather',c:'#3b2157',d:'دواوين ومعلقات وقصائد',jobs:[W('intitle:ديوان'),W('معلقة'),I('ديوان شعر')]},
- {k:'religion',t:'كتب دينية',ic:'mosque',c:'#2e5a3a',d:'تفسير وحديث وفقه وسيرة',jobs:[L('عقائد'),W('تفسير'),W('صحيح'),I('تفسير القرآن'),I('السيرة النبوية'),I('فقه')]},
- {k:'heritage',t:'التراث والأدب',ic:'scroll',c:'#8a5a12',d:'أمهات كتب الأدب العربي',jobs:[W('intitle:كتاب'),W('أدب'),I('الأدب العربي')]},
- {k:'history',t:'تاريخ ورحلات',ic:'globe-hemisphere-east',c:'#1f4e6b',d:'تواريخ ورحلات وجغرافيا',jobs:[W('تاريخ'),W('رحلة'),I('تاريخ الإسلام'),I('رحلة')]},
- {k:'social',t:'اجتماع وفكر',ic:'users-three',c:'#6b3d22',d:'علم الاجتماع والفكر والنهضة',jobs:[W('ابن خلدون'),I('علم الاجتماع'),I('الفكر العربي'),G('','sociology')]},
- {k:'psych',t:'علم النفس',ic:'brain',c:'#5a2a6b',d:'النفس والسلوك والأخلاق',jobs:[I('علم النفس'),W('الأخلاق'),G('','psychology'),O('psychology')]},
- {k:'philo',t:'فلسفة',ic:'lightbulb',c:'#3d3d5c',d:'فلاسفة العرب والعالم',jobs:[W('فلسفة'),I('فلسفة'),G('','philosophy')]},
- {k:'novels',t:'روايات وقصص',ic:'book-open-text',c:'#7a2e4f',d:'روايات وقصص عربية وعالمية',jobs:[I('رواية'),W('قصة'),G('','fiction')]},
- {k:'science',t:'علوم وطب',ic:'flask',c:'#22566b',d:'تراث علمي وعلوم حديثة',jobs:[W('طب'),I('الطب'),I('علوم'),G('','science')]},
- {k:'kids',t:'للأطفال',ic:'balloon',c:'#b0472a',d:'حكايات وقصص للصغار',jobs:[I('قصص الأطفال'),G('',"children")]},
- {k:'world',t:'الأدب العالمي',ic:'globe',c:'#4a4f6b',d:'روائع الأدب المترجم والعالمي',jobs:[G(''),O('classic literature')]}];
+ {k:'iraq',g:'عام',t:'من العراق',ic:'tree-palm',c:'#1f6b4f',d:'المكتبة الرقمية العراقية، والمتنبي، والجاحظ، والرصافي، والزهاوي…',jobs:[L(''),W('الرصافي'),W('الزهاوي'),W('أبو نواس'),W('ديوان المتنبي'),W('الجاحظ'),I('العراق'),I('بغداد تاريخ'),GB('العراق',1)]},
+ {k:'kids',g:'عام',t:'للأطفال',ic:'balloon',c:'#d0662a',d:'قصص مصوّرة عربية وإنجليزية، وحكايات للصغار',jobs:[SW('','Arabic'),SW('','English'),I('قصص الأطفال'),OS('children'),OS('fairy_tales'),G('','children'),GB('قصص أطفال',1)]},
+ {k:'audio',g:'عام',t:'كتب صوتية',ic:'headphones',c:'#6b4fa0',d:'استمع لروائع الأدب بأصوات القرّاء',jobs:[LV('')]},
+ {k:'poetry',g:'عام',t:'الشعر العربي',ic:'feather',c:'#3b2157',d:'دواوين ومعلقات وقصائد',jobs:[W('intitle:ديوان'),W('معلقة'),I('ديوان شعر'),GB('ديوان',1)]},
+ {k:'religion',g:'عام',t:'كتب دينية',ic:'mosque',c:'#2e5a3a',d:'تفسير وحديث وفقه وسيرة',jobs:[L('عقائد'),W('تفسير'),W('صحيح'),I('تفسير القرآن'),I('السيرة النبوية'),I('فقه'),GB('تفسير',1)]},
+ {k:'novels',g:'عام',t:'روايات وقصص',ic:'book-open-text',c:'#7a2e4f',d:'روايات وقصص عربية وعالمية',jobs:[I('رواية'),W('قصة'),G('','fiction'),GB('رواية',1),OS('fiction')]},
+ {k:'heritage',g:'عام',t:'التراث والأدب',ic:'scroll',c:'#8a5a12',d:'أمهات كتب الأدب العربي',jobs:[W('intitle:كتاب'),W('أدب'),I('الأدب العربي'),GB('أدب عربي',1)]},
+ {k:'history',g:'عام',t:'تاريخ ورحلات',ic:'globe-hemisphere-east',c:'#1f4e6b',d:'تواريخ ورحلات وجغرافيا',jobs:[W('تاريخ'),W('رحلة'),I('تاريخ الإسلام'),I('رحلة'),GB('تاريخ',1),OS('history')]},
+ {k:'social',g:'عام',t:'اجتماع وفكر',ic:'users-three',c:'#6b3d22',d:'علم الاجتماع والفكر والنهضة',jobs:[W('ابن خلدون'),I('علم الاجتماع'),I('الفكر العربي'),G('','sociology'),OS('sociology')]},
+ {k:'psych',g:'عام',t:'علم النفس',ic:'brain',c:'#5a2a6b',d:'النفس والسلوك والأخلاق',jobs:[I('علم النفس'),W('الأخلاق'),G('','psychology'),OS('psychology'),GB('علم النفس',1)]},
+ {k:'self',g:'عام',t:'تطوير الذات',ic:'plant',c:'#4f7a3a',d:'العادات والنجاح والتفكير',jobs:[I('تطوير الذات'),OS('self-help'),OS('success'),GB('تنمية بشرية',1)]},
+ {k:'philo',g:'عام',t:'فلسفة',ic:'lightbulb',c:'#3d3d5c',d:'فلاسفة العرب والعالم',jobs:[W('فلسفة'),I('فلسفة'),G('','philosophy'),OS('philosophy')]},
+ {k:'biog',g:'عام',t:'سير وتراجم',ic:'user-focus',c:'#7a5a2e',d:'حياة العلماء والقادة والأدباء',jobs:[I('سيرة'),W('ترجمة'),OS('biography'),GB('سيرة',1)]},
+ {k:'world',g:'عام',t:'الأدب العالمي',ic:'globe',c:'#4a4f6b',d:'روائع الأدب المترجم والعالمي',jobs:[G(''),O('classic literature'),GB('classic novel')]},
+ {k:'sports',g:'الرياضة',t:'الرياضة',ic:'trophy',c:'#c79a2e',d:'تاريخ الرياضة وتدريبها وقوانينها',jobs:[I('الرياضة'),I('التربية الرياضية'),OS('sports'),G('','sports'),GB('رياضة',1)]},
+ {k:'football',g:'الرياضة',t:'كرة القدم',ic:'soccer-ball',c:'#2e7a3a',d:'تكتيك وتدريب وتاريخ اللعبة',jobs:[I('كرة القدم'),OS('soccer'),GB('كرة القدم',1),GB('football soccer')]},
+ {k:'gym',g:'الرياضة',t:'كمال الأجسام واللياقة',ic:'barbell',c:'#8a2e2e',d:'تمارين، تغذية رياضية، وتشريح القوة',jobs:[I('كمال الأجسام'),I('اللياقة البدنية'),OS('bodybuilding'),OS('physical_fitness'),OS('weight_training'),GB('fitness training')]},
+ {k:'martial',g:'الرياضة',t:'الفنون القتالية والملاكمة',ic:'hand-fist',c:'#5a2a2a',d:'كاراتيه، جودو، ملاكمة، مصارعة',jobs:[I('الفنون القتالية'),I('الكاراتيه'),OS('martial_arts'),OS('boxing'),OS('wrestling')]},
+ {k:'basket',g:'الرياضة',t:'كرة السلة والطائرة',ic:'basketball',c:'#c0602a',d:'مهارات وخطط اللعب',jobs:[I('كرة السلة'),OS('basketball'),OS('volleyball')]},
+ {k:'running',g:'الرياضة',t:'الجري وألعاب القوى',ic:'person-simple-run',c:'#2e6b8a',d:'الجري، الماراثون، والعدو',jobs:[I('ألعاب القوى'),OS('running'),OS('track_and_field'),OS('marathon_running')]},
+ {k:'swim',g:'الرياضة',t:'السباحة والرياضات المائية',ic:'swimming-pool',c:'#1f6b9a',d:'تعلّم السباحة والغوص',jobs:[I('السباحة'),OS('swimming'),OS('diving')]},
+ {k:'chess',g:'الرياضة',t:'الشطرنج',ic:'crown-simple',c:'#3a3a3a',d:'افتتاحيات وخطط ومباريات',jobs:[I('الشطرنج'),OS('chess'),G('chess')]},
+ {k:'tennis',g:'الرياضة',t:'التنس والريشة',ic:'tennis-ball',c:'#7a8a2e',d:'تنس الطاولة والأرضي والريشة',jobs:[OS('tennis'),OS('table_tennis'),OS('badminton')]},
+ {k:'horse',g:'الرياضة',t:'الفروسية والرماية',ic:'horse',c:'#6b4a2e',d:'الخيل والفروسية والرماية',jobs:[I('الفروسية'),I('الخيل'),OS('horsemanship'),OS('archery')]},
+ {k:'science',g:'العلوم والمهارات',t:'علوم وطب',ic:'flask',c:'#22566b',d:'تراث علمي وعلوم حديثة',jobs:[W('طب'),I('الطب'),I('علوم'),G('','science'),OS('medicine')]},
+ {k:'health',g:'العلوم والمهارات',t:'الصحة والتغذية',ic:'heartbeat',c:'#a03a4a',d:'تغذية، أمراض، وطب وقائي',jobs:[I('التغذية'),I('الصحة'),OS('nutrition'),OS('health'),GB('تغذية',1)]},
+ {k:'tech',g:'العلوم والمهارات',t:'حاسوب وبرمجة',ic:'code',c:'#2a3a5a',d:'برمجة، شبكات، وذكاء اصطناعي',jobs:[I('البرمجة'),I('الحاسوب'),OS('computers'),OS('programming_languages'),GB('programming')]},
+ {k:'math',g:'العلوم والمهارات',t:'الرياضيات والفيزياء',ic:'math-operations',c:'#3a5a8a',d:'جبر، هندسة، فيزياء',jobs:[I('الرياضيات'),I('الفيزياء'),W('الجبر'),OS('mathematics'),OS('physics')]},
+ {k:'space',g:'العلوم والمهارات',t:'الفلك والفضاء',ic:'planet',c:'#2a2a5a',d:'النجوم والكواكب وعلم الفلك',jobs:[I('علم الفلك'),W('فلك'),OS('astronomy')]},
+ {k:'econ',g:'العلوم والمهارات',t:'اقتصاد وإدارة',ic:'chart-line-up',c:'#2e6b4f',d:'مال، أعمال، وتسويق',jobs:[I('الاقتصاد'),I('الإدارة'),OS('economics'),OS('business'),GB('اقتصاد',1)]},
+ {k:'lang',g:'العلوم والمهارات',t:'اللغات وتعلّمها',ic:'translate',c:'#5a3a8a',d:'نحو عربي، إنجليزي، وقواميس',jobs:[I('قواعد اللغة العربية'),I('تعلم اللغة الإنجليزية'),W('نحو'),OS('english_language'),OS('arabic_language')]},
+ {k:'art',g:'العلوم والمهارات',t:'فنون وخط عربي',ic:'palette',c:'#a0522d',d:'رسم، خط عربي، عمارة',jobs:[I('الخط العربي'),I('الفن'),OS('art'),OS('calligraphy'),OS('architecture')]},
+ {k:'cook',g:'العلوم والمهارات',t:'الطبخ',ic:'cooking-pot',c:'#b5651d',d:'أكلات عربية وعالمية',jobs:[I('الطبخ'),I('أكلات'),OS('cooking'),GB('طبخ',1)]},
+ {k:'travel',g:'العلوم والمهارات',t:'سفر وجغرافيا',ic:'airplane-tilt',c:'#2a7a8a',d:'بلدان، خرائط، ورحلات',jobs:[I('جغرافيا'),W('رحلة'),OS('travel'),OS('geography')]}];
 const secJobs=sec=>sec.jobs.filter(j=>S.src.some(s=>s.id===j.src&&s.on));
 function loadShelf(sec){
  const el=$('#sh-'+sec.k);if(!el)return;
@@ -640,8 +696,7 @@ function home(){
  ${n>1?`<div class="dots">${[...Array(Math.min(n,3))].map((_,i)=>`<i class="${i?'':'on'}"></i>`).join('')}</div>`:''}
  <div class="duo"><div class="goal"><svg viewBox="0 0 70 70"><circle cx="35" cy="35" r="29" fill="none" stroke="var(--line)" stroke-width="7"/><circle class="ring" cx="35" cy="35" r="29" fill="none" stroke="var(--gold)" stroke-width="7" stroke-linecap="round" stroke-dasharray="${C*fr} ${C}" transform="rotate(-90 35 35)"/><text x="35" y="41" text-anchor="middle" font-size="17" font-weight="700" fill="currentColor">${ar(m)}</text></svg><b style="font-size:14px">من ${ar(g)} دقيقة</b><span class="mut" style="font-size:12px"><i class="ph-fill ph-fire fire"></i> ${ar(streak())} أيام متتالية</span></div>
  <div class="quote"><i class="ph-fill ph-quotes"></i><span class="mut" style="font-size:12px">بيت اليوم</span><p id="qv">${QUO[qi][0]}<br>${QUO[qi][1]}</p><span class="mut" style="font-size:12px" id="qa">— ${QUO[qi][2]}</span><div class="qact"><button data-act="nextq" aria-label="بيت آخر"><i class="ph-bold ph-arrows-clockwise"></i></button><button data-act="copyq" aria-label="نسخ البيت"><i class="ph-bold ph-copy"></i></button></div></div></div>
- <h2>الأقسام</h2>
- <div class="cats">${SECTIONS.map(c=>`<button class="cat" data-sec="${c.k}"><em style="background:${c.c}"><i class="ph-duotone ph-${c.ic}"></i></em><span>${c.t}</span></button>`).join('')}</div>
+ ${[...new Set(SECTIONS.map(x=>x.g))].map(g=>`<h2>${g==='عام'?'الأقسام':g}</h2><div class="cats">${SECTIONS.filter(c=>c.g===g).map(c=>`<button class="cat" data-sec="${c.k}"><em style="background:${c.c}"><i class="ph-duotone ph-${c.ic}"></i></em><span>${c.t}</span></button>`).join('')}</div>`).join('')}
  ${SECTIONS.map(sec=>`<section data-shelf-k="${sec.k}"><h2><span><i class="ph-duotone ph-${sec.ic}" style="color:${sec.c}"></i> ${sec.t}</span><button data-sec="${sec.k}">عرض الكل</button></h2><p class="mut" style="margin:-8px 0 10px;font-size:13px">${sec.d}</p><div id="sh-${sec.k}">${skel(4)}</div></section>`).join('')}
  <p class="mut" style="text-align:center;font-size:12px;margin-top:24px">كل الكتب من مصادر مرخّصة أو ملكية عامة</p>`;
 }
@@ -679,7 +734,7 @@ function sources(){
  return `<h1>المصادر</h1><p class="mut" style="margin:6px 0 0">مداد يبحث في كل المصادر المفعّلة بنفس الوقت. أضف مكتبة رقمية برابطها، وإذا كانت تسمح بالاتصال المباشر تُجلب كتبها فوراً.</p>
  <button class="addsrc" data-act="addsrc"><i><i class="ph-bold ph-plus"></i></i><span><b>إضافة مصدر جديد</b><br><span class="mut">رابط OPDS أو JSON أو API</span></span></button>
  <h2>المصادر <small>${ar(enabled().length)} نشط</small></h2>
- ${S.src.map(x=>{const s=srcMeta(x);const n=s.id==='libiq'?ar(Object.keys(LQ().b).length):BUILTIN[s.id]?'∞':ar((S.cust[s.id]||[]).length);const wait=s.custom&&(s.wait||!(S.cust[s.id]||[]).length);return `<div class="src"><header><em style="background:${s.c}"><i class="ph-duotone ph-${{wiki:'scroll',ia:'archive',ol:'book-bookmark',gut:'books',libiq:'tree-palm'}[s.id]||'link'}"></i></em><div style="flex:1"><h4>${esc(s.n)}</h4><div class="u">${esc(s.u)}</div></div><button class="sw ${s.on?'on':''}" data-tog="${s.id}" role="switch" aria-checked="${s.on}" aria-label="تفعيل ${esc(s.n)}"></button></header>
+ ${S.src.map(x=>{const s=srcMeta(x);const n=s.id==='libiq'?ar(Object.keys(LQ().b).length):BUILTIN[s.id]?'∞':ar((S.cust[s.id]||[]).length);const wait=s.custom&&(s.wait||!(S.cust[s.id]||[]).length);return `<div class="src"><header><em style="background:${s.c}"><i class="ph-duotone ph-${{wiki:'scroll',ia:'archive',ol:'book-bookmark',gut:'books',libiq:'tree-palm',gb:'google-logo',sw:'balloon',lv:'headphones'}[s.id]||'link'}"></i></em><div style="flex:1"><h4>${esc(s.n)}</h4><div class="u">${esc(s.u)}</div></div><button class="sw ${s.on?'on':''}" data-tog="${s.id}" role="switch" aria-checked="${s.on}" aria-label="تفعيل ${esc(s.n)}"></button></header>
  <footer><span class="live ${!s.on?'off':wait?'wait':''}" id="lv-${s.id}">${!s.on?'متوقف':wait?(s.wait?'غير متصل':'بلا فهرس'):'متصل'}</span><span>·</span><span>${s.id==='libiq'?n+' كتاب محفوظ':BUILTIN[s.id]?'بحث مباشر':n+' كتاب'}</span><span>·</span><span class="tag" style="margin:0">${esc(s.type)}</span><span class="sp"></span><span id="sy-${s.id}">${ago(s.sync)}</span>
  <button data-sync="${s.id}"><i class="ph-bold ph-arrows-clockwise"></i> فحص</button>${s.custom?`<button data-del="${s.id}" style="color:var(--bad)">حذف</button>`:''}</footer>${wait?`<p class="hint">${s.wait?'تعذّر الوصول للمصدر. اضغط «فحص» للمحاولة مرة ثانية.':'الموقع اشتغل بس ما بيه فهرس كتب يقرأه التطبيق (OPDS أو JSON). جرّب رابط الفهرس بدل الصفحة الرئيسية.'}</p>`:''}</div>`}).join('')}`;
 }
@@ -736,14 +791,14 @@ function openBook(id,keep){
  const b=getB(id);if(!b)return;const e=S.lib[id],s=srcOf(b.src);
  const sb=(st,l)=>`<button class="chip ${e&&e.s===st?'on':''}" data-shelf="${st}" data-id="${esc(id)}">${l}</button>`;
  const sc=$('#sheet').scrollTop;
- const how=b.kind==='libiq'?'قارئ المكتبة الرقمية العراقية الرسمي':b.kind==='wiki'?'نص كامل داخل قارئ مداد':b.kind==='gut'?'نص كامل، أو صفحة Gutenberg':b.kind==='ia'?'قارئ أرشيف الإنترنت داخل التطبيق':'من المصدر';
+ const how=b.kind==='gb'?'قارئ كتب Google داخل التطبيق':b.kind==='sw'?'قصة مصوّرة بقارئ StoryWeaver':b.kind==='audio'?'كتاب صوتي بمشغّل مداد':b.kind==='libiq'?'قارئ المكتبة الرقمية العراقية الرسمي':b.kind==='wiki'?'نص كامل داخل قارئ مداد':b.kind==='gut'?'نص كامل، أو صفحة Gutenberg':b.kind==='ia'?'قارئ أرشيف الإنترنت داخل التطبيق':'من المصدر';
  sheetOn(`<div class="dhead">${cover(b)}<div>${sbadge(b)}<h3>${esc(b.t)}</h3><div class="mut">${esc(b.a)}</div></div></div>
  <div class="meta"><div><b>${b.lang==='ar'?'عربي':'أجنبي'}</b><span>اللغة</span></div><div><b>${b.year?esc(b.year):'—'}</b><span>السنة</span></div><div><b>${e&&e.pages?ar(e.pages):'—'}</b><span>صفحة</span></div><div><b>${e&&e.s==='reading'&&e.pages?ar(pctOf(id))+'٪':'—'}</b><span>التقدم</span></div></div>
  ${b.d?`<p style="margin:0 0 14px">${esc(b.d)}</p>`:''}
  <p class="mut" style="margin:0 0 14px">طريقة القراءة: ${how}</p>
  <div class="acts"><button class="btn full" data-read="${esc(id)}">${e&&e.s==='reading'?'تابع القراءة':e&&e.s==='done'?'اقرأ مرة أخرى':'ابدأ القراءة'}</button><button class="btn alt" data-act="close" aria-label="إغلاق"><i class="ph-bold ph-x"></i></button></div>
  <div class="shelf">${sb('want','أريد قراءتها')}${sb('reading','أقرأ الآن')}${sb('done','قرأتها')}</div>
- ${(()=>{const d=S.dl[id],txt=b.kind==='wiki'||(b.kind==='gut'&&b.txt),canPdf=b.kind==='ia'||(b.kind==='link'&&/pdf/i.test((b.ltype||'')+(b.link||'')));if(!txt&&!canPdf)return b.kind==='libiq'?'<p class="mut" style="font-size:13px;margin:12px 0 0">التحميل غير متاح لكتب هذا المصدر، تُقرأ بقارئه الرسمي.</p>':'';
+ ${(()=>{const d=S.dl[id],txt=b.kind==='wiki'||(b.kind==='gut'&&b.txt),canPdf=(b.kind==='gb'&&b.pdf)||b.kind==='ia'||(b.kind==='link'&&/pdf/i.test((b.ltype||'')+(b.link||'')));if(!txt&&!canPdf)return b.kind==='libiq'?'<p class="mut" style="font-size:13px;margin:12px 0 0">التحميل غير متاح لكتب هذا المصدر، تُقرأ بقارئه الرسمي.</p>':'';
   return `<div class="dlrow">${busy[id]?`<span class="mut" style="flex:1">جارٍ التحميل…<div class="prog"><b id="dlp-${cssId(id)}"></b></div></span>`:
   d?`${d.kind==='text'?`<span class="tag" style="align-self:center"><i class="ph-fill ph-check-circle"></i> محفوظ بدون نت</span>`:''}${d.kind==='pdf'||d.pdf?`<button class="btn" data-pdfo="${esc(id)}"><i class="ph-bold ph-file-pdf"></i> فتح PDF</button><button class="btn alt" data-pdfs="${esc(id)}"><i class="ph-bold ph-share-network"></i> حفظ/مشاركة</button>`:''}${txt?`<button class="btn alt" data-pdfx="${esc(id)}"><i class="ph-bold ph-file-pdf"></i> ${d.pdf?'تحديث PDF':'إنشاء PDF بملاحظاتي'}</button>`:''}<button class="btn alt" data-dlx="${esc(id)}" aria-label="حذف التحميل"><i class="ph-bold ph-trash"></i></button>`:
   `<button class="btn alt" data-dl="${esc(id)}"><i class="ph-bold ph-download-simple"></i> ${txt?'تحميل للقراءة بدون نت':'تحميل PDF للمكتبة'}</button>${txt?`<button class="btn alt" data-pdfx="${esc(id)}"><i class="ph-bold ph-file-pdf"></i> PDF</button>`:''}`}</div>`})()}
@@ -882,6 +937,7 @@ async function downloadBook(id){
    if(!pdfs.length)throw new Error('nopdf');const f=pdfs[0];if(+f.size>60*1048576)throw new Error('big');pr(30);
    const g=await getVia(`https://archive.org/download/${enc(b.ref)}/${f.name.split('/').map(enc).join('/')}`,90000);const blob=await g.r.blob();if(blob.size<1000)throw new Error('bad');
    await IDB.set('pdf:'+id,blob);S.dl[id]={kind:'pdf',at:Date.now(),size:blob.size};toast('حُمّل ملف PDF إلى مكتبتك ✓')}
+  else if(b.kind==='gb'&&b.pdf){const g=await getVia(b.pdf,90000);const blob=await g.r.blob();if(blob.size<1000||!/pdf/i.test(blob.type||'pdf'))throw new Error('bad');await IDB.set('pdf:'+id,blob);S.dl[id]={kind:'pdf',at:Date.now(),size:blob.size};toast('حُمّل ملف PDF ✓')}
   else if(b.kind==='link'&&/pdf/i.test((b.ltype||'')+b.link)){const g=await getVia(b.link,90000);const blob=await g.r.blob();await IDB.set('pdf:'+id,blob);S.dl[id]={kind:'pdf',at:Date.now(),size:blob.size};toast('حُمّل ملف PDF ✓')}
   else throw new Error('na');
   pr(100);save();
@@ -991,6 +1047,24 @@ function ensureEntry(b){
  if(!S.lib[b.id]||S.lib[b.id].s!=='reading'){const o=S.lib[b.id];S.lib[b.id]={...(o||{}),s:'reading',p:o&&o.s!=='done'&&o.p?o.p:1,part:o&&o.s!=='done'?o.part||0:0,marks:o&&o.marks||[]}}
  S.lib[b.id].last=Date.now();save();
 }
+/* ---------- مشغّل الكتب الصوتية ---------- */
+async function openAudio(b){
+ const rd=$('#reader');rd.classList.add('fr');const e=S.lib[b.id];e.pages=0;save();
+ $('#frame').innerHTML='<div class="lstate" style="color:var(--rink)"><span class="spin">◌</span><b>جارٍ تجهيز الكتاب الصوتي…</b></div>';
+ try{if(!b.secs||!b.secs.length){const g=await getVia(`https://librivox.org/api/feed/audiobooks?id=${b.ref}&format=json&extended=1`,25000);const j=await g.r.json();const x=(j.books||[])[0]||{};b.secs=(x.sections||[]).map(s=>({t:s.title,u:s.listen_url,d:+s.playtime||0})).filter(s=>s.u);remember(b)}}catch(err){}
+ if(!b.secs||!b.secs.length){$('#frame').innerHTML=`<div class="lstate"><b>تعذّر تحميل فصول الكتاب</b><a class="ext" href="${esc(extUrl(b))}" target="_blank" rel="noopener">فتح في LibriVox ↗</a></div>`;return}
+ const st=e.aud||{i:0,t:0};const fmt=n=>{n=Math.round(n);return ar(Math.floor(n/60))+':'+String(n%60).padStart(2,'0').replace(/\d/g,d=>'٠١٢٣٤٥٦٧٨٩'[d])};
+ $('#frame').innerHTML=`<div class="aud"><div class="audtop">${cover(b)}<div><h3>${esc(b.t)}</h3><div class="mut">${esc(b.a)}</div><div class="mut" id="audnow"></div></div></div>
+  <audio id="aud" controls preload="none" playsinline></audio>
+  <div class="audbtns"><button data-ast="-30" aria-label="رجوع ٣٠ ثانية"><i class="ph-bold ph-clock-counter-clockwise"></i> ٣٠</button><button data-arate aria-label="السرعة" id="arate">١×</button><button data-ast="30" aria-label="تقديم ٣٠ ثانية">٣٠ <i class="ph-bold ph-clock-clockwise"></i></button></div>
+  <div class="audlist">${b.secs.map((s,i)=>`<button data-ach="${i}" class="${i===st.i?'cur':''}"><span>${ar(i+1)}. ${esc(s.t||'الفصل '+(i+1))}</span><span class="mut">${s.d?fmt(s.d):''}</span></button>`).join('')}</div></div>`;
+ const au=$('#aud');let last=0;
+ const play=(i,t,go)=>{const sec=b.secs[i];if(!sec)return;au.src=sec.u.replace('http:','https:');e.aud={i,t:t||0};save();$('#audnow').textContent='الفصل '+ar(i+1)+' من '+ar(b.secs.length);document.querySelectorAll('.audlist button').forEach((x,k)=>x.classList.toggle('cur',k===i));
+  au.onloadedmetadata=()=>{if(t)au.currentTime=t};if(go)au.play().catch(()=>{})};
+ au.ontimeupdate=()=>{if(Date.now()-last>4000){last=Date.now();e.aud={i:e.aud.i,t:au.currentTime};e.pct=(e.aud.i+(au.duration?au.currentTime/au.duration:0))/b.secs.length*100;save()}};
+ au.onended=()=>{if(e.aud.i+1<b.secs.length)play(e.aud.i+1,0,true);else{e.s='done';save();toast('انتهى الكتاب الصوتي 🎉')}};
+ play(st.i,st.t,false);R.audio=au;R.audplay=play;
+}
 let immT=0;function immIdle(){const rd=$('#reader');rd.classList.remove('idle');clearTimeout(immT);if(rd.classList.contains('imm'))immT=setTimeout(()=>rd.classList.add('idle'),2500)}
 $('#reader').addEventListener('touchstart',()=>{if($('#reader').classList.contains('imm'))immIdle()},{passive:true});
 function markEmpty(id){
@@ -1007,7 +1081,8 @@ async function openReader(id,jump){
  const rd=$('#reader');rd.classList.remove('fr');$('#frame').innerHTML='';
  $('#rtitle').textContent=b.t;$('#rext').href=extUrl(b);
  applyR();rd.classList.add('on');rStart=Date.now();
- if(b.kind==='ia'||b.kind==='libiq'||b.kind==='link'||(b.kind==='gut'&&!b.txt)){openFrame(b);return}
+ if(b.kind==='audio'){openAudio(b);return}
+ if(b.kind==='ia'||b.kind==='libiq'||b.kind==='gb'||b.kind==='sw'||b.kind==='link'||(b.kind==='gut'&&!b.txt)){openFrame(b);return}
  $('#page').innerHTML=`<div class="pw skl">${'<i></i>'.repeat(14)}</div>`;
  try{
   if(b.kind==='wiki'){
@@ -1034,7 +1109,7 @@ async function loadPart(i,p){
 }
 function openFrame(b){
  const rd=$('#reader');rd.classList.add('fr');
- const src=b.kind==='libiq'?extUrl(b):b.kind==='ia'?`https://archive.org/embed/${enc(b.ref)}`:b.kind==='gut'?b.html:b.link;
+ const src=b.kind==='gb'?`https://books.google.com/books?id=${enc(b.ref)}&printsec=frontcover&output=embed&hl=ar`:b.kind==='sw'?`https://storyweaver.org.in/stories/${b.ref}`:b.kind==='libiq'?extUrl(b):b.kind==='ia'?`https://archive.org/embed/${enc(b.ref)}`:b.kind==='gut'?b.html:b.link;
  const e=S.lib[b.id];e.pages=0;save();
  if(!src){$('#frame').innerHTML=`<div class="lstate" style="color:#555"><b>لا يوجد رابط قراءة لهذا الكتاب</b></div>`;return}
  if(b.kind==='link'&&/epub/i.test(b.ltype||src)){$('#frame').innerHTML=`<div class="lstate" style="color:#555"><b>هذا الكتاب بصيغة EPUB</b><span>افتحه بتطبيق الكتب في جهازك.</span><a class="btn" href="${esc(src)}" target="_blank" rel="noopener">فتح / تحميل ↗</a></div>`;return}
@@ -1071,7 +1146,7 @@ async function turn(d){
 }
 function stopTTS(){try{speechSynthesis.cancel()}catch(e){}$('#tts').classList.remove('on')}
 function closeReader(){
- stopTTS();
+ stopTTS();try{if(R&&R.audio)R.audio.pause()}catch(e){}
  const mins=Math.max(1,Math.round((Date.now()-rStart)/60000));
  S.days[today()]=(S.days[today()]||0)+mins;save();
  hlMode=false;closeAnn();$('#rmodal').classList.remove('on');$('#reader').classList.remove('hlm','imm','idle');$('#hlb').classList.remove('on');if(pdfIO){pdfIO.disconnect();pdfIO=null}try{if(document.fullscreenElement)document.exitFullscreen()}catch(e){}
@@ -1115,6 +1190,9 @@ document.addEventListener('click',async ev=>{
   else if(d.aa==='copy'){try{navigator.clipboard.writeText((a0.text!=null?a0.text:blk.t).replace(/\t/g,' ')).then(()=>toast('نُسخ النص'))}catch(e){}}
   else if(d.aa==='clear'){const m=ANN()[R.id]||{};delete m[akey(i)];save();drawPage(0);closeAnn();toast('مُسحت التعديلات على الفقرة')}
   return}
+ if(d.ach!=null&&R&&R.audplay){R.audplay(+d.ach,0,true);return}
+ if(d.ast&&R&&R.audio){R.audio.currentTime=Math.max(0,R.audio.currentTime+(+d.ast));return}
+ if(d.arate!=null&&R&&R.audio){const rs=[1,1.25,1.5,2,.75],k=(rs.indexOf(R.audio.playbackRate)+1)%rs.length;R.audio.playbackRate=rs[k];t.textContent=ar(rs[k])+'×';return}
  if(d.dl){downloadBook(d.dl);return}
  if(d.dlx){removeDownload(d.dlx);return}
  if(d.pdfx){exportPDF(d.pdfx);return}

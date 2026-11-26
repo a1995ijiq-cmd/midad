@@ -120,6 +120,15 @@ export default {
     }
     if (url.pathname.replace(/\/$/, '') === '/api/libiq') return libiq(request);
     if (url.pathname.replace(/\/$/, '') === '/api/aco') return aco(request);
+    if (url.pathname.replace(/\/$/, '') === '/api/acon') {
+      const id = (url.searchParams.get('id') || '').replace(/[^a-z0-9_]/gi, '');
+      if (!id) return err('missing id', 400);
+      try {
+        const r = await fetch(`https://sites.dlib.nyu.edu/viewer/books/${id}/1?embed=1`, { headers: { 'user-agent': 'Mozilla/5.0 MidadReader/1.0' }, cf: { cacheTtl: 2592000, cacheEverything: true } });
+        const t = await r.text(); const n = +((t.match(/data-sequence-count="(\d+)"/) || t.match(/class="sequence_count">(\d+)/) || [])[1] || 0);
+        return new Response(JSON.stringify({ ok: !!n, id, n }), { headers: { ...CORS, 'content-type': 'application/json', 'cache-control': 'public, max-age=2592000' } });
+      } catch (e) { return err('acon failed', 502); }
+    }
     if (url.pathname.startsWith('/api/r/')) { const u = new URL(request.url); u.pathname = '/api/fetch'; u.search = '?raw=1&u64=' + url.pathname.slice(7) + (url.searchParams.get('grep') ? '&grep=' + encodeURIComponent(url.searchParams.get('grep')) : ''); return onRequestGet({ request: new Request(u.toString()) }); }
     if (url.pathname === '/api/health') return new Response(JSON.stringify({ ok: true, server: 'midad' }), { headers: { 'content-type': 'application/json', 'access-control-allow-origin': '*' } });
     return env.ASSETS.fetch(request);

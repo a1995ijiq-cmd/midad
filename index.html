@@ -537,6 +537,10 @@ html[dir=rtl] .npill{right:auto;left:0}
 .njn h4{font:700 1.08em/1.7 Amiri;margin:.55em 0 0;color:inherit;opacity:.92}
 .njs{font:700 1em Amiri;color:var(--gold);margin:1em 0 .4em;text-align:center;opacity:.9}
 .toc .tocsec{font-weight:700;color:var(--gold);border-top:1px solid var(--rline);margin-top:6px}
+.scanv{scroll-behavior:auto}.scanv .pp{background:var(--soft);position:relative;overflow:hidden}.scanv .pp img{display:block;width:100%;height:auto}.scanv .pp.ok .pn{display:none}
+.scanv.zoom{overflow:auto}.scanv.zoom .pp{width:200%;max-width:none}
+.scanbar{position:absolute;inset-inline:12px;bottom:calc(12px + env(safe-area-inset-bottom));display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:16px;background:rgb(28 16 44/.88);color:#fff;backdrop-filter:blur(10px);z-index:5;box-shadow:0 8px 24px rgb(0 0 0/.3)}
+.scanbar span{font-size:13px;min-width:70px;text-align:center}.scanbar input{flex:1;accent-color:#e9c46a}.scanbar button{width:36px;height:36px;border-radius:11px;background:rgb(255 255 255/.12);color:#e9c46a;display:grid;place-items:center}
 </style>
 <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
 </head>
@@ -1406,6 +1410,37 @@ async function openPages(id){
  v.querySelectorAll('.pp').forEach(el=>pdfIO.observe(el));
  const last=(S.lib[id]||{}).pdfp;if(last>1)setTimeout(()=>{const el=v.querySelector(`.pp[data-n="${last-1}"]`);if(el)el.scrollIntoView()},120);
 }
+/* عارض صفحات مصوّرة مباشر (IIIF): كل الصفحات بتمرير عمودي، تحميل كسول، شريط انتقال، تكبير بالنقر المزدوج */
+const ACO_IMG=(id,n,w)=>`https://sites.dlib.nyu.edu/viewer/api/image/books/${id}/${n}/full/${w||900},/0/default.jpg`;
+async function openScan(b){
+ const id=b.id;closeSheet();R={id,b,pdf:true,parts:[],pages:null};ensureEntry(b);
+ const rd=$('#reader');rd.classList.add('fr','on');applyR();rStart=Date.now();$('#rtitle').textContent=b.t;$('#rext').href=extUrl(b);
+ $('#frame').innerHTML='<div class="lstate"><div class="spin"></div><p>جارٍ تجهيز صفحات الكتاب…</p></div>';
+ let n=b.np||0;
+ if(!n){try{const j=await getJSON(`/api/acon?id=${enc(b.ref)}`,20000);n=j.n||0}catch(e){}}
+ if(!R||R.id!==id)return;
+ if(!n){$('#frame').innerHTML=`<div class="lstate"><p>تعذّر جلب صفحات هذا الكتاب الآن.</p><button class="btn" data-acopdf="${esc(id)}">تحميل PDF ⤓</button></div>`;return}
+ b.np=n;S.books[id]=b;const e=S.lib[id];if(e){e.pages=n}save();
+ $('#frame').innerHTML=`<div class="pdfv scanv" id="pdfv"></div><div class="scanbar"><span id="scpos">١ / ${ar(n)}</span><input type="range" id="scr" min="1" max="${n}" value="1" dir="rtl" aria-label="انتقال إلى صفحة"><button data-acopdf="${esc(id)}" aria-label="تحميل PDF"><i class="ph-bold ph-download-simple"></i></button></div>`;
+ const v=$('#pdfv');const frag=document.createDocumentFragment();
+ for(let i=1;i<=n;i++){const el=document.createElement('div');el.className='pp';el.dataset.n=i;el.style.aspectRatio='0.69';el.innerHTML=`<span class="pn">${ar(i)}</span>`;frag.appendChild(el)}
+ v.appendChild(frag);
+ const show=el=>{if(el.dataset.done)return;el.dataset.done=1;const i=+el.dataset.n;const im=new Image();im.decoding='async';im.alt=`صفحة ${i}`;im.referrerPolicy='no-referrer';
+  im.onload=()=>{el.style.aspectRatio=(im.naturalWidth/im.naturalHeight)||'';el.classList.add('ok')};im.onerror=()=>{el.dataset.done='';el.innerHTML=`<span class="pn">تعذّر تحميل الصفحة ${ar(i)} — اسحب للمحاولة</span>`};
+  im.src=ACO_IMG(b.ref,i,Math.min(1400,Math.round(innerWidth*(devicePixelRatio||1))));el.appendChild(im)};
+ let cur=1,lock=0;const pos=$('#scpos'),rng=$('#scr');
+ if(pdfIO)pdfIO.disconnect();
+ pdfIO=new IntersectionObserver(en=>en.forEach(x=>{if(x.isIntersecting){show(x.target)}}),{root:v,rootMargin:'1400px 0px'});
+ v.querySelectorAll('.pp').forEach(el=>pdfIO.observe(el));
+ const track=()=>{const mid=v.scrollTop+v.clientHeight/2;let lo=1,hi=n;const kids=v.children;while(lo<hi){const m=(lo+hi+1)>>1;if(kids[m-1].offsetTop<=mid)lo=m;else hi=m-1}
+  if(lo!==cur){cur=lo;pos.textContent=`${ar(cur)} / ${ar(n)}`;if(!lock)rng.value=cur;const e=S.lib[id];if(e){e.pdfp=cur;e.p=cur;e.pct=cur/n*100;save()}}};
+ v.addEventListener('scroll',()=>requestAnimationFrame(track),{passive:true});
+ const go=p=>{const el=v.children[p-1];if(el){v.scrollTop=el.offsetTop-4;track()}};
+ rng.addEventListener('input',()=>{lock=1;pos.textContent=`${ar(+rng.value)} / ${ar(n)}`});
+ rng.addEventListener('change',()=>{go(+rng.value);lock=0});
+ let lt=0;v.addEventListener('click',ev=>{const now=Date.now();if(now-lt<300){const pp=ev.target.closest('.pp');const r=pp?pp.offsetTop:0;const rel=pp?(v.scrollTop-r)/pp.offsetHeight:0;v.classList.toggle('zoom');if(pp){v.scrollTop=pp.offsetTop+rel*pp.offsetHeight;if(v.classList.contains('zoom'))v.scrollLeft=(v.scrollWidth-v.clientWidth)/2}lt=0}else lt=now});
+ const last=(S.lib[id]||{}).pdfp;setTimeout(()=>go(last>1?last:1),60);
+}
 async function pagesToPDF(id){
  const d=S.dl[id];if(!d||busy[id])return;busy[id]=1;
  try{await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');let pdf=null;
@@ -1583,6 +1618,7 @@ async function loadPart(i,p){
  if(R.parts.length>1&&i+1<R.parts.length)wikiParse(R.parts[i+1].ref).catch(()=>{});
 }
 function openFrame(b){
+ if(b.kind==='aco'){openScan(b);return}
  const rd=$('#reader');rd.classList.add('fr');
  if(b.kind==='sw'){/* StoryWeaver لا يسمح بالعرض داخل التطبيقات: تُفتح القصة في موقعه */
   const u=`https://storyweaver.org.in/ar/stories/${b.ref}`;const e=S.lib[b.id];if(e){e.pages=0;save()}

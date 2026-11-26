@@ -557,7 +557,7 @@ const A={
    const keep=new Set([...big.map(r=>r.title),...withParts]);
    const l=all.filter(r=>keep.has(r.title)).map(r=>mkB({src:'wiki',key:r.title,t:r.title,a:'',lang:'ar',kind:'wiki',d:strip(r.snippet).slice(0,240)}));l.more=!!j.continue;return l}},
  ia:{async search(q,o){const pg=o.page||1;
-   const qq=`(${q||'*'}) AND mediatype:(texts) AND NOT collection:(inlibrary OR printdisabled OR lendinglibrary OR americana_restricted)`+(o.ar?' AND language:(ara OR arabic OR Arabic)':'');
+   const qq=`${o.ts&&q?`(title:(${q}) OR subject:(${q}))`:`(${q||'*'})`} AND mediatype:(texts) AND NOT collection:(inlibrary OR printdisabled OR lendinglibrary OR americana_restricted)`+(o.ar?' AND language:(ara OR arabic OR Arabic)':'');
    const j=await getJSON(`https://archive.org/advancedsearch.php?q=${enc(qq)}&fl%5B%5D=identifier&fl%5B%5D=title&fl%5B%5D=creator&fl%5B%5D=year&fl%5B%5D=language&fl%5B%5D=description&rows=30&page=${pg}&sort%5B%5D=downloads+desc&output=json`);
    const R=j.response||{};const l=(R.docs||[]).filter(d=>d.title&&!/^[a-z_\-]*\d+[a-z0-9_\-]*$/i.test(String(first(d.title)).trim())).map(d=>{const L=[].concat(d.language||[]).join(' ').toLowerCase();return mkB({src:'ia',key:d.identifier,t:first(d.title),a:first(d.creator)||'',year:d.year,lang:/ara|arab/.test(L)||isAr(first(d.title))?'ar':'en',kind:'ia',ref:d.identifier,cover:`https://archive.org/services/img/${enc(d.identifier)}`,d:strip(first(d.description)).slice(0,300)})});l.more=(R.numFound||0)>pg*30;return l}},
  ol:{async search(q,o){const pg=o.page||1;
@@ -635,7 +635,7 @@ function searchAll(query,opt={}){seenCards=new Set();
  const ar=opt.ar||fLang==='ar';
  const jobs=opt.jobs||enabled().map(s=>({src:s.id,q:query,o:{ar}}));
  curJobs=jobs.filter(j=>S.src.some(s=>s.id===j.src&&s.on)).map(j=>({...j,page:0,more:true}));
- curTitle=opt.title||'';
+ curTitle=opt.title||'';curSec=opt.sec||null;
  const tk=++stoken;results=[];rstat={};
  loadMore(tk);
 }
@@ -647,7 +647,7 @@ function loadMore(tk=stoken){
  curJobs.filter(j=>j.more&&!j.busy).forEach(j=>{
   j.busy=true;j.page++;scount[j.src]=scount[j.src]||0;upd(j.src);
   runJob(j,j.page).then(list=>{if(tk!==stoken)return;j.busy=false;j.more=!!list.more&&list.length>0;
-    const seen=new Set(results.map(b=>norm(b.t)+b.src));list.forEach(b=>{const k=norm(b.t)+b.src;if(!seen.has(k)){seen.add(k);results.push(b);scount[j.src]++}});upd(j.src);drawResults()})
+    const seen=new Set(results.map(b=>norm(b.t)+b.src));list.forEach(b=>{const k=norm(b.t)+b.src;if(!seen.has(k)&&fits(curSec,b,j)){seen.add(k);results.push(b);scount[j.src]++}});upd(j.src);drawResults()})
    .catch(()=>{if(tk!==stoken)return;j.busy=false;j.more=false;sfail[j.src]=1;upd(j.src);drawResults()});
  });
  drawResults();
@@ -669,7 +669,7 @@ function drawResults(){
 const QUO=[['أَعَزُّ مَكانٍ في الدُنى سَرجُ سابِحٍ','وَخَيرُ جَليسٍ في الزَمانِ كِتابُ','المتنبي'],['عَلى قَدرِ أَهلِ العَزمِ تَأتي العَزائِمُ','وَتَأتي عَلى قَدرِ الكِرامِ المَكارِمُ','المتنبي'],['قُم لِلمُعَلِّمِ وَفِّهِ التَبجيلا','كادَ المُعَلِّمُ أَن يَكونَ رَسولا','أحمد شوقي'],['شَكَوتُ إِلى وَكيعٍ سوءَ حِفظي','فَأَرشَدَني إِلى تَركِ المَعاصي','الإمام الشافعي']];
 let qi=new Date().getDate()%QUO.length;
 /* الأقسام: كل قسم يجمع كتب مرخّصة أو ملكية عامة من أكثر من مصدر */
-const L=(q)=>({src:'libiq',q,o:{}}),W=(q)=>({src:'wiki',q,o:{}}),I=(q)=>({src:'ia',q,o:{ar:true}}),IE=(q)=>({src:'ia',q,o:{}}),G=(q,topic)=>({src:'gut',q,o:topic?{topic}:{}}),O=(q)=>({src:'ol',q,o:{}}),OS=(subj)=>({src:'ol',q:subj,o:{subj}}),GB=(q,ar)=>({src:'gb',q,o:{ar:!!ar}}),SW=(q,lang)=>({src:'sw',q,o:{lang}}),LV=(q)=>({src:'lv',q,o:{}});
+const L=(q)=>({src:'libiq',q,o:{},tr:1}),W=(q)=>({src:'wiki',q,o:{}}),I=(q)=>({src:'ia',q,o:{ar:true,ts:true}}),IE=(q)=>({src:'ia',q,o:{}}),G=(q,topic)=>({src:'gut',q,o:topic?{topic}:{},tr:topic?1:0}),O=(q)=>({src:'ol',q,o:{}}),OS=(subj)=>({src:'ol',q:subj,o:{subj},tr:1}),GB=(q,ar)=>({src:'gb',q:/:/.test(q)?q:(ar?'intitle:'+q:'subject:'+q),o:{ar:!!ar}}),SW=(q,lang)=>({src:'sw',q,o:{lang},tr:1}),LV=(q)=>({src:'lv',q,o:{},tr:1});
 const SECTIONS=[
  {k:'iraq',g:'عام',t:'من العراق',ic:'tree-palm',c:'#1f6b4f',d:'المكتبة الرقمية العراقية، والمتنبي، والجاحظ، والرصافي، والزهاوي…',jobs:[L(''),W('الرصافي'),W('الزهاوي'),W('أبو نواس'),W('ديوان المتنبي'),W('الجاحظ'),I('العراق'),I('بغداد تاريخ'),GB('العراق',1)]},
  {k:'kids',g:'عام',t:'للأطفال',ic:'balloon',c:'#d0662a',d:'قصص مصوّرة عربية وإنجليزية، وحكايات للصغار',jobs:[SW('','Arabic'),SW('','English'),I('قصص الأطفال'),OS('children'),OS('fairy_tales'),G('','children'),GB('قصص أطفال',1)]},
@@ -705,14 +705,51 @@ const SECTIONS=[
  {k:'art',g:'العلوم والمهارات',t:'فنون وخط عربي',ic:'palette',c:'#a0522d',d:'رسم، خط عربي، عمارة',jobs:[I('الخط العربي'),I('الفن'),OS('art'),OS('calligraphy'),OS('architecture')]},
  {k:'cook',g:'العلوم والمهارات',t:'الطبخ',ic:'cooking-pot',c:'#b5651d',d:'أكلات عربية وعالمية',jobs:[I('الطبخ'),I('أكلات'),OS('cooking'),GB('طبخ',1)]},
  {k:'travel',g:'العلوم والمهارات',t:'سفر وجغرافيا',ic:'airplane-tilt',c:'#2a7a8a',d:'بلدان، خرائط، ورحلات',jobs:[I('جغرافيا'),W('رحلة'),OS('travel'),OS('geography')]}];
+/* كلمات كل قسم: الكتاب لازم يحتوي وحدة منها بالعنوان أو الوصف حتى ينحط بالقسم */
+const KW={kids:'طفل|اطفال|قصص|قصه|حكايه|حكايات|صغار|child|kid|fairy|stories|tale|picture book',
+ poetry:'ديوان|شعر|قصيد|معلق|ارجوز|poem|poetry|verse',
+ religion:'تفسير|قران|حديث|فقه|سيره|صحيح|عقيد|عقائد|اسلام|نبي|دين|سنن|شريعه|توحيد|quran|islam|hadith|religio|bible|prophet',
+ novels:'روايه|قصه|قصص|حكايه|novel|fiction|stories|tale|romance',
+ heritage:'ادب|تراث|كتاب|اغاني|بيان|مقامات|literatur|classic',
+ history:'تاريخ|رحله|حضار|دوله|دول|خلافه|ملوك|history|historic|civiliz|empire|travel',
+ social:'اجتماع|مجتمع|فكر|نهضه|خلدون|سياس|sociolog|societ|social|politic',
+ psych:'نفس|سلوك|اخلاق|شخصيه|عقل|psycholog|mind|behavio|ethic|personality',
+ self:'ذات|نجاح|تنميه|عادات|تفكير|سعاده|self|success|habit|motivat|happiness',
+ philo:'فلسف|منطق|حكمه|philosoph|logic|wisdom|stoic',
+ biog:'سيره|حياه|ترجمه|مذكرات|اعلام|biograph|life of|memoir|lives',
+ sports:'رياضه|رياضي|بدنيه|العاب|تدريب|بطوله|اولمب|sport|athlet|olymp|coach|training|games',
+ football:'كره القدم|كرة القدم|القدم|فيفا|كاس العالم|football|soccer|fifa|world cup',
+ gym:'اجسام|لياقه|تمارين|عضل|بدنيه|حديد|بناء الجسم|تغذيه الرياضي|bodybuild|fitness|muscle|exercise|weight|strength|gym|workout',
+ martial:'قتال|كاراتيه|جودو|ملاكم|مصارع|تايكوندو|دفاع عن النفس|martial|karate|judo|box|wrestl|kung fu|taekwondo|self-defense|jujitsu',
+ basket:'سله|طائره|basket|volley',
+ running:'جري|عدو|ماراثون|العاب القوى|running|marathon|track|athletic|jogging',
+ swim:'سباح|غوص|swim|diving',
+ chess:'شطرنج|chess',
+ tennis:'تنس|ريشه|tennis|badminton|ping pong',
+ horse:'خيل|فروسيه|فرس|رمايه|horse|equestr|archery|riding',
+ science:'علوم|علم|طب|كيمياء|احياء|science|medic|biolog|chemi',
+ health:'صحه|تغذيه|غذاء|طب|مرض|علاج|health|nutrition|diet|disease|medic',
+ tech:'برمج|حاسوب|حاسب|كمبيوتر|شبكات|ذكاء اصطناعي|بايثون|جافا|program|computer|software|code|python|java|network',
+ math:'رياضيات|جبر|هندسه|حساب|فيزياء|تفاضل|math|algebra|geometr|physics|calculus',
+ space:'فلك|نجوم|كواكب|فضاء|astronom|space|planet|stars',
+ econ:'اقتصاد|اداره|مال|تسويق|تجاره|محاسب|econom|business|financ|market|manag|account',
+ lang:'لغه|نحو|صرف|قواعد|انجليزي|قاموس|معجم|بلاغه|language|grammar|english|dictionar|vocabular',
+ art:'فن|رسم|خط|عماره|زخرف|art|paint|drawing|calligraph|architect',
+ cook:'طبخ|اكل|اكلات|وصفات|مطبخ|حلويات|cook|recipe|food|kitchen|baking',
+ travel:'سفر|رحله|جغرافي|بلدان|خرائط|travel|geograph|journey|map|atlas'};
+KW.sports+='|'+['football','gym','martial','basket','running','swim','chess','tennis','horse'].map(k=>KW[k]).join('|');
+const NX={sports:'رياضيات|رياضيه البحته|mathemat',health:'رياضيات',math:'',science:'',psych:'نفسه'};
+SECTIONS.forEach(s=>{if(KW[s.k])s.re=new RegExp(norm(KW[s.k]));if(NX[s.k])s.nx=new RegExp(norm(NX[s.k]))});
+const fits=(sec,b,j)=>{if(!sec||!sec.re||(j&&j.tr))return true;const t=norm([b.t,b.a,b.d].join(' '));return sec.re.test(t)&&!(sec.nx&&sec.nx.test(t))};
+let curSec=null;
 const secJobs=sec=>sec.jobs.filter(j=>S.src.some(s=>s.id===j.src&&s.on));
 function loadShelf(sec){
  const el=$('#sh-'+sec.k);if(!el)return;
  if(shelfCache[sec.k]){fillShelf(sec);return}
  const jobs=secJobs(sec);if(!jobs.length){el.closest('section').remove();return}
  Promise.allSettled(jobs.map(j=>runJob(j,1))).then(rs=>{
-  const seen=new Set(),out=[];const lists=rs.filter(r=>r.status==='fulfilled').map(r=>r.value);
-  for(let i=0;i<20;i++)lists.forEach(l=>{const b=l[i];if(b&&!seen.has(norm(b.t))){seen.add(norm(b.t));out.push(b)}});
+  const seen=new Set(),out=[];const lists=rs.map((r,k)=>r.status==='fulfilled'?r.value.filter(b=>fits(sec,b,jobs[k])):[]);
+  for(let i=0;i<30;i++)lists.forEach(l=>{const b=l[i];if(b&&!seen.has(norm(b.t))){seen.add(norm(b.t));out.push(b)}});
   shelfCache[sec.k]=out;fillShelf(sec)});
 }
 function fillShelf(sec){const el=$('#sh-'+sec.k);if(!el)return;const l=shelfCache[sec.k].filter(b=>!S.empty[b.id]);l.forEach(b=>MEM[b.id]=b);el.className='rail';el.innerHTML=l.length?ordered(l).slice(0,16).map((b,i)=>card(b,i)).join(''):'<span class="mut">تعذّر التحميل — تأكد من الإنترنت</span>'}
@@ -724,7 +761,7 @@ function observeShelves(){
  shelfIO=new IntersectionObserver(en=>en.forEach(x=>{if(x.isIntersecting){shelfIO.unobserve(x.target);loadShelf(SECTIONS.find(s=>s.k===x.target.dataset.shelfK))}}),{root:$('#view'),rootMargin:'400px'});
  els.forEach(e=>shelfIO.observe(e));
 }
-function openSection(k){const sec=SECTIONS.find(s=>s.k===k);if(!sec)return;q='';fSrc='all';tab='explore';render();searchAll('',{jobs:secJobs(sec),title:sec.t});$('#view').scrollTop=0}
+function openSection(k){const sec=SECTIONS.find(s=>s.k===k);if(!sec)return;q='';fSrc='all';tab='explore';render();searchAll('',{jobs:secJobs(sec),title:sec.t,sec});$('#view').scrollTop=0}
 const pctOf=id=>Math.round((S.lib[id]||{}).pct||0);
 
 function home(){
@@ -831,7 +868,7 @@ function render(){
  const f=$('#feat');if(f)f.onscroll=()=>{const i=Math.round(Math.abs(f.scrollLeft)/f.clientWidth);document.querySelectorAll('.dots i').forEach((d,j)=>d.classList.toggle('on',i===j))};
 }
 function go(t,focus){tab=t;render();$('#view').scrollTop=0;$('#nav').classList.remove('mini');if(focus)setTimeout(()=>$('#q')?.focus(),60)}
-function doSearch(term){q=term;curTitle='';tab='explore';S.recent=[term,...S.recent.filter(x=>x!==term)].slice(0,6);save();render();searchAll(term);$('#view').scrollTop=0}
+function doSearch(term){q=term;curTitle='';curSec=null;tab='explore';S.recent=[term,...S.recent.filter(x=>x!==term)].slice(0,6);save();render();searchAll(term);$('#view').scrollTop=0}
 const sheetOn=h=>{$('#sheet').innerHTML='<div class="grab"></div>'+h;$('#sheet').classList.add('on');$('#scrim').classList.add('on')};
 const closeSheet=()=>{$('#sheet').classList.remove('on');$('#scrim').classList.remove('on');add=null};
 

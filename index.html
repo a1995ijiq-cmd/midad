@@ -763,8 +763,8 @@ function library(){
  let body;
  const CL={y:'#f5d76e',g:'#8fd19e',b:'#8cc4f0',p:'#f3a3c4'};
  if(libTab==='hl')body=annList.length?annList.map(({id,k,a})=>{const b=S.books[id];const [pt,pp]=k.split(':');return `<button class="row" style="grid-template-columns:1fr" data-annj="${esc(id)}|${pt}|${pp}"><div><p style="margin:0;font:16px/1.8 Amiri;border-radius:8px;padding:6px 10px;background:${a.c?`color-mix(in srgb,${CL[a.c]} 45%,transparent)`:'var(--soft)'}">${esc(a.s||'')}</p>${a.note?`<p style="margin:6px 0 0;font-size:14px"><i class="ph-fill ph-note" style="color:var(--gold)"></i> ${esc(a.note)}</p>`:''}${a.add?`<p style="margin:6px 0 0;font-size:14px;color:var(--plum)">✎ ${esc(a.add.slice(0,160))}</p>`:''}<div class="mut" style="margin-top:6px">${esc(b.t)} · صفحة ${ar(pp)}${a.text!=null?' · نص معدّل':''}</div></div></button>`}).join(''):`<div class="empty"><i class="ph-duotone ph-note-pencil"></i><b>لا توجد ملاحظات</b>افتح كتاباً واضغط زر القلم، وبعدها اضغط على أي فقرة لتظليلها أو كتابة ملاحظة أو تعديلها</div>`;
- else if(libTab==='dl')body=dlList.length?dlList.map(([id,d])=>{const b=S.books[id];const hasPdf=d.kind==='pdf'||d.pdf;return `<div class="row" style="grid-template-columns:62px 1fr">${cover(b)}<div><h4>${esc(b.t)}</h4><div class="mut">${d.kind==='pdf'?'PDF من المصدر · '+fmtSize(d.size||0):'نص كامل بدون نت'+(d.pdf?' · PDF '+fmtSize(d.pdfSize||0):'')}</div>
-  <div class="dlrow">${d.kind==='text'?`<button class="btn" data-read="${esc(id)}"><i class="ph-fill ph-book-open-text"></i> اقرأ</button>`:''}${hasPdf?`<button class="btn ${d.kind==='text'?'alt':''}" data-pdfo="${esc(id)}"><i class="ph-bold ph-file-pdf"></i> فتح PDF</button><button class="btn alt" data-pdfs="${esc(id)}"><i class="ph-bold ph-share-network"></i> حفظ/مشاركة</button>`:''}<button class="btn alt" data-dlx="${esc(id)}" aria-label="حذف"><i class="ph-bold ph-trash"></i></button></div></div></div>`}).join(''):`<div class="empty"><i class="ph-duotone ph-download-simple"></i><b>لا توجد تحميلات</b>من صفحة أي كتاب اضغط «تحميل» حتى تقرأه بدون إنترنت أو تحفظه PDF</div>`;
+ else if(libTab==='dl')body=dlList.length?dlList.map(([id,d])=>{const b=S.books[id];const hasPdf=d.kind==='pdf'||d.pdf;return `<div class="row" style="grid-template-columns:62px 1fr">${cover(b)}<div><h4>${esc(b.t)}</h4><div class="mut">${d.kind==='pages'?`${ar(d.n)} صفحة أصلية · ${fmtSize(d.size||0)}`:d.kind==='pdf'?'PDF من المصدر · '+fmtSize(d.size||0):'نص كامل بدون نت'+(d.pdf?' · PDF '+fmtSize(d.pdfSize||0):'')}</div>
+  <div class="dlrow">${d.kind==='pages'?`<button class="btn" data-pgo="${esc(id)}"><i class="ph-fill ph-book-open-text"></i> اقرأ</button><button class="btn alt" data-${d.pdf?'pdfs':'pgpdf'}="${esc(id)}"><i class="ph-bold ph-file-pdf"></i> حفظ PDF</button>`:''}${d.kind==='text'?`<button class="btn" data-read="${esc(id)}"><i class="ph-fill ph-book-open-text"></i> اقرأ</button>`:''}${hasPdf&&d.kind!=='pages'?`<button class="btn ${d.kind==='text'?'alt':''}" data-pdfo="${esc(id)}"><i class="ph-bold ph-file-pdf"></i> فتح PDF</button><button class="btn alt" data-pdfs="${esc(id)}"><i class="ph-bold ph-share-network"></i> حفظ/مشاركة</button>`:''}<button class="btn alt" data-dlx="${esc(id)}" aria-label="حذف"><i class="ph-bold ph-trash"></i></button></div></div></div>`}).join(''):`<div class="empty"><i class="ph-duotone ph-download-simple"></i><b>لا توجد تحميلات</b>من صفحة أي كتاب اضغط «تحميل» حتى تقرأه بدون إنترنت أو تحفظه PDF</div>`;
  else{const list=ents.filter(([,e])=>e.s===libTab).sort((a,b)=>(b[1].last||0)-(a[1].last||0));
  body=list.length?list.map(([id,e])=>{const b=S.books[id];return `<button class="row" data-open="${esc(id)}">${cover(b)}<div><h4>${esc(b.t)}</h4><div class="mut">${esc(b.a)}</div>${sbadge(b)}
  ${e.s==='reading'?(e.pages?`<div class="bar"><b style="width:${pctOf(id)}%"></b></div><div class="mut">وصلت إلى صفحة ${ar(e.p)} من ${ar(e.pages)}${e.parts>1?` · الجزء ${ar((e.part||0)+1)}/${ar(e.parts)}`:''}</div>`:'<div class="mut">بقارئ المصدر</div>'):e.s==='done'?'<span class="tag">✓ مكتمل</span>':''}</div>
@@ -849,8 +849,8 @@ function openBook(id,keep){
  <div class="shelf">${sb('want','أريد قراءتها')}${sb('reading','أقرأ الآن')}${sb('done','قرأتها')}</div>
  ${(()=>{const d=S.dl[id],txt=b.kind==='wiki'||(b.kind==='gut'&&b.txt),canPdf=(b.kind==='gb'&&b.pdf)||b.kind==='ia'||(b.kind==='link'&&/pdf/i.test((b.ltype||'')+(b.link||'')));if(!txt&&!canPdf)return b.kind==='libiq'?'<p class="mut" style="font-size:13px;margin:12px 0 0">التحميل غير متاح لكتب هذا المصدر، تُقرأ بقارئه الرسمي.</p>':'';
   return `<div class="dlrow">${busy[id]?`<span class="mut" style="flex:1"><span style="display:flex;justify-content:space-between"><span id="dlt-${cssId(id)}">${esc((dlProg[id]||{}).label||'جارٍ التحميل…')}</span><b>${ar(Math.round((dlProg[id]||{}).pct||0))}٪</b></span><div class="prog"><b id="dlp-${cssId(id)}" style="width:${(dlProg[id]||{}).pct||3}%"></b></div></span>`:
-  d?`${d.kind==='text'?`<span class="tag" style="align-self:center"><i class="ph-fill ph-check-circle"></i> محفوظ بدون نت</span>`:''}${d.kind==='pdf'||d.pdf?`<button class="btn" data-pdfo="${esc(id)}"><i class="ph-bold ph-file-pdf"></i> فتح PDF</button><button class="btn alt" data-pdfs="${esc(id)}"><i class="ph-bold ph-share-network"></i> حفظ/مشاركة</button>`:''}${txt?`<button class="btn alt" data-pdfx="${esc(id)}"><i class="ph-bold ph-file-pdf"></i> ${d.pdf?'تحديث PDF':'إنشاء PDF بملاحظاتي'}</button>`:''}<button class="btn alt" data-dlx="${esc(id)}" aria-label="حذف التحميل"><i class="ph-bold ph-trash"></i></button>`:
-  `<button class="btn alt" data-dl="${esc(id)}"><i class="ph-bold ph-download-simple"></i> ${txt?'تحميل للقراءة بدون نت':'تحميل PDF للمكتبة'}</button>${txt?`<button class="btn alt" data-pdfx="${esc(id)}"><i class="ph-bold ph-file-pdf"></i> PDF</button>`:''}`}</div>`})()}
+  d?`${d.kind==='pages'?`<button class="btn" data-pgo="${esc(id)}"><i class="ph-fill ph-book-open-text"></i> اقرأ بدون نت</button><button class="btn alt" data-${d.pdf?'pdfs':'pgpdf'}="${esc(id)}"><i class="ph-bold ph-file-pdf"></i> حفظ PDF</button>`:''}${d.kind==='text'?`<span class="tag" style="align-self:center"><i class="ph-fill ph-check-circle"></i> محفوظ بدون نت</span>`:''}${(d.kind==='pdf'||d.pdf)&&d.kind!=='pages'?`<button class="btn" data-pdfo="${esc(id)}"><i class="ph-bold ph-file-pdf"></i> فتح PDF</button><button class="btn alt" data-pdfs="${esc(id)}"><i class="ph-bold ph-share-network"></i> حفظ/مشاركة</button>`:''}${txt?`<button class="btn alt" data-pdfx="${esc(id)}"><i class="ph-bold ph-file-pdf"></i> ${d.pdf?'تحديث PDF':'إنشاء PDF بملاحظاتي'}</button>`:''}<button class="btn alt" data-dlx="${esc(id)}" aria-label="حذف التحميل"><i class="ph-bold ph-trash"></i></button>`:
+  `<button class="btn alt" data-dl="${esc(id)}"><i class="ph-bold ph-download-simple"></i> ${txt||b.kind==='ia'?'تحميل للقراءة بدون نت':'تحميل PDF للمكتبة'}</button>${txt?`<button class="btn alt" data-pdfx="${esc(id)}"><i class="ph-bold ph-file-pdf"></i> PDF</button>`:''}`}</div>`})()}
  ${e&&e.marks&&e.marks.length?`<h2 style="font-size:18px">العلامات</h2><div class="shelf">${e.marks.map(m=>{const [pt,p]=m.split(':');return `<button class="chip" data-hj="${esc(id)}" data-part="${pt}" data-p="${p}"><i class="ph-fill ph-bookmark-simple"></i> ${+pt?`ج${ar(+pt+1)} · `:''}ص ${ar(p)}</button>`}).join('')}</div>`:''}
  ${b.a?`<button class="ext" data-rq2="${esc(b.a)}"><i class="ph-duotone ph-user-list"></i> المزيد من ${esc(b.a)}</button><br>`:''}
  <a class="ext" href="${esc(extUrl(b))}" target="_blank" rel="noopener"><i class="ph-duotone ph-arrow-square-out"></i> فتح في ${esc(s?s.n:'المصدر')}</a>
@@ -998,7 +998,16 @@ async function downloadBook(id){
  const fileProg=(got,tot)=>pr(tot?Math.min(99,got/tot*100):Math.min(95,got/1048576*4),tot?`${fmtSize(got)} من ${fmtSize(tot)}`:fmtSize(got));
  try{
   if(b.kind==='wiki'||(b.kind==='gut'&&b.txt)){const parts=await bookParts(b,(i,n)=>pr(i/n*100,`الجزء ${ar(i+1)} من ${ar(n)}`));S.dl[id]={kind:'text',at:Date.now(),parts:parts.length,size:JSON.stringify(parts).length};toast('حُفظ الكتاب للقراءة بدون إنترنت ✓')}
-  else if(b.kind==='ia'){pr(10);const m=await(await getVia(`https://archive.org/metadata/${enc(b.ref)}`,20000)).r.json();const pdfs=(m.files||[]).filter(f=>/\.pdf$/i.test(f.name)).sort((x,y)=>((x.format==='Text PDF'?0:1)-(y.format==='Text PDF'?0:1))||((+x.size||9e9)-(+y.size||9e9)));
+  else if(b.kind==='ia'&&await (async()=>{pr(3,'قراءة معلومات الكتاب…');const m=await(await getVia(`https://archive.org/metadata/${enc(b.ref)}`,20000)).r.json();b._meta=m;const n=Math.min(1200,+((m.metadata||{}).imagecount)||0);if(n<2)return false;
+    /* صور الصفحات الأصلية: الكتابة تطلع مثل الكتاب الحقيقي بالضبط */
+    const url=i=>`https://archive.org/download/${enc(b.ref)}/page/n${i}_w800.jpg`;let direct=true;
+    try{const r=await fetch(url(0));if(!r.ok)throw 0;await IDB.set(`pg:${id}:0`,await r.blob())}catch(e){direct=false;const r=await fetch(PROXY+enc(url(0)));if(!r.ok)throw new Error('net');await IDB.set(`pg:${id}:0`,await r.blob())}
+    let done=1,size=0,next=1,fails=0;
+    const worker=async()=>{while(next<n){const i=next++;for(let t=0;t<3;t++){try{const r=await fetch(direct?url(i):PROXY+enc(url(i)));if(!r.ok)throw 0;const bl=await r.blob();size+=bl.size;await IDB.set(`pg:${id}:${i}`,bl);break}catch(e){if(t===2)fails++}}done++;pr(done/n*100,`صفحة ${ar(done)} من ${ar(n)} · ${fmtSize(size)}`)}};
+    await Promise.all([1,2,3,4,5,6].map(worker));
+    if(fails>n*.1)throw new Error('net');
+    S.dl[id]={kind:'pages',n,at:Date.now(),size};toast('حُمّل الكتاب بصفحاته الأصلية للقراءة بدون نت ✓');return true})()){}
+  else if(b.kind==='ia'){pr(10);const m=b._meta||await(await getVia(`https://archive.org/metadata/${enc(b.ref)}`,20000)).r.json();const pdfs=(m.files||[]).filter(f=>/\.pdf$/i.test(f.name)).sort((x,y)=>((x.format==='Text PDF'?0:1)-(y.format==='Text PDF'?0:1))||((+x.size||9e9)-(+y.size||9e9)));
    if(!pdfs.length)throw new Error('nopdf');const f=pdfs[0];if(+f.size>60*1048576)throw new Error('big');pr(2,'بدأ التنزيل…');
    const blob=await fetchProg(`https://archive.org/download/${enc(b.ref)}/${f.name.split('/').map(enc).join('/')}`,(g,t)=>fileProg(g,t||+f.size));if(blob.size<1000)throw new Error('bad');
    await IDB.set('pdf:'+id,blob);S.dl[id]={kind:'pdf',at:Date.now(),size:blob.size};toast('حُمّل ملف PDF إلى مكتبتك ✓')}
@@ -1010,7 +1019,7 @@ async function downloadBook(id){
  delete busy[id];setTimeout(()=>hideProg(id),900);if(document.querySelector('#sheet.on'))openBook(id,1);if(tab==='library')render();
 }
 const cssId=id=>id.replace(/[^a-z0-9]/gi,'_');
-async function removeDownload(id){const d=S.dl[id];if(!d)return;if(d.kind==='pdf'||d.pdf)await IDB.del('pdf:'+id).catch(()=>{});delete S.dl[id];save();toast('حُذف التحميل');if(document.querySelector('#sheet.on'))openBook(id,1);if(tab==='library')render()}
+async function removeDownload(id){const d=S.dl[id];if(!d)return;if(d.kind==='pages'){for(let i=0;i<d.n;i++)await IDB.del(`pg:${id}:${i}`).catch(()=>{})}if(d.kind==='pdf'||d.pdf)await IDB.del('pdf:'+id).catch(()=>{});delete S.dl[id];save();toast('حُذف التحميل');if(document.querySelector('#sheet.on'))openBook(id,1);if(tab==='library')render()}
 
 /* ---------- تصدير PDF مع تظليلاتك وملاحظاتك وتعديلاتك ---------- */
 const HLC={y:'rgba(245,215,110,.55)',g:'rgba(143,209,158,.5)',b:'rgba(140,196,240,.5)',p:'rgba(243,163,196,.5)'};
@@ -1085,6 +1094,29 @@ async function openPDF(id){
   const last=(S.lib[id]||{}).pdfp;if(last>1)setTimeout(()=>{const el=v.querySelector(`.pp[data-n="${last}"]`);if(el)el.scrollIntoView()},120);
  }catch(e){const url=URL.createObjectURL(blob);$('#frame').innerHTML=`<iframe src="${url}" title="PDF"></iframe>`}
 }
+async function openPages(id){
+ const b=S.books[id]||getB(id),d=S.dl[id];closeSheet();R={id,b,pdf:true,parts:[],pages:null};ensureEntry(b);
+ const rd=$('#reader');rd.classList.add('fr','on');applyR();rStart=Date.now();$('#rtitle').textContent=b.t;$('#rext').href=extUrl(b);
+ $('#frame').innerHTML='<div class="pdfv" id="pdfv"></div><div class="pdfbar" id="pdfbar"></div>';const v=$('#pdfv');
+ for(let i=0;i<d.n;i++){const el=document.createElement('div');el.className='pp';el.dataset.n=i;el.style.aspectRatio='0.68';el.innerHTML=`<span class="pn">${ar(i+1)}</span>`;v.appendChild(el)}
+ const urls={};
+ const show=async el=>{const i=+el.dataset.n;if(el.dataset.done)return;el.dataset.done=1;const bl=await IDB.get(`pg:${id}:${i}`).catch(()=>null);if(!bl){el.innerHTML='<span class="pn">صفحة غير محمّلة</span>';return}urls[i]=URL.createObjectURL(bl);const im=new Image();im.decoding='async';im.alt='';im.style.cssText='display:block;width:100%;height:auto';im.onload=()=>{el.style.aspectRatio=''};im.src=urls[i];el.prepend(im)};
+ if(pdfIO)pdfIO.disconnect();
+ pdfIO=new IntersectionObserver(en=>en.forEach(x=>{if(x.isIntersecting){show(x.target);const n=+x.target.dataset.n+1;const e=S.lib[id];if(e){e.pdfp=n;e.pages=d.n;e.p=n;e.pct=n/d.n*100;save()}const bar=$('#pdfbar');if(bar)bar.textContent=`${ar(n)} / ${ar(d.n)}`}}),{root:v,rootMargin:'900px 0px'});
+ v.querySelectorAll('.pp').forEach(el=>pdfIO.observe(el));
+ const last=(S.lib[id]||{}).pdfp;if(last>1)setTimeout(()=>{const el=v.querySelector(`.pp[data-n="${last-1}"]`);if(el)el.scrollIntoView()},120);
+}
+async function pagesToPDF(id){
+ const d=S.dl[id];if(!d||busy[id])return;busy[id]=1;
+ try{await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');let pdf=null;
+  for(let i=0;i<d.n;i++){const bl=await IDB.get(`pg:${id}:${i}`).catch(()=>null);if(!bl)continue;const bm=await createImageBitmap(bl);const w=595,h=Math.round(595*bm.height/bm.width);
+   const url=await new Promise(r=>{const fr=new FileReader();fr.onload=()=>r(fr.result);fr.readAsDataURL(bl)});
+   if(!pdf)pdf=new window.jspdf.jsPDF({unit:'pt',format:[w,h],compress:true});else pdf.addPage([w,h]);pdf.addImage(url,'JPEG',0,0,w,h);bm.close&&bm.close();
+   showProg(id,(i+1)/d.n*100,`تجهيز PDF: صفحة ${ar(i+1)} من ${ar(d.n)}`);if(i%10===0)await new Promise(r=>setTimeout(r))}
+  const blob=pdf.output('blob');await IDB.set('pdf:'+id,blob);d.pdf=true;d.pdfSize=blob.size;save();hideProg(id);delete busy[id];await sharePDF(id);
+ }catch(e){hideProg(id);delete busy[id];toast('تعذّر إنشاء PDF')}
+ if(document.querySelector('#sheet.on'))openBook(id,1);if(tab==='library')render();
+}
 async function sharePDF(id){
  const blob=await IDB.get('pdf:'+id).catch(()=>null);if(!blob)return;const b=S.books[id]||{t:'book'};const name=(b.t||'book').replace(/[\\/:*?"<>|]/g,'').slice(0,60)+'.pdf';
  try{const f=new File([blob],name,{type:'application/pdf'});if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:b.t});return}}catch(e){if(e&&e.name==='AbortError')return}
@@ -1140,6 +1172,7 @@ function markEmpty(id){
 function lstate(html){$('#page').innerHTML=`<div class="lstate">${html}</div>`}
 async function openReader(id,jump){
  const b=getB(id);if(!b)return;
+ if(S.dl[id]&&S.dl[id].kind==='pages'&&!jump){openPages(id);return}
  if(S.dl[id]&&S.dl[id].kind==='pdf'&&!jump){openPDF(id);return}
  ensureEntry(b);closeSheet();
  const e=S.lib[id];if(jump){e.part=jump.part;e.p=jump.p}
@@ -1263,6 +1296,8 @@ document.addEventListener('click',async ev=>{
  if(d.dlx){removeDownload(d.dlx);return}
  if(d.pdfx){exportPDF(d.pdfx);return}
  if(d.pdfo){openPDF(d.pdfo);return}
+ if(d.pgo){openPages(d.pgo);return}
+ if(d.pgpdf){pagesToPDF(d.pgpdf);return}
  if(d.pdfs){sharePDF(d.pdfs);return}
  if(d.annj){const [id,pt,pp]=d.annj.split('|');openReader(id,{part:+pt,p:+pp});return}
  const a=d.act;

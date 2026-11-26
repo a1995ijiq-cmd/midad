@@ -45,6 +45,8 @@ async function onRequestGet({ request }) {
   if (new URL(request.url).searchParams.get('raw') === '1') {
     const head = `HTTP ${r.status}\nfinal-url: ${r.url}\ncontent-type: ${ct}\nx-frame-options: ${r.headers.get('x-frame-options') || '-'}\ncsp: ${(r.headers.get('content-security-policy') || '-').slice(0, 300)}\n\n`;
     const txt = new TextDecoder().decode(body);
+    const g = new URL(request.url).searchParams.get('grep');
+    if (g) { let out = '', m, re; try { re = new RegExp(g, 'gi'); } catch { re = /$^/g; } let n = 0; while ((m = re.exec(txt)) && n < 80) { out += '…' + txt.slice(Math.max(0, m.index - 150), m.index + 250).replace(/\s+/g, ' ') + '…\n\n'; n++; if (m.index === re.lastIndex) re.lastIndex++; } return new Response(head + `bytes: ${body.byteLength}\nmatches: ${n}\n\n` + out, { status: 200, headers: { ...CORS, 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'no-store' } }); }
     return new Response(head + `bytes: ${body.byteLength}\n\n` + txt.slice(0, 20000), { status: 200, headers: { ...CORS, 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'no-store' } });
   }
   return new Response(body, {
@@ -118,7 +120,7 @@ export default {
     }
     if (url.pathname.replace(/\/$/, '') === '/api/libiq') return libiq(request);
     if (url.pathname.replace(/\/$/, '') === '/api/aco') return aco(request);
-    if (url.pathname.startsWith('/api/r/')) { const u = new URL(request.url); u.pathname = '/api/fetch'; u.search = '?raw=1&u64=' + url.pathname.slice(7); return onRequestGet({ request: new Request(u.toString()) }); }
+    if (url.pathname.startsWith('/api/r/')) { const u = new URL(request.url); u.pathname = '/api/fetch'; u.search = '?raw=1&u64=' + url.pathname.slice(7) + (url.searchParams.get('grep') ? '&grep=' + encodeURIComponent(url.searchParams.get('grep')) : ''); return onRequestGet({ request: new Request(u.toString()) }); }
     if (url.pathname === '/api/health') return new Response(JSON.stringify({ ok: true, server: 'midad' }), { headers: { 'content-type': 'application/json', 'access-control-allow-origin': '*' } });
     return env.ASSETS.fetch(request);
   }

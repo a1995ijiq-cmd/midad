@@ -31,6 +31,12 @@ async function onRequestGet({ request }) {
 
   if (BLOCK.some(b => r.url.toLowerCase().includes(b))) return err('blocked source', 403);
   const ct = r.headers.get('content-type') || 'application/octet-stream';
+  // ملفات الكتب (PDF / EPUB): تمرير مباشر بدون تخزين بالذاكرة
+  if (!RAW && /pdf|epub|octet-stream/i.test(ct)) {
+    if (!r.ok) return err('upstream ' + r.status, 502);
+    if (+(r.headers.get('content-length') || 0) > 60 * 1024 * 1024) return err('too large', 413);
+    return new Response(r.body, { status: 200, headers: { ...CORS, 'content-type': ct, 'cache-control': 'public, max-age=86400', 'x-final-url': r.url } });
+  }
   if (!RAW && !/xml|json|html|text|atom|opds/i.test(ct)) return err('unsupported content type: ' + ct, 415);
   if (+(r.headers.get('content-length') || 0) > MAX) return err('too large', 413);
   const body = await r.arrayBuffer();

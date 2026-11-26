@@ -869,14 +869,14 @@ async function downloadBook(id){
  const b=getB(id);if(!b||busy[id])return;remember(b);busy[id]=1;const pr=p=>{const el=$('#dlp-'+cssId(id));if(el)el.style.width=p+'%'};
  try{
   if(b.kind==='wiki'||(b.kind==='gut'&&b.txt)){const parts=await bookParts(b,(i,n)=>pr(i/n*100));S.dl[id]={kind:'text',at:Date.now(),parts:parts.length,size:JSON.stringify(parts).length};toast('حُفظ الكتاب للقراءة بدون إنترنت ✓')}
-  else if(b.kind==='ia'){pr(10);const m=await getJSON(`https://archive.org/metadata/${enc(b.ref)}`,20000);const pdfs=(m.files||[]).filter(f=>/\.pdf$/i.test(f.name)).sort((x,y)=>(+x.size||9e9)-(+y.size||9e9));
-   if(!pdfs.length)throw new Error('nopdf');const f=pdfs[0];if(+f.size>30*1048576)throw new Error('big');pr(30);
+  else if(b.kind==='ia'){pr(10);const m=await(await getVia(`https://archive.org/metadata/${enc(b.ref)}`,20000)).r.json();const pdfs=(m.files||[]).filter(f=>/\.pdf$/i.test(f.name)).sort((x,y)=>(+x.size||9e9)-(+y.size||9e9));
+   if(!pdfs.length)throw new Error('nopdf');const f=pdfs[0];if(+f.size>60*1048576)throw new Error('big');pr(30);
    const g=await getVia(`https://archive.org/download/${enc(b.ref)}/${f.name.split('/').map(enc).join('/')}`,90000);const blob=await g.r.blob();if(blob.size<1000)throw new Error('bad');
    await IDB.set('pdf:'+id,blob);S.dl[id]={kind:'pdf',at:Date.now(),size:blob.size};toast('حُمّل ملف PDF إلى مكتبتك ✓')}
   else if(b.kind==='link'&&/pdf/i.test((b.ltype||'')+b.link)){const g=await getVia(b.link,90000);const blob=await g.r.blob();await IDB.set('pdf:'+id,blob);S.dl[id]={kind:'pdf',at:Date.now(),size:blob.size};toast('حُمّل ملف PDF ✓')}
   else throw new Error('na');
   pr(100);save();
- }catch(e){toast(e.message==='nopdf'?'هذا الكتاب ما عنده ملف PDF بالمصدر':e.message==='big'?'ملف PDF أكبر من ٣٠ م.ب، افتحه من المصدر':e.message==='na'?'التحميل غير متاح لهذا المصدر':'تعذّر التحميل، حاول مرة ثانية')}
+ }catch(e){toast(e.message==='nopdf'?'هذا الكتاب ما عنده ملف PDF بالمصدر':e.message==='big'?'ملف PDF أكبر من ٦٠ م.ب، افتحه من المصدر':e.message==='na'?'التحميل غير متاح لهذا المصدر':'تعذّر التحميل، حاول مرة ثانية')}
  delete busy[id];if(document.querySelector('#sheet.on'))openBook(id,1);if(tab==='library')render();
 }
 const cssId=id=>id.replace(/[^a-z0-9]/gi,'_');

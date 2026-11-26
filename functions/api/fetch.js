@@ -3,9 +3,11 @@
 const BLOCK = ['welib', 'annas-archive', 'annas-', 'libgen', 'library.lol', 'z-lib', 'zlib', '1lib', 'pdfdrive', 'sci-hub', 'b-ok', 'singlelogin'];
 const MAX = 30 * 1024 * 1024;
 const CORS = { 'access-control-allow-origin': '*', 'access-control-expose-headers': 'x-final-url' };
-const err = (msg, status) => new Response(JSON.stringify({ error: msg }), { status, headers: { ...CORS, 'content-type': 'application/json; charset=utf-8' } });
+let RAW = false;
+const err = (msg, status) => RAW ? new Response(`ERR ${status} ${msg}`, { status: 200, headers: { ...CORS, 'content-type': 'text/plain' } }) : new Response(JSON.stringify({ error: msg }), { status, headers: { ...CORS, 'content-type': 'application/json; charset=utf-8' } });
 
 export async function onRequestGet({ request }) {
+  RAW = new URL(request.url).searchParams.get('raw') === '1';
   const raw = new URL(request.url).searchParams.get('url');
   if (!raw) return err('missing url', 400);
   let target;
@@ -24,11 +26,11 @@ export async function onRequestGet({ request }) {
       },
       cf: { cacheTtl: 3600, cacheEverything: true }
     });
-  } catch (e) { return err('fetch failed', 502); }
+  } catch (e) { return err('fetch failed: ' + (e && e.message), 502); }
 
   if (BLOCK.some(b => r.url.toLowerCase().includes(b))) return err('blocked source', 403);
   const ct = r.headers.get('content-type') || 'application/octet-stream';
-  if (!/xml|json|html|text|atom|opds/i.test(ct)) return err('unsupported content type', 415);
+  if (!RAW && !/xml|json|html|text|atom|opds/i.test(ct)) return err('unsupported content type: ' + ct, 415);
   if (+(r.headers.get('content-length') || 0) > MAX) return err('too large', 413);
   const body = await r.arrayBuffer();
   if (body.byteLength > MAX) return err('too large', 413);

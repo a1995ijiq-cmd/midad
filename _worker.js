@@ -74,6 +74,40 @@ async function libiq(request) {
   return new Response(JSON.stringify({ ok: true, books: out.filter(Boolean), missing: ids.filter((id, i) => !out[i]) }), { headers: { ...CORS, 'content-type': 'application/json; charset=utf-8', 'cache-control': 'public, max-age=86400' } });
 }
 
+// مجموعات عربية على الإنترنت ACO (جامعة نيويورك وشركاؤها): ~18 ألف كتاب عربي ملكية عامة
+async function aco(request) {
+  const sp = new URL(request.url).searchParams;
+  const q = (sp.get('q') || '').slice(0, 120), page = Math.max(1, parseInt(sp.get('page') || '1', 10) || 1);
+  const H = { 'user-agent': 'Mozilla/5.0 MidadReader/1.0', accept: 'text/html' };
+  const dec = t => t.replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#0?39;/g, "'").replace(/\s+/g, ' ').trim();
+  try {
+    const r = await fetch(`https://aco.dlib.nyu.edu/search?q=${encodeURIComponent(q || 'كتاب')}&rpp=24&page=${page}`, { headers: H, cf: { cacheTtl: 86400, cacheEverything: true } });
+    if (!r.ok) return err('aco ' + r.status, 502);
+    const html = await r.text();
+    const total = +((html.match(/class="numfound">(\d+)/) || [])[1] || 0);
+    const items = html.split('class="item flexrow"').slice(1).map(c => {
+      const id = (c.match(/\/book\/([a-z0-9_]+)\/1/i) || [])[1];
+      if (!id) return null;
+      const tl = dec((c.match(/class="md_title"[^>]*>\s*<a[^>]*>([\s\S]*?)<\/a>/) || [])[1] || '');
+      const au = dec((c.match(/class="md_author"[^>]*>([\s\S]*?)<\/a>/) || [])[1] || '').replace(/,?\s*(author|editor|translator)\.?$/i, '').replace(/,\s*\d{3,4}-?\d{0,4}\.?$/, '');
+      const yr = ((c.match(/Date of Publication[\s\S]{0,200}?(\d{4})/i) || c.match(/md_date[^>]*>[^<]*?(\d{4})/) || [])[1]) || '';
+      return { id, tl, a: au, year: yr };
+    }).filter(Boolean);
+    // العنوان العربي من صفحة كل كتاب (og:title)
+    await Promise.all(items.map(async it => {
+      try {
+        const b = await fetch(`https://aco.dlib.nyu.edu/book/${it.id}/1?lang=ar`, { headers: H, cf: { cacheTtl: 2592000, cacheEverything: true } });
+        if (!b.ok) return;
+        const t = await b.text();
+        const og = (t.match(/property="og:title"\s+content="([^"]+)"/) || t.match(/<title>([^<]+)<\/title>/) || [])[1];
+        if (og && /[؀-ۿ]/.test(og)) it.t = dec(og);
+      } catch (e) {}
+    }));
+    const books = items.map(it => ({ id: it.id, t: it.t || it.tl, tl: it.tl, a: it.a, year: it.year }));
+    return new Response(JSON.stringify({ ok: true, total, page, books }), { headers: { ...CORS, 'content-type': 'application/json; charset=utf-8', 'cache-control': 'public, max-age=86400' } });
+  } catch (e) { return err('aco failed', 502); }
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -83,6 +117,7 @@ export default {
       return new Response('method not allowed', { status: 405 });
     }
     if (url.pathname.replace(/\/$/, '') === '/api/libiq') return libiq(request);
+    if (url.pathname.replace(/\/$/, '') === '/api/aco') return aco(request);
     if (url.pathname === '/api/health') return new Response(JSON.stringify({ ok: true, server: 'midad' }), { headers: { 'content-type': 'application/json', 'access-control-allow-origin': '*' } });
     return env.ASSETS.fetch(request);
   }

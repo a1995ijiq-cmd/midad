@@ -118,6 +118,7 @@ export default {
     }
     if (url.pathname.replace(/\/$/, '') === '/api/libiq') return libiq(request);
     if (url.pathname.replace(/\/$/, '') === '/api/aco') return aco(request);
+    if (url.pathname.startsWith('/api/r/')) { const u = new URL(request.url); u.pathname = '/api/fetch'; u.search = '?raw=1&u64=' + url.pathname.slice(7); return onRequestGet({ request: new Request(u.toString()) }); }
     if (url.pathname === '/api/health') return new Response(JSON.stringify({ ok: true, server: 'midad' }), { headers: { 'content-type': 'application/json', 'access-control-allow-origin': '*' } });
     return env.ASSETS.fetch(request);
   }

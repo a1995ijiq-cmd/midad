@@ -32,6 +32,10 @@ async function onRequestGet({ request }) {
   const body = await r.arrayBuffer();
   if (body.byteLength > MAX) return err('too large', 413);
 
+  if (new URL(request.url).searchParams.get('raw') === '1') {
+    const head = `HTTP ${r.status}\nfinal-url: ${r.url}\ncontent-type: ${ct}\n\n`;
+    return new Response(head + new TextDecoder().decode(body), { status: 200, headers: { ...CORS, 'content-type': 'text/plain; charset=utf-8', 'cache-control': 'no-store' } });
+  }
   return new Response(body, {
     status: r.status,
     headers: { ...CORS, 'content-type': new URL(request.url).searchParams.get('raw') === '1' ? 'text/plain; charset=utf-8' : ct, 'cache-control': 'public, max-age=3600', 'x-final-url': r.url }

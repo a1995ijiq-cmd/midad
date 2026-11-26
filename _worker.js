@@ -100,7 +100,7 @@ async function aco(request) {
         if (!b.ok) return;
         const t = await b.text();
         const og = (t.match(/property="og:title"\s+content="([^"]+)"/) || t.match(/<title>([^<]+)<\/title>/) || [])[1];
-        if (og && /[؀-ۿ]/.test(og)) it.t = dec(og);
+        if (og && /[؀-ۿ]/.test(og)) it.t = dec(og).replace(/[\s:\/;,،]+$/, '');
       } catch (e) {}
     }));
     const books = items.map(it => ({ id: it.id, t: it.t || it.tl, tl: it.tl, a: it.a, year: it.year }));

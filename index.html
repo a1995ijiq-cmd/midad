@@ -1408,7 +1408,7 @@ function openFrame(b){
  const e=S.lib[b.id];e.pages=0;save();
  if(!src){$('#frame').innerHTML=`<div class="lstate" style="color:#555"><b>لا يوجد رابط قراءة لهذا الكتاب</b></div>`;return}
  if(b.kind==='link'&&/epub/i.test(b.ltype||src)){$('#frame').innerHTML=`<div class="lstate" style="color:#555"><b>هذا الكتاب بصيغة EPUB</b><span>افتحه بتطبيق الكتب في جهازك.</span><a class="btn" href="${esc(src)}" target="_blank" rel="noopener">فتح / تحميل ↗</a></div>`;return}
- $('#frame').innerHTML=`<iframe src="${esc(src)}" allow="fullscreen" referrerpolicy="no-referrer-when-downgrade" title="${esc(b.t)}"></iframe><div class="fbar"><span style="flex:1">إذا لم يظهر الكتاب، افتحه من المصدر مباشرة.</span><a href="${esc(extUrl(b))}" target="_blank" rel="noopener">فتح ↗</a><button aria-label="إخفاء" onclick="this.parentNode.remove()">✕</button></div>`;
+ $('#frame').innerHTML=`<iframe src="${esc(src)}" allow="fullscreen" referrerpolicy="no-referrer-when-downgrade" title="${esc(b.t)}"></iframe><div class="fbar"><span style="flex:1">إذا لم يظهر الكتاب، افتحه من المصدر مباشرة.</span>${b.kind==='aco'?`<button data-acopdf="${esc(b.id)}" style="font-weight:700;color:var(--gold)">PDF ⤓</button>`:''}<a href="${esc(extUrl(b))}" target="_blank" rel="noopener">فتح ↗</a><button aria-label="إخفاء" onclick="this.parentNode.remove()">✕</button></div>`;
 }
 function applyR(){
  const r=$('#reader'),s=S.set;r.dataset.t=s.theme;
@@ -1498,6 +1498,7 @@ document.addEventListener('click',async ev=>{
  if(d.qa){quranAyah(+d.qa,d.k);return}
  if(d.qt){S.quran.tid=+d.qt;save();document.querySelectorAll('[data-qt]').forEach(x=>x.classList.toggle('on',x===t));loadTafsir(d.qk);return}
  if(d.qr){S.quran.rid=+d.qr;S.quran.cur=0;save();$('#rmodal').classList.remove('on');$('#rmta').style.display='';$('[data-act=rmsave]').style.display='';const qb=$('#qtaf');if(qb)qb.remove();const au=$('#qaudio');if(au)au.pause();quranPlay();return}
+ if(d.acopdf){const id=d.acopdf;if(S.dl[id]){openPDF(id);return}toast('جارٍ تحميل الكتاب PDF…');downloadBook(id).then(()=>{if(S.dl[id]&&R&&R.id===id)openPDF(id)});return}
  if(d.dl){downloadBook(d.dl);return}
  if(d.dlx){removeDownload(d.dlx);return}
  if(d.pdfx){exportPDF(d.pdfx);return}

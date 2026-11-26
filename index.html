@@ -1330,7 +1330,7 @@ async function downloadBook(id){
    const stem=n=>n.replace(/\.pdf$/i,'').replace(/_text$/i,'');const byStem={};pdfs.forEach(f=>{const k=stem(f.name);if(!byStem[k]||(f.format==='Text PDF'&&byStem[k].format!=='Text PDF'))byStem[k]=f});
    let vols=Object.values(byStem).map((f,k)=>({f,no:volNo(f.name),k})).sort((a,c)=>a.no-c.no||a.k-c.k);if(vols.length>12)vols=vols.slice(0,12);
    const tot=vols.reduce((a,v)=>a+(+v.f.size||0),0)||1;let base=0,out=[];pr(2,'بدأ التنزيل…');
-   for(let k=0;k<vols.length;k++){const f=vols[k].f,lbl=vols.length>1?(vols[k].no<999?`الجزء ${ar(vols[k].no)}`:`الملف ${ar(k+1)}`):'';
+   for(let k=0;k<vols.length;k++){const f=vols[k].f,lbl=vols.length>1?(vols[k].no===0||(/cover|غلاف/i.test(f.name))?'الغلاف':vols[k].no<999?`الجزء ${ar(vols[k].no)}`:`الملف ${ar(k+1)}`):'';
     const blob=await fetchProg(`https://archive.org/download/${enc(b.ref)}/${f.name.split('/').map(enc).join('/')}`,(g,t)=>pr(Math.max(2,Math.min(99,(base+g)/tot*100)),`${lbl?lbl+' · ':''}${fmtSize(base+g)} من ${fmtSize(tot)}`));
     if(blob.size<1000)throw new Error('bad');await IDB.set(k?`pdf:${id}:${k}`:'pdf:'+id,blob);base+=+f.size||blob.size;out.push({l:lbl||'الكتاب',size:blob.size})}
    S.dl[id]={kind:'pdf',at:Date.now(),size:out.reduce((a,v)=>a+v.size,0),vols:out.length>1?out:undefined};toast(out.length>1?`حُمّلت ${ar(out.length)} أجزاء إلى مكتبتك ✓`:'حُمّل ملف PDF إلى مكتبتك ✓')}
@@ -1401,7 +1401,7 @@ async function exportPDF(id){
 /* ---------- عارض PDF داخل التطبيق (pdf.js) ---------- */
 let pdfIO=null;
 async function openPDF(id,vk){
- vk=+vk||0;const b=S.books[id]||getB(id);const vols=(S.dl[id]||{}).vols;const blob=await IDB.get(vk?`pdf:${id}:${vk}`:'pdf:'+id).catch(()=>null);if(!blob){toast('ملف PDF غير موجود');return}
+ const b=S.books[id]||getB(id);const vols=(S.dl[id]||{}).vols;if(vk==null&&vols&&vols.length>1&&vols[0].l==='الغلاف')vk=1;vk=+vk||0;const blob=await IDB.get(vk?`pdf:${id}:${vk}`:'pdf:'+id).catch(()=>null);if(!blob){toast('ملف PDF غير موجود');return}
  closeSheet();R={id,b,pdf:true,parts:[],pages:null};ensureEntry(b);
  const rd=$('#reader');rd.classList.add('fr','on');applyR();rStart=Date.now();$('#rtitle').textContent=b.t;$('#rext').href=extUrl(b);
  $('#frame').innerHTML='<div class="pdfv" id="pdfv"><div class="lstate" style="color:#eee"><span class="spin">◌</span><b style="color:#fff">جارٍ فتح الملف…</b></div></div><div class="pdfbar" id="pdfbar"><span id="pdfpos"></span>'+(vols?`<select id="pdfvol" aria-label="اختر الجزء">${vols.map((v,k)=>`<option value="${k}" ${k===vk?'selected':''}>${esc(v.l)}</option>`).join('')}</select>`:'')+'</div>';
@@ -1596,6 +1596,7 @@ function lstate(html){$('#page').innerHTML=`<div class="lstate">${html}</div>`}
 async function openReader(id,jump){
  const b=getB(id);if(!b)return;
  if(S.dl[id]&&S.dl[id].kind==='pages'&&!jump){openPages(id);return}
+ if(S.dl[id]&&S.dl[id].kind==='pdf'&&b.kind==='ia'&&!S.dl[id].vols&&S.dl[id].size<1200000){await removeDownload(id);toast('التنزيل السابق كان ناقصاً (الغلاف فقط) — نزّله من جديد')}
  if(S.dl[id]&&S.dl[id].kind==='pdf'&&!jump){openPDF(id);return}
  ensureEntry(b);closeSheet();
  const e=S.lib[id];if(jump){e.part=jump.part;e.p=jump.p}
@@ -1689,7 +1690,7 @@ async function turn(d){
  e.p=n;e.last=Date.now();if(d>0)S.stat.pages=(S.stat.pages||0)+1;save();drawPage(d);if(R.lazy)prefetchTr(n);
 }
 function stopTTS(){try{speechSynthesis.cancel()}catch(e){}$('#tts').classList.remove('on')}
-function closeReader(){
+function closeReader(){setTimeout(()=>{try{if(window.__pendingSW)location.reload()}catch(e){}},400);
  stopTTS();try{if(R&&R.audio)R.audio.pause();const qa=$('#qaudio');if(qa)qa.pause()}catch(e){}
  $('#rmta').style.display='';$('[data-act=rmsave]').style.display='';{const qb=$('#qtaf');if(qb)qb.remove()}
  const mins=Math.max(1,Math.round((Date.now()-rStart)/60000));
@@ -1846,7 +1847,14 @@ document.addEventListener('keydown',e=>{if(!$('#reader').classList.contains('on'
 {let lastY=0;const v=$('#view'),nv=$('#nav');v.addEventListener('scroll',()=>{const y=v.scrollTop;if(y>lastY+6&&y>90)nv.classList.add('mini');else if(y<lastY-6||y<40)nv.classList.remove('mini');lastY=y},{passive:true})}
 render();
 setTimeout(()=>$('#splash').classList.add('off'),1000);
-if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
+if('serviceWorker' in navigator&&location.protocol.startsWith('http')){
+ const hadCtl=!!navigator.serviceWorker.controller;let reloading=false,pendingReload=false;
+ const doReload=()=>{if(reloading)return;if($('#reader.on')||Object.keys(dlProg||{}).length){pendingReload=true;window.__pendingSW=!Object.keys(dlProg||{}).length;return}reloading=true;location.reload()};
+ navigator.serviceWorker.register('sw.js').then(reg=>{
+  /* تحديث تلقائي: يفحص عند الرجوع للتطبيق وكل ٣٠ دقيقة */
+  const chk=()=>reg.update().catch(()=>{});document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){chk();if(pendingReload)doReload()}});setInterval(chk,30*60*1000)}).catch(()=>{});
+ navigator.serviceWorker.addEventListener('controllerchange',()=>{if(hadCtl)doReload()});
+}
 }
 </script>
 </body>

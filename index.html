@@ -417,7 +417,8 @@ const BUILTIN={
  wiki:{n:'ويكي مصدر العربية',u:'ar.wikisource.org',type:'MediaWiki API',c:'#22566b',lic:'ملكية عامة',hosts:['wikisource.org']},
  ia:{n:'أرشيف الإنترنت',u:'archive.org',type:'Advanced Search API',c:'#1f4e6b',lic:'متاح للقراءة العامة',hosts:['archive.org']},
  ol:{n:'Open Library',u:'openlibrary.org',type:'Search API',c:'#7a2e4f',lic:'نسخ عامة فقط',hosts:['openlibrary.org']},
- gut:{n:'Project Gutenberg',u:'gutendex.com',type:'Gutendex API',c:'#3d3d5c',lic:'ملكية عامة',hosts:['gutenberg.org','gutendex.com']}};
+ gut:{n:'Project Gutenberg',u:'gutendex.com',type:'Gutendex API',c:'#3d3d5c',lic:'ملكية عامة',hosts:['gutenberg.org','gutendex.com']},
+ libiq:{n:'المكتبة الرقمية العراقية',u:'dl.lib.iq',type:'lib.iq API',c:'#1f6b8a',lic:'منشورة للعامة من المكتبة (العتبة الحسينية المقدسة)',hosts:['lib.iq']}};
 const BLOCK=['welib','annas-archive','annas-','libgen','library.lol','z-lib','zlib','1lib','pdfdrive','sci-hub','b-ok','singlelogin'];
 const SUGG=[['https://standardebooks.org/feeds/opds','Standard Ebooks (OPDS)'],['https://m.gutenberg.org/ebooks.opds/','Gutenberg OPDS'],['https://bookserver.archive.org/catalog/','أرشيف الإنترنت OPDS']];
 
@@ -440,13 +441,27 @@ const A={
    const j=await getJSON(`https://gutendex.com/books/?${p.join('&')}`);
    const l=(j.results||[]).map(r=>{const f=r.formats||{};return mkB({src:'gut',key:String(r.id),t:r.title,a:(r.authors[0]||{}).name||'',lang:(r.languages||[]).includes('ar')?'ar':(isAr(r.title)?'ar':'en'),kind:'gut',ref:r.id,cover:f['image/jpeg']||'',txt:f['text/plain; charset=utf-8']||f['text/plain; charset=us-ascii']||f['text/plain']||'',html:f['text/html']||f['text/html; charset=utf-8']||`https://www.gutenberg.org/ebooks/${r.id}`,d:(r.subjects||[]).slice(0,3).join(' · ')})});l.more=!!j.next;return l}}
 };
-const extUrl=b=>b.kind==='wiki'?`https://ar.wikisource.org/wiki/${enc(b.key)}`:b.kind==='ia'?`https://archive.org/details/${enc(b.ref)}`:b.kind==='gut'?`https://www.gutenberg.org/ebooks/${b.ref}`:(b.link||b.html||'#');
+/* المكتبة الرقمية العراقية: ما عندها بحث عام، فنجمع فهرسها تدريجياً ونحفظه بالجهاز */
+const LQ=()=>{if(!S.libiq)S.libiq={cur:0,end:false,dead:0,b:{}};return S.libiq};
+const lqBook=x=>mkB({src:'libiq',key:String(x.id),t:x.t,a:x.a,lang:isAr(x.t)?'ar':'en',kind:'libiq',ref:x.id,cover:x.cover,year:x.year,d:[x.subj,x.pub].filter(Boolean).join(' · ')});
+async function lqBlock(){const c=LQ();if(c.end)return [];const ids=[];for(let i=1;i<=40;i++)ids.push(c.cur+i);
+ const j=await getJSON('/api/libiq?ids='+ids.join(','),25000);c.cur+=40;
+ (j.books||[]).forEach(x=>{c.b[x.id]={id:x.id,t:x.t,a:x.a,cover:x.cover,year:x.year,subj:(x.subj||'').slice(0,60),pub:(x.pub||'').slice(0,50)}});
+ c.dead=(j.books||[]).length?0:c.dead+1;if(c.dead>=3)c.end=true;save();return j.books||[]}
+A.libiq={async search(q,o){const pg=o.page||1,c=LQ();
+ if(!q){while(c.cur<pg*40&&!c.end)await lqBlock();const l=Object.values(c.b).filter(x=>x.id>(pg-1)*40&&x.id<=pg*40).map(lqBook);l.more=!c.end;return l}
+ const nq=norm(q),hit=x=>norm(x.t+' '+x.a+' '+x.subj).includes(nq);let out=[];
+ if(pg===1)out=Object.values(c.b).filter(hit);
+ for(let k=0;k<3&&!c.end;k++){const got=await lqBlock();got.forEach(x=>{if(hit(x))out.push(c.b[x.id])})}
+ const l=out.map(lqBook);l.more=!c.end;return l}};
+const extUrl=b=>b.kind==='libiq'?`https://reader.lib.iq/?bookId=${b.ref}&page=1&volume=1&section=1&lang=ar`:b.kind==='wiki'?`https://ar.wikisource.org/wiki/${enc(b.key)}`:b.kind==='ia'?`https://archive.org/details/${enc(b.ref)}`:b.kind==='gut'?`https://www.gutenberg.org/ebooks/${b.ref}`:(b.link||b.html||'#');
 
 /* ---------- الحالة ---------- */
 const seed=()=>({lib:{},books:{},hl:[],recent:[],cust:{},stat:{pages:0},
  src:Object.keys(BUILTIN).map(k=>({id:k,on:true,sync:0})),
  set:{fs:20,lh:2,font:'Amiri',theme:'sepia',arFirst:true,goal:20,yearGoal:24},days:{}});
 let S;try{S=JSON.parse(localStorage.getItem('midad4'))||seed()}catch(e){S=seed()}
+if(!S.src.some(s=>s.id==='libiq'))S.src.splice(0,0,{id:'libiq',on:true,sync:0});
 const save=()=>{try{localStorage.setItem('midad4',JSON.stringify(S))}catch(e){try{S.cust={};localStorage.setItem('midad4',JSON.stringify(S))}catch(_){}}};
 const srcMeta=s=>BUILTIN[s.id]?{...BUILTIN[s.id],...s}:s;
 const srcOf=id=>{const s=S.src.find(x=>x.id===id);return s&&srcMeta(s)};
@@ -502,11 +517,11 @@ function drawResults(){
 const QUO=[['أَعَزُّ مَكانٍ في الدُنى سَرجُ سابِحٍ','وَخَيرُ جَليسٍ في الزَمانِ كِتابُ','المتنبي'],['عَلى قَدرِ أَهلِ العَزمِ تَأتي العَزائِمُ','وَتَأتي عَلى قَدرِ الكِرامِ المَكارِمُ','المتنبي'],['قُم لِلمُعَلِّمِ وَفِّهِ التَبجيلا','كادَ المُعَلِّمُ أَن يَكونَ رَسولا','أحمد شوقي'],['شَكَوتُ إِلى وَكيعٍ سوءَ حِفظي','فَأَرشَدَني إِلى تَركِ المَعاصي','الإمام الشافعي']];
 let qi=new Date().getDate()%QUO.length;
 /* الأقسام: كل قسم يجمع كتب مرخّصة أو ملكية عامة من أكثر من مصدر */
-const W=(q)=>({src:'wiki',q,o:{}}),I=(q)=>({src:'ia',q,o:{ar:true}}),G=(q,topic)=>({src:'gut',q,o:topic?{topic}:{}}),O=(q)=>({src:'ol',q,o:{}});
+const L=(q)=>({src:'libiq',q,o:{}}),W=(q)=>({src:'wiki',q,o:{}}),I=(q)=>({src:'ia',q,o:{ar:true}}),G=(q,topic)=>({src:'gut',q,o:topic?{topic}:{}}),O=(q)=>({src:'ol',q,o:{}});
 const SECTIONS=[
- {k:'iraq',t:'من أدب العراق',ic:'tree-palm',c:'#1f6b4f',d:'المتنبي، الجاحظ، أبو نواس، الرصافي، الزهاوي…',jobs:[W('الرصافي'),W('الزهاوي'),W('أبو نواس'),W('ديوان المتنبي'),W('الجاحظ'),I('العراق'),I('بغداد تاريخ')]},
+ {k:'iraq',t:'من العراق',ic:'tree-palm',c:'#1f6b4f',d:'المكتبة الرقمية العراقية، والمتنبي، والجاحظ، والرصافي، والزهاوي…',jobs:[L(''),W('الرصافي'),W('الزهاوي'),W('أبو نواس'),W('ديوان المتنبي'),W('الجاحظ'),I('العراق'),I('بغداد تاريخ')]},
  {k:'poetry',t:'الشعر العربي',ic:'feather',c:'#3b2157',d:'دواوين ومعلقات وقصائد',jobs:[W('intitle:ديوان'),W('معلقة'),I('ديوان شعر')]},
- {k:'religion',t:'كتب دينية',ic:'mosque',c:'#2e5a3a',d:'تفسير وحديث وفقه وسيرة',jobs:[W('تفسير'),W('صحيح'),I('تفسير القرآن'),I('السيرة النبوية'),I('فقه')]},
+ {k:'religion',t:'كتب دينية',ic:'mosque',c:'#2e5a3a',d:'تفسير وحديث وفقه وسيرة',jobs:[L('عقائد'),W('تفسير'),W('صحيح'),I('تفسير القرآن'),I('السيرة النبوية'),I('فقه')]},
  {k:'heritage',t:'التراث والأدب',ic:'scroll',c:'#8a5a12',d:'أمهات كتب الأدب العربي',jobs:[W('intitle:كتاب'),W('أدب'),I('الأدب العربي')]},
  {k:'history',t:'تاريخ ورحلات',ic:'globe-hemisphere-east',c:'#1f4e6b',d:'تواريخ ورحلات وجغرافيا',jobs:[W('تاريخ'),W('رحلة'),I('تاريخ الإسلام'),I('رحلة')]},
  {k:'social',t:'اجتماع وفكر',ic:'users-three',c:'#6b3d22',d:'علم الاجتماع والفكر والنهضة',jobs:[W('ابن خلدون'),I('علم الاجتماع'),I('الفكر العربي'),G('','sociology')]},
@@ -585,8 +600,8 @@ function sources(){
  return `<h1>المصادر</h1><p class="mut" style="margin:6px 0 0">مداد يبحث في كل المصادر المفعّلة بنفس الوقت. أضف مكتبة رقمية برابطها، وإذا كانت تسمح بالاتصال المباشر تُجلب كتبها فوراً.</p>
  <button class="addsrc" data-act="addsrc"><i><i class="ph-bold ph-plus"></i></i><span><b>إضافة مصدر جديد</b><br><span class="mut">رابط OPDS أو JSON أو API</span></span></button>
  <h2>المصادر <small>${ar(enabled().length)} نشط</small></h2>
- ${S.src.map(x=>{const s=srcMeta(x);const n=BUILTIN[s.id]?'∞':ar((S.cust[s.id]||[]).length);const wait=s.custom&&(s.wait||!(S.cust[s.id]||[]).length);return `<div class="src"><header><em style="background:${s.c}"><i class="ph-duotone ph-${{wiki:'scroll',ia:'archive',ol:'book-bookmark',gut:'books'}[s.id]||'link'}"></i></em><div style="flex:1"><h4>${esc(s.n)}</h4><div class="u">${esc(s.u)}</div></div><button class="sw ${s.on?'on':''}" data-tog="${s.id}" role="switch" aria-checked="${s.on}" aria-label="تفعيل ${esc(s.n)}"></button></header>
- <footer><span class="live ${!s.on?'off':wait?'wait':''}" id="lv-${s.id}">${!s.on?'متوقف':wait?(s.wait?'غير متصل':'بلا فهرس'):'متصل'}</span><span>·</span><span>${BUILTIN[s.id]?'بحث مباشر':n+' كتاب'}</span><span>·</span><span class="tag" style="margin:0">${esc(s.type)}</span><span class="sp"></span><span id="sy-${s.id}">${ago(s.sync)}</span>
+ ${S.src.map(x=>{const s=srcMeta(x);const n=s.id==='libiq'?ar(Object.keys(LQ().b).length):BUILTIN[s.id]?'∞':ar((S.cust[s.id]||[]).length);const wait=s.custom&&(s.wait||!(S.cust[s.id]||[]).length);return `<div class="src"><header><em style="background:${s.c}"><i class="ph-duotone ph-${{wiki:'scroll',ia:'archive',ol:'book-bookmark',gut:'books',libiq:'tree-palm'}[s.id]||'link'}"></i></em><div style="flex:1"><h4>${esc(s.n)}</h4><div class="u">${esc(s.u)}</div></div><button class="sw ${s.on?'on':''}" data-tog="${s.id}" role="switch" aria-checked="${s.on}" aria-label="تفعيل ${esc(s.n)}"></button></header>
+ <footer><span class="live ${!s.on?'off':wait?'wait':''}" id="lv-${s.id}">${!s.on?'متوقف':wait?(s.wait?'غير متصل':'بلا فهرس'):'متصل'}</span><span>·</span><span>${s.id==='libiq'?n+' كتاب محفوظ':BUILTIN[s.id]?'بحث مباشر':n+' كتاب'}</span><span>·</span><span class="tag" style="margin:0">${esc(s.type)}</span><span class="sp"></span><span id="sy-${s.id}">${ago(s.sync)}</span>
  <button data-sync="${s.id}"><i class="ph-bold ph-arrows-clockwise"></i> فحص</button>${s.custom?`<button data-del="${s.id}" style="color:var(--bad)">حذف</button>`:''}</footer>${wait?`<p class="hint">${s.wait?'تعذّر الوصول للمصدر. اضغط «فحص» للمحاولة مرة ثانية.':'الموقع اشتغل بس ما بيه فهرس كتب يقرأه التطبيق (OPDS أو JSON). جرّب رابط الفهرس بدل الصفحة الرئيسية.'}</p>`:''}</div>`}).join('')}`;
 }
 function profile(){
@@ -642,7 +657,7 @@ function openBook(id,keep){
  const b=getB(id);if(!b)return;const e=S.lib[id],s=srcOf(b.src);
  const sb=(st,l)=>`<button class="chip ${e&&e.s===st?'on':''}" data-shelf="${st}" data-id="${esc(id)}">${l}</button>`;
  const sc=$('#sheet').scrollTop;
- const how=b.kind==='wiki'?'نص كامل داخل قارئ مداد':b.kind==='gut'?'نص كامل، أو صفحة Gutenberg':b.kind==='ia'?'قارئ أرشيف الإنترنت داخل التطبيق':'من المصدر';
+ const how=b.kind==='libiq'?'قارئ المكتبة الرقمية العراقية الرسمي':b.kind==='wiki'?'نص كامل داخل قارئ مداد':b.kind==='gut'?'نص كامل، أو صفحة Gutenberg':b.kind==='ia'?'قارئ أرشيف الإنترنت داخل التطبيق':'من المصدر';
  sheetOn(`<div class="dhead">${cover(b)}<div>${sbadge(b)}<h3>${esc(b.t)}</h3><div class="mut">${esc(b.a)}</div></div></div>
  <div class="meta"><div><b>${b.lang==='ar'?'عربي':'أجنبي'}</b><span>اللغة</span></div><div><b>${b.year?esc(b.year):'—'}</b><span>السنة</span></div><div><b>${e&&e.pages?ar(e.pages):'—'}</b><span>صفحة</span></div><div><b>${e&&e.s==='reading'&&e.pages?ar(pctOf(id))+'٪':'—'}</b><span>التقدم</span></div></div>
  ${b.d?`<p style="margin:0 0 14px">${esc(b.d)}</p>`:''}
@@ -772,7 +787,7 @@ async function openReader(id,jump){
  const rd=$('#reader');rd.classList.remove('fr');$('#frame').innerHTML='';
  $('#rtitle').textContent=b.t;$('#rext').href=extUrl(b);
  applyR();rd.classList.add('on');rStart=Date.now();
- if(b.kind==='ia'||b.kind==='link'||(b.kind==='gut'&&!b.txt)){openFrame(b);return}
+ if(b.kind==='ia'||b.kind==='libiq'||b.kind==='link'||(b.kind==='gut'&&!b.txt)){openFrame(b);return}
  lstate('<span class="spin">◌</span><b>جارٍ تحميل الكتاب…</b>');
  try{
   if(b.kind==='wiki'){
@@ -797,7 +812,7 @@ async function loadPart(i,p){
 }
 function openFrame(b){
  const rd=$('#reader');rd.classList.add('fr');
- const src=b.kind==='ia'?`https://archive.org/embed/${enc(b.ref)}`:b.kind==='gut'?b.html:b.link;
+ const src=b.kind==='libiq'?extUrl(b):b.kind==='ia'?`https://archive.org/embed/${enc(b.ref)}`:b.kind==='gut'?b.html:b.link;
  const e=S.lib[b.id];e.pages=0;save();
  if(!src){$('#frame').innerHTML=`<div class="lstate" style="color:#555"><b>لا يوجد رابط قراءة لهذا الكتاب</b></div>`;return}
  if(b.kind==='link'&&/epub/i.test(b.ltype||src)){$('#frame').innerHTML=`<div class="lstate" style="color:#555"><b>هذا الكتاب بصيغة EPUB</b><span>افتحه بتطبيق الكتب في جهازك.</span><a class="btn" href="${esc(src)}" target="_blank" rel="noopener">فتح / تحميل ↗</a></div>`;return}
@@ -863,7 +878,7 @@ document.addEventListener('click',async ev=>{
  if(d.font){S.set.font=d.font;save();applyR();return}
  if(d.tog){const s=S.src.find(x=>x.id===d.tog);s.on=!s.on;save();shelfCache={};results=[];rstat={};render();toast(s.on?'تم التفعيل':'تم الإيقاف');return}
  if(d.sync){const s=S.src.find(x=>x.id===d.sync);const el=$('#sy-'+s.id);if(el)el.innerHTML='<span class="spin">⟳</span>';
-  try{if(BUILTIN[s.id])await A[s.id].search(s.id==='gut'?'':'كتاب',{});else{const uu=s.u.startsWith('http')?s.u:'https://'+s.u;const g=await getVia(uu);const p=parseFeed(await g.r.text(),'',g.final||uu,s.id);if(!p.books.length&&p.nav.length){const g2=await getVia(p.nav[0]);Object.assign(p,parseFeed(await g2.r.text(),'',g2.final||p.nav[0],s.id))}S.cust[s.id]=p.books;s.wait=false}s.sync=Date.now();toast('المصدر يعمل ✓')}catch(e){if(!BUILTIN[s.id])s.wait=true;toast('تعذّر الاتصال بالمصدر')}save();render();return}
+  try{if(s.id==='libiq')await lqBlock();else if(BUILTIN[s.id])await A[s.id].search(s.id==='gut'?'':'كتاب',{});else{const uu=s.u.startsWith('http')?s.u:'https://'+s.u;const g=await getVia(uu);const p=parseFeed(await g.r.text(),'',g.final||uu,s.id);if(!p.books.length&&p.nav.length){const g2=await getVia(p.nav[0]);Object.assign(p,parseFeed(await g2.r.text(),'',g2.final||p.nav[0],s.id))}S.cust[s.id]=p.books;s.wait=false}s.sync=Date.now();toast('المصدر يعمل ✓')}catch(e){if(!BUILTIN[s.id])s.wait=true;toast('تعذّر الاتصال بالمصدر')}save();render();return}
  if(d.del){S.src=S.src.filter(s=>s.id!==d.del);delete S.cust[d.del];save();render();toast('حُذف المصدر');return}
  if(d.sg){add.u=d.sg;add.n=$('#sn').value;add.ok=$('#sok').checked;add.err='';addSheet();return}
  const a=d.act;

@@ -49,6 +49,25 @@ async function onRequestGet({ request }) {
 
 const onRequestOptions = () => new Response(null, { headers: { ...CORS, 'access-control-allow-methods': 'GET, OPTIONS' } });
 
+// المكتبة الرقمية العراقية (العتبة الحسينية): جلب بيانات عدة كتب بطلب واحد
+async function libiq(request) {
+  const ids = (new URL(request.url).searchParams.get('ids') || '').split(',').map(n => parseInt(n, 10)).filter(n => n > 0).slice(0, 40);
+  if (!ids.length) return err('missing ids', 400);
+  const one = async id => {
+    try {
+      const r = await fetch(`https://api.lib.iq/api/book/getBookMetaData?bookId=${id}`, { headers: { accept: 'application/json', 'user-agent': 'MidadReader/1.0' }, cf: { cacheTtl: 604800, cacheEverything: true } });
+      if (!r.ok) return null;
+      const j = await r.json();
+      const d = j && j.data;
+      if (!j.success || !d || d.IsPublic === false || d.IsActive === false) return null;
+      const subj = Array.isArray(d.Subjects) ? d.Subjects.map(x => x && (x.SubjectName || x.name || x.Title || x)).filter(x => typeof x === 'string').join('، ') : '';
+      return { id, t: d.BookTitle || '', st: d.BookSubtitle || '', a: d.Author || '', lang: d.Language || '', subj: subj || (typeof d.Subject === 'string' ? d.Subject : ''), year: d.PublishYear || '', pub: d.Publisher || '', pages: d.TotalPages || d.page_count || 0, cover: d.imageUrl || '', desc: (d.Description || '').toString().replace(/<[^>]+>/g, ' ').slice(0, 300), rights: d.Rights || '' };
+    } catch (e) { return null; }
+  };
+  const out = await Promise.all(ids.map(one));
+  return new Response(JSON.stringify({ ok: true, books: out.filter(Boolean), missing: ids.filter((id, i) => !out[i]) }), { headers: { ...CORS, 'content-type': 'application/json; charset=utf-8', 'cache-control': 'public, max-age=86400' } });
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -57,6 +76,7 @@ export default {
       if (request.method === 'GET') return onRequestGet({ request });
       return new Response('method not allowed', { status: 405 });
     }
+    if (url.pathname.replace(/\/$/, '') === '/api/libiq') return libiq(request);
     if (url.pathname === '/api/health') return new Response(JSON.stringify({ ok: true, server: 'midad' }), { headers: { 'content-type': 'application/json', 'access-control-allow-origin': '*' } });
     return env.ASSETS.fetch(request);
   }

@@ -445,6 +445,39 @@ html[dir=rtl] .npill{right:auto;left:0}
 .dlpill em{font-style:normal;font-weight:700;font-size:16px;color:var(--gold)}
 .dlpill .bar{position:absolute;bottom:0;right:0;height:4px;background:var(--gold);transition:width .25s}
 .reader.on~.dlpill{bottom:calc(16px + env(safe-area-inset-bottom))}
+
+.avail{margin-top:12px;padding:12px 14px;border-radius:16px;background:linear-gradient(135deg,color-mix(in srgb,var(--gold) 16%,transparent),var(--soft));font-size:14px;display:flex;gap:8px;align-items:flex-start}
+.avail i{font-size:20px;color:var(--gold);flex:none}
+.avail b{color:var(--plum);font-size:16px}
+
+/* القرآن الكريم */
+.qcard{display:flex;align-items:center;gap:14px;width:100%;margin-top:16px;padding:14px 16px;border-radius:20px;text-align:start;color:#fff;background:linear-gradient(135deg,#1f5a3a,#0f3324);box-shadow:0 12px 28px rgb(15 51 36/.3);position:relative;overflow:hidden}
+.qcard::after{content:"";position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48'%3E%3Cpath d='M24 3l5 10 10-5-5 10 10 5-10 5 5 10-10-5-5 10-5-10-10 5 5-10-10-5 10-5-5-10 10 5z' fill='%23c79a2e' fill-opacity='.12'/%3E%3C/svg%3E");pointer-events:none}
+.qcard b{display:block;font:700 20px Amiri}.qcard small{font-size:12px;opacity:.85}.qcard span:nth-child(2){flex:1}
+.qstar{width:46px;height:46px;border-radius:14px;background:rgb(199 154 46/.2);display:grid;place-items:center;font-size:24px;color:var(--gold)}
+.qv{position:absolute;inset:0;overflow-y:auto;background:var(--rbg);color:var(--rink);padding:12px 16px 60px}
+.qcont{display:flex;align-items:center;gap:12px;width:100%;padding:14px;border-radius:16px;background:var(--rline);color:var(--rink);text-align:start}
+.qcont span{flex:1;display:grid;font-size:13px}.qcont b{font:700 18px Amiri}.qcont i:first-child{color:var(--gold);font-size:22px}
+.qlist{margin-top:10px}
+.qrow{display:grid;grid-template-columns:44px 1fr auto;gap:12px;align-items:center;width:100%;padding:12px 4px;border-bottom:1px solid var(--rline);text-align:start;color:var(--rink)}
+.qn{width:38px;height:38px;display:grid;place-items:center;font-size:13px;font-weight:700;color:var(--gold);background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cpath d='M20 2l5 8 9-2-2 9 8 5-8 5 2 9-9-2-5 8-5-8-9 2 2-9-8-5 8-5-2-9 9 2z' fill='none' stroke='%23c79a2e' stroke-width='1.5'/%3E%3C/svg%3E") center/contain no-repeat}
+.qnm{font:700 22px "Amiri Quran",Amiri,serif}
+.qbar{position:sticky;top:-12px;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:8px;margin:-12px -16px 8px;padding:10px 12px;background:var(--rbg);border-bottom:1px solid var(--rline)}
+.qbar b{font:700 18px Amiri}.qbar button{min-height:40px;padding:0 10px;border-radius:12px;background:var(--rline);color:var(--rink);font-size:14px;display:flex;align-items:center;gap:4px}
+.qbar button i{font-size:22px;color:var(--gold)}
+.qhead{display:flex;justify-content:space-between;align-items:center;margin:10px 0;padding:10px 14px;border:2px solid var(--gold);border-radius:14px;background:color-mix(in srgb,var(--gold) 8%,transparent)}
+.qhead h3{margin:0;font:700 24px "Amiri Quran",Amiri,serif}.qhead span{font-size:12px;color:var(--rmute)}
+.qbism{text-align:center;font:30px/2 "Amiri Quran",Amiri,serif;margin:8px 0}
+.qp{font:calc(var(--rs) + 6px)/2.3 "Amiri Quran",Amiri,serif;text-align:justify;margin:0}
+.qa{cursor:pointer;border-radius:8px;transition:background .2s}
+.qa.on{background:color-mix(in srgb,var(--gold) 28%,transparent)}
+.qnum{font-style:normal;color:var(--gold);font-size:.85em;white-space:nowrap}
+.qnav{display:flex;justify-content:space-between;gap:10px;margin-top:22px}
+.qay{font:22px/2 "Amiri Quran",Amiri,serif;margin:0 0 10px;color:var(--plum)}
+.qtafx{max-height:45vh;overflow-y:auto;font:17px/1.9 Amiri,serif;white-space:pre-line;background:var(--bg);border-radius:14px;padding:12px;margin-top:8px}
+.qrecs{max-height:55vh;overflow-y:auto}
+.qrecs button{display:flex;justify-content:space-between;width:100%;padding:12px 6px;border-bottom:1px solid var(--line);min-height:48px;text-align:start}
+.qrecs button.on{color:var(--gold);font-weight:700}.qrecs small{color:var(--mute)}
 </style>
 <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
 </head>
@@ -556,32 +589,32 @@ const A={
      Object.values(lj.query&&lj.query.pages||{}).forEach(pg=>{const n=(pg.links||[]).filter(l=>l.title.startsWith(pg.title+'/')).length;if(n>=2)withParts.add(pg.title)});
      (lj.query&&lj.query.redirects||[]).forEach(r=>{if(withParts.has(r.to))withParts.add(r.from)})}catch(e){}}
    const keep=new Set([...big.map(r=>r.title),...withParts]);
-   const l=all.filter(r=>keep.has(r.title)).map(r=>mkB({src:'wiki',key:r.title,t:r.title,a:'',lang:'ar',kind:'wiki',d:strip(r.snippet).slice(0,240)}));l.more=!!j.continue;return l}},
+   const l=all.filter(r=>keep.has(r.title)).map(r=>mkB({src:'wiki',key:r.title,t:r.title,a:'',lang:'ar',kind:'wiki',d:strip(r.snippet).slice(0,240)}));l.more=!!j.continue;l.total=((j.query||{}).searchinfo||{}).totalhits||0;return l}},
  ia:{async search(q,o){const pg=o.page||1;
-   const qq=`${o.ts&&q?`(title:(${q}) OR subject:(${q}))`:`(${q||'*'})`} AND mediatype:(texts) AND NOT collection:(inlibrary OR printdisabled OR lendinglibrary OR americana_restricted)`+(o.ar?' AND language:(ara OR arabic OR Arabic)':'');
+   const qq=`${o.ts&&q?`(title:(${q}) OR subject:(${q}))`:`(${q||'*'})`} AND mediatype:(${o.media||'texts'}) AND NOT collection:(inlibrary OR printdisabled OR lendinglibrary OR americana_restricted)`+(o.ar?' AND language:(ara OR arabic OR Arabic)':'');
    const j=await getJSON(`https://archive.org/advancedsearch.php?q=${enc(qq)}&fl%5B%5D=identifier&fl%5B%5D=title&fl%5B%5D=creator&fl%5B%5D=year&fl%5B%5D=language&fl%5B%5D=description&rows=30&page=${pg}&sort%5B%5D=downloads+desc&output=json`);
-   const R=j.response||{};const l=(R.docs||[]).filter(d=>d.title&&!/^[a-z_\-]*\d+[a-z0-9_\-]*$/i.test(String(first(d.title)).trim())).map(d=>{const L=[].concat(d.language||[]).join(' ').toLowerCase();return mkB({src:'ia',key:d.identifier,t:first(d.title),a:first(d.creator)||'',year:d.year,lang:/ara|arab/.test(L)||isAr(first(d.title))?'ar':'en',kind:'ia',ref:d.identifier,cover:`https://archive.org/services/img/${enc(d.identifier)}`,d:strip(first(d.description)).slice(0,300)})});l.more=(R.numFound||0)>pg*30;return l}},
+   const R=j.response||{};const l=(R.docs||[]).filter(d=>d.title&&!/^[a-z_\-]*\d+[a-z0-9_\-]*$/i.test(String(first(d.title)).trim())).map(d=>{const L=[].concat(d.language||[]).join(' ').toLowerCase();return mkB({src:'ia',key:d.identifier,t:first(d.title),a:first(d.creator)||'',year:d.year,lang:/ara|arab/.test(L)||isAr(first(d.title))?'ar':'en',kind:'ia',ref:d.identifier,cover:`https://archive.org/services/img/${enc(d.identifier)}`,d:strip(first(d.description)).slice(0,300)})});l.more=(R.numFound||0)>pg*30;l.total=R.numFound||0;return l}},
  ol:{async search(q,o){const pg=o.page||1;
    if(o.subj){const j=await getJSON(`https://openlibrary.org/subjects/${enc(o.subj)}.json?ebooks=true&limit=30&offset=${(pg-1)*30}`);
-    const l=(j.works||[]).filter(w=>w.availability&&w.availability.status==='open'&&(w.ia||w.availability.identifier)).map(w=>{const ia=w.availability.identifier||w.ia;return mkB({src:'ol',key:w.key.replace('/works/',''),t:w.title,a:((w.authors||[])[0]||{}).name||'',year:w.first_publish_year,kind:'ia',ref:ia,cover:w.cover_id?`https://covers.openlibrary.org/b/id/${w.cover_id}-M.jpg`:`https://archive.org/services/img/${enc(ia)}`,d:''})});l.more=(j.work_count||0)>pg*30;return l}
+    const l=(j.works||[]).filter(w=>w.availability&&w.availability.status==='open'&&(w.ia||w.availability.identifier)).map(w=>{const ia=w.availability.identifier||w.ia;return mkB({src:'ol',key:w.key.replace('/works/',''),t:w.title,a:((w.authors||[])[0]||{}).name||'',year:w.first_publish_year,kind:'ia',ref:ia,cover:w.cover_id?`https://covers.openlibrary.org/b/id/${w.cover_id}-M.jpg`:`https://archive.org/services/img/${enc(ia)}`,d:''})});l.more=(j.work_count||0)>pg*30;l.total=j.work_count||0;return l}
    const j=await getJSON(`https://openlibrary.org/search.json?q=${enc((q||'classic')+(o.ar?' language:ara':''))}&fields=key,title,author_name,first_publish_year,cover_i,language,ia,ebook_access&limit=60&page=${pg}`);
-   const docs=j.docs||[];const l=docs.filter(d=>d.ebook_access==='public'&&d.ia&&d.ia.length).map(d=>mkB({src:'ol',key:d.key.replace('/works/',''),t:d.title,a:(d.author_name||[])[0]||'',year:d.first_publish_year,lang:(d.language||[]).includes('ara')||isAr(d.title)?'ar':'en',kind:'ia',ref:d.ia[0],cover:d.cover_i?`https://covers.openlibrary.org/b/id/${d.cover_i}-M.jpg`:`https://archive.org/services/img/${enc(d.ia[0])}`,d:''}));l.more=docs.length===60;return l}},
+   const docs=j.docs||[];const OLT=j.numFound||0;const l=docs.filter(d=>d.ebook_access==='public'&&d.ia&&d.ia.length).map(d=>mkB({src:'ol',key:d.key.replace('/works/',''),t:d.title,a:(d.author_name||[])[0]||'',year:d.first_publish_year,lang:(d.language||[]).includes('ara')||isAr(d.title)?'ar':'en',kind:'ia',ref:d.ia[0],cover:d.cover_i?`https://covers.openlibrary.org/b/id/${d.cover_i}-M.jpg`:`https://archive.org/services/img/${enc(d.ia[0])}`,d:''}));l.more=docs.length===60;l.total=OLT;return l}},
  gut:{async search(q,o){const pg=o.page||1;
    const p=['page='+pg];if(q)p.push('search='+enc(q));if(o.ar)p.push('languages=ar');if(o.topic)p.push('topic='+enc(o.topic));
    const j=await getJSON(`https://gutendex.com/books/?${p.join('&')}`);
-   const l=(j.results||[]).map(r=>{const f=r.formats||{};return mkB({src:'gut',key:String(r.id),t:r.title,a:(r.authors[0]||{}).name||'',lang:(r.languages||[]).includes('ar')?'ar':(isAr(r.title)?'ar':'en'),kind:'gut',ref:r.id,cover:f['image/jpeg']||'',txt:f['text/plain; charset=utf-8']||f['text/plain; charset=us-ascii']||f['text/plain']||'',html:f['text/html']||f['text/html; charset=utf-8']||`https://www.gutenberg.org/ebooks/${r.id}`,d:(r.subjects||[]).slice(0,3).join(' · ')})});l.more=!!j.next;return l}}
+   const l=(j.results||[]).map(r=>{const f=r.formats||{};return mkB({src:'gut',key:String(r.id),t:r.title,a:(r.authors[0]||{}).name||'',lang:(r.languages||[]).includes('ar')?'ar':(isAr(r.title)?'ar':'en'),kind:'gut',ref:r.id,cover:f['image/jpeg']||'',txt:f['text/plain; charset=utf-8']||f['text/plain; charset=us-ascii']||f['text/plain']||'',html:f['text/html']||f['text/html; charset=utf-8']||`https://www.gutenberg.org/ebooks/${r.id}`,d:(r.subjects||[]).slice(0,3).join(' · ')})});l.more=!!j.next;l.total=j.count||0;return l}}
 };
 /* كتب Google المجانية: كتب ملكية عامة أو مجانية بقرار ناشرها */
 A.gb={async search(q,o){const pg=o.page||1;
  const j=await getJSON(`https://www.googleapis.com/books/v1/volumes?q=${enc(q||'subject:literature')}&filter=free-ebooks&printType=books&maxResults=30&startIndex=${(pg-1)*30}${o.ar?'&langRestrict=ar':''}`);
  const l=(j.items||[]).map(it=>{const v=it.volumeInfo||{},ac=it.accessInfo||{};return mkB({src:'gb',key:it.id,t:v.title+(v.subtitle?': '+v.subtitle:''),a:(v.authors||[])[0]||'',year:(v.publishedDate||'').slice(0,4),lang:v.language==='ar'||isAr(v.title)?'ar':'en',kind:'gb',ref:it.id,cover:((v.imageLinks||{}).thumbnail||'').replace('http:','https:'),pdf:(ac.pdf||{}).downloadLink||'',d:strip(v.description||'').slice(0,300)})});
- l.more=(j.totalItems||0)>pg*30&&l.length>0;return l}};
+ l.more=(j.totalItems||0)>pg*30&&l.length>0;l.total=j.totalItems||0;return l}};
 /* StoryWeaver: قصص أطفال مصوّرة بترخيص مفتوح، عربي وإنجليزي */
 A.sw={async search(q,o){const pg=o.page||1;
  const g=await getVia(`https://storyweaver.org.in/api/v1/books-search?page=${pg}&per_page=24${q?'&query='+enc(q):''}&languages[]=${enc(o.lang||'Arabic')}`,20000);const j=await g.r.json();
  const l=(j.data||[]).map(x=>{const js=JSON.stringify(x.coverImage||x.cover_image||x);const cov=(js.match(/https:[^"]+illustration_crops[^"]+size3[^"]+/)||js.match(/https:[^"]+illustration_crops[^"]+/)||[''])[0];
   return mkB({src:'sw',key:String(x.id),t:x.title,a:((x.authors||[])[0]||{}).name||'',lang:(o.lang||'Arabic')==='Arabic'?'ar':'en',kind:'sw',ref:x.slug||x.id,cover:cov,d:strip(x.description||x.synopsis||'').slice(0,240)})});
- const md=j.metadata||{};l.more=(md.hits||0)>pg*24||(md.total_pages||0)>pg;return l}};
+ const md=j.metadata||{};l.more=(md.hits||0)>pg*24||(md.total_pages||0)>pg;l.total=md.hits||0;return l}};
 /* تراث: مكتبة الشاملة (آلاف كتب التراث الإسلامي لكل المذاهب) — البحث بالنص ثم نجمع النتائج حسب الكتاب */
 const TRB='https://api.turath.io';
 A.tr={async search(q,o){const pg=o.page||1;
@@ -659,14 +692,16 @@ function loadMore(tk=stoken){
  curJobs.filter(j=>j.more&&!j.busy).forEach(j=>{
   j.busy=true;j.page++;scount[j.src]=scount[j.src]||0;upd(j.src);
   runJob(j,j.page).then(list=>{if(tk!==stoken)return;j.busy=false;j.more=!!list.more&&list.length>0;
-    const seen=new Set(results.map(b=>norm(b.t)+b.src));list.forEach(b=>{const k=norm(b.t)+b.src;if(!seen.has(k)&&fits(curSec,b,j)){seen.add(k);results.push(b);scount[j.src]++}});upd(j.src);drawResults()})
+    const seen=new Set(results.map(dkey));if(list.total&&j.page===1)j.total=list.total;list.forEach(b=>{const k=dkey(b);if(!seen.has(k)&&fits(curSec,b,j)){seen.add(k);results.push(b);scount[j.src]++}});upd(j.src);drawResults()})
    .catch(()=>{if(tk!==stoken)return;j.busy=false;j.more=false;sfail[j.src]=1;upd(j.src);drawResults()});
  });
  drawResults();
 }
+let moreIO=null;
 function drawResults(){
  const el=$('#res');if(!el)return;
  const pending=Object.values(rstat).some(v=>v==='…');
+ setTimeout(()=>{const mb=el.querySelector('[data-act=more]');if(moreIO)moreIO.disconnect();if(mb&&'IntersectionObserver' in window){moreIO=new IntersectionObserver(en=>{if(en[0].isIntersecting){moreIO.disconnect();loadMore()}},{root:$('#view'),rootMargin:'500px'});moreIO.observe(mb)}},50);
  let r=results.filter(b=>!S.empty[b.id]&&(fLang==='all'||b.lang===fLang)&&(fSrc==='all'||b.src===fSrc));
  r=ordered(r);
  const more=curJobs&&curJobs.some(j=>j.more);
@@ -674,7 +709,8 @@ function drawResults(){
  const ent=Object.entries(rstat),bad=ent.filter(([,v])=>v==='x'||v===0).length;
  const st=`<div class="sstat">${ent.filter(([,v])=>v!=='x'&&v!==0).map(([id,v])=>{const s=srcOf(id);return s?`<span class="${v==='…'?'':'ok'}">${esc(s.n)}: ${v==='…'?'<span class="spin">◌</span>':ar(v)}</span>`:''}).join('')}${bad?`<span>${ar(bad)} مصادر بدون نتائج</span>`:''}</div>`;
  let ni=0;const rc=r.map(b=>{const fresh=!seenCards.has(b.id);seenCards.add(b.id);return card(b,fresh?ni++:null)}).join('');
- el.innerHTML=st+(r.length?`<p class="mut" style="margin:12px 0 0">${ar(r.length)} كتاب</p><div class="grid">${rc}</div>${pending?`<div class="grid">${'<div class="skel-c"></div>'.repeat(3)}</div>`:more?`<button class="btn alt full" style="margin-top:18px" data-act="more"><i class="ph-bold ph-plus-circle"></i> تحميل المزيد</button>`:`<p class="mut" style="text-align:center;margin-top:18px">وصلت لنهاية النتائج</p>`}`:pending?`<div class="grid">${'<div class="skel-c"></div>'.repeat(6)}</div>`:`<div class="empty"><i class="ph-duotone ph-binoculars"></i><b>ما لگينا نتائج</b>جرّب كلمة ثانية، أو فعّل مصادر أكثر، أو جرّب بالإنجليزي</div>`);
+ const tot=curJobs?curJobs.reduce((n,j)=>n+(j.total||0),0):0,nsrc=curJobs?new Set(curJobs.filter(j=>j.total).map(j=>j.src)).size:0;
+ el.innerHTML=st+(curTitle&&tot>100?`<div class="avail"><i class="ph-duotone ph-books"></i> يتوفر بهذا القسم تقريباً <b>${ar(tot)}</b> كتاب من ${ar(nsrc)} مصادر — مرّر للأسفل حتى تتحمّل تلقائياً</div>`:'')+(r.length?`<p class="mut" style="margin:12px 0 0">${ar(r.length)} كتاب معروض بدون تكرار</p><div class="grid">${rc}</div>${pending?`<div class="grid">${'<div class="skel-c"></div>'.repeat(3)}</div>`:more?`<button class="btn alt full" style="margin-top:18px" data-act="more"><i class="ph-bold ph-plus-circle"></i> تحميل المزيد</button>`:`<p class="mut" style="text-align:center;margin-top:18px">وصلت لنهاية النتائج</p>`}`:pending?`<div class="grid">${'<div class="skel-c"></div>'.repeat(6)}</div>`:`<div class="empty"><i class="ph-duotone ph-binoculars"></i><b>ما لگينا نتائج</b>جرّب كلمة ثانية، أو فعّل مصادر أكثر، أو جرّب بالإنجليزي</div>`);
 }
 
 /* ---------- الشاشات ---------- */
@@ -682,55 +718,63 @@ const QUO=[['أَعَزُّ مَكانٍ في الدُنى سَرجُ سابِح
 let qi=new Date().getDate()%QUO.length;
 /* الأقسام: كل قسم يجمع كتب مرخّصة أو ملكية عامة من أكثر من مصدر */
 const L=(q)=>({src:'libiq',q,o:{},tr:1}),W=(q)=>({src:'wiki',q,o:{}}),I=(q)=>({src:'ia',q,o:{ar:true,ts:true}}),IE=(q)=>({src:'ia',q,o:{}}),G=(q,topic)=>({src:'gut',q,o:topic?{topic}:{},tr:topic?1:0}),O=(q)=>({src:'ol',q,o:{}}),OS=(subj)=>({src:'ol',q:subj,o:{subj},tr:1}),GB=(q,ar)=>({src:'gb',q:/:/.test(q)?q:(ar?'intitle:'+q:'subject:'+q),o:{ar:!!ar}}),SW=(q,lang)=>({src:'sw',q,o:{lang},tr:1}),LV=(q)=>({src:'lv',q,o:{},tr:1});
-const T=(q)=>({src:'tr',q,o:{},tr:1});
+const T=(q)=>({src:'tr',q,o:{},tr:1}),IA_A=(q)=>({src:'ia',q,o:{media:'audio',ts:true},tr:1});
 const SECTIONS=[
- {k:'iraq',g:'عام',t:'من العراق',ic:'tree-palm',c:'#1f6b4f',d:'المكتبة الرقمية العراقية، والمتنبي، والجاحظ، والرصافي، والزهاوي…',jobs:[L(''),W('الرصافي'),W('الزهاوي'),W('أبو نواس'),W('ديوان المتنبي'),W('الجاحظ'),I('العراق'),I('بغداد تاريخ'),GB('العراق',1)]},
- {k:'kids',g:'عام',t:'للأطفال',ic:'balloon',c:'#d0662a',d:'قصص مصوّرة عربية وإنجليزية، وحكايات للصغار',jobs:[SW('','Arabic'),SW('','English'),I('قصص الأطفال'),OS('children'),OS('fairy_tales'),G('','children'),GB('قصص أطفال',1)]},
- {k:'audio',g:'عام',t:'كتب صوتية',ic:'headphones',c:'#6b4fa0',d:'استمع لروائع الأدب بأصوات القرّاء',jobs:[LV('')]},
- {k:'poetry',g:'عام',t:'الشعر العربي',ic:'feather',c:'#3b2157',d:'دواوين ومعلقات وقصائد',jobs:[W('intitle:ديوان'),W('معلقة'),I('ديوان شعر'),GB('ديوان',1)]},
- {k:'religion',g:'عام',t:'كتب دينية',ic:'mosque',c:'#2e5a3a',d:'تفسير وحديث وفقه وسيرة',jobs:[L('عقائد'),W('تفسير'),W('صحيح'),I('تفسير القرآن'),I('السيرة النبوية'),I('فقه'),GB('تفسير',1)]},
- {k:'novels',g:'عام',t:'روايات وقصص',ic:'book-open-text',c:'#7a2e4f',d:'روايات وقصص عربية وعالمية',jobs:[I('رواية'),W('قصة'),G('','fiction'),GB('رواية',1),OS('fiction')]},
- {k:'heritage',g:'عام',t:'التراث والأدب',ic:'scroll',c:'#8a5a12',d:'أمهات كتب الأدب العربي',jobs:[W('intitle:كتاب'),W('أدب'),I('الأدب العربي'),GB('أدب عربي',1)]},
- {k:'history',g:'عام',t:'تاريخ ورحلات',ic:'globe-hemisphere-east',c:'#1f4e6b',d:'تواريخ ورحلات وجغرافيا',jobs:[W('تاريخ'),W('رحلة'),I('تاريخ الإسلام'),I('رحلة'),GB('تاريخ',1),OS('history')]},
- {k:'social',g:'عام',t:'اجتماع وفكر',ic:'users-three',c:'#6b3d22',d:'علم الاجتماع والفكر والنهضة',jobs:[W('ابن خلدون'),I('علم الاجتماع'),I('الفكر العربي'),G('','sociology'),OS('sociology')]},
- {k:'psych',g:'عام',t:'علم النفس',ic:'brain',c:'#5a2a6b',d:'النفس والسلوك والأخلاق',jobs:[I('علم النفس'),W('الأخلاق'),G('','psychology'),OS('psychology'),GB('علم النفس',1)]},
- {k:'self',g:'عام',t:'تطوير الذات',ic:'plant',c:'#4f7a3a',d:'العادات والنجاح والتفكير',jobs:[I('تطوير الذات'),OS('self-help'),OS('success'),GB('تنمية بشرية',1)]},
- {k:'philo',g:'عام',t:'فلسفة',ic:'lightbulb',c:'#3d3d5c',d:'فلاسفة العرب والعالم',jobs:[W('فلسفة'),I('فلسفة'),G('','philosophy'),OS('philosophy')]},
- {k:'biog',g:'عام',t:'سير وتراجم',ic:'user-focus',c:'#7a5a2e',d:'حياة العلماء والقادة والأدباء',jobs:[I('سيرة'),W('ترجمة'),OS('biography'),GB('سيرة',1)]},
- {k:'world',g:'عام',t:'الأدب العالمي',ic:'globe',c:'#4a4f6b',d:'روائع الأدب المترجم والعالمي',jobs:[G(''),O('classic literature'),GB('classic novel')]},
- {k:'quran',g:'المكتبة الإسلامية',t:'القرآن وعلومه',ic:'book-open',c:'#1f5a3a',d:'علوم القرآن، التجويد والقراءات، الإعجاز',jobs:[T('علوم القرآن'),T('التجويد'),W('القرآن'),I('علوم القرآن'),I('التجويد'),OS('koran')]},
- {k:'tafsir',g:'المكتبة الإسلامية',t:'التفسير',ic:'book-bookmark',c:'#2a4a3a',d:'تفاسير قديمة وحديثة لكل المذاهب',jobs:[T('تفسير القرآن'),L('تفسير'),W('تفسير'),I('تفسير'),T('الميزان في تفسير القرآن'),T('مجمع البيان')]},
- {k:'hadith',g:'المكتبة الإسلامية',t:'الحديث وشروحه',ic:'scroll',c:'#5a4a1a',d:'الصحاح والسنن والكتب الأربعة وشروحها',jobs:[T('صحيح البخاري'),T('سنن'),T('الكافي للكليني'),T('بحار الأنوار'),W('صحيح'),I('الحديث الشريف'),OS('hadith')]},
- {k:'fiqh_shia',g:'المكتبة الإسلامية',t:'الفقه الشيعي (الجعفري)',ic:'scales',c:'#1f4e5a',d:'فقه الإمامية، الرسائل العملية، الاستدلال',jobs:[L('فقه'),T('فقه الإمامية'),T('جواهر الكلام'),T('العروة الوثقى'),I('رسالة عملية'),I('الفقه الجعفري'),I('منهاج الصالحين'),OS('shiah')]},
- {k:'fiqh_sunni',g:'المكتبة الإسلامية',t:'الفقه على المذاهب الأربعة',ic:'scales',c:'#3a4a1f',d:'الحنفي، المالكي، الشافعي، الحنبلي',jobs:[T('الفقه الحنفي'),T('الفقه المالكي'),T('الفقه الشافعي'),T('الفقه الحنبلي'),T('الفقه على المذاهب الأربعة'),I('الفقه الحنفي'),I('الفقه الشافعي'),OS('islamic_law')]},
+ {k:'iraq',g:'عام',t:'من العراق',ic:'tree-palm',c:'#1f6b4f',d:'المكتبة الرقمية العراقية، والمتنبي، والجاحظ، والرصافي، والزهاوي…',jobs:[L(''),W('الرصافي'),W('الزهاوي'),W('أبو نواس'),W('ديوان المتنبي'),W('الجاحظ'),I('العراق'),I('بغداد'),I('الموصل'),I('البصرة'),T('تاريخ بغداد'),GB('العراق',1)]},
+ {k:'kids',g:'عام',t:'للأطفال',ic:'balloon',c:'#d0662a',d:'قصص مصوّرة عربية وإنجليزية، وحكايات للصغار',jobs:[SW('','Arabic'),SW('','English'),I('قصص الأطفال'),I('حكايات'),OS('children'),OS('fairy_tales'),OS('picture_books'),G('','children'),GB('قصص أطفال',1)]},
+ {k:'audio',g:'عام',t:'كتب صوتية',ic:'headphones',c:'#6b4fa0',d:'استمع لروائع الأدب بأصوات القرّاء',jobs:[LV(''),IA_A('كتاب مسموع'),IA_A('كتب صوتية')]},
+ {k:'poetry',g:'الأدب واللغة',t:'الشعر',ic:'feather',c:'#3b2157',d:'دواوين ومعلقات وقصائد من الجاهلية حتى العصر الحديث',jobs:[W('intitle:ديوان'),W('معلقة'),W('قصيدة'),T('ديوان'),T('شرح المعلقات'),I('ديوان'),I('شعر'),I('الشعر العربي'),GB('ديوان',1),OS('arabic_poetry'),OS('poetry'),G('','poetry')]},
+ {k:'heritage',g:'الأدب واللغة',t:'الأدب',ic:'scroll',c:'#8a5a12',d:'أمهات كتب الأدب العربي والنثر والمقامات',jobs:[W('intitle:كتاب'),W('أدب'),T('الأدب'),T('المقامات'),T('الأغاني'),I('الأدب العربي'),I('أدب'),I('مقامات'),GB('أدب عربي',1),OS('arabic_literature'),O('classic literature')]},
+ {k:'novels',g:'الأدب واللغة',t:'روايات وقصص',ic:'book-open-text',c:'#7a2e4f',d:'روايات وقصص عربية وعالمية',jobs:[I('رواية'),I('قصص'),W('قصة'),G('','fiction'),GB('رواية',1),OS('fiction'),OS('short_stories')]},
+ {k:'lang',g:'الأدب واللغة',t:'اللغة وإعرابها وشرحها',ic:'translate',c:'#5a3a8a',d:'النحو والصرف والإعراب والبلاغة والمعاجم وتعلّم اللغات',jobs:[T('إعراب القرآن'),T('شرح ابن عقيل'),T('النحو'),T('الصرف'),T('البلاغة'),T('لسان العرب'),I('قواعد اللغة العربية'),I('إعراب'),I('النحو'),I('البلاغة'),W('نحو'),OS('arabic_language'),OS('english_language'),I('تعلم اللغة الإنجليزية')]},
+ {k:'callig',g:'الأدب واللغة',t:'الخط العربي',ic:'pen-nib',c:'#a0522d',d:'كراسات الخط، أنواعه (النسخ، الثلث، الرقعة، الديواني) وتاريخه',jobs:[I('الخط العربي'),I('كراسة خط'),I('خط الرقعة'),I('خط النسخ'),I('خط الثلث'),T('الخط'),OS('calligraphy'),OS('arabic_calligraphy'),GB('الخط العربي',1)]},
+ {k:'history',g:'المعرفة والمجتمع',t:'التاريخ',ic:'globe-hemisphere-east',c:'#1f4e6b',d:'تاريخ العرب والإسلام والعالم، والحضارات والرحلات',jobs:[W('تاريخ'),W('رحلة'),T('تاريخ'),T('البداية والنهاية'),T('الكامل في التاريخ'),I('تاريخ'),I('تاريخ الإسلام'),I('الحضارة'),I('رحلة'),GB('تاريخ',1),OS('history'),OS('world_history'),G('','history')]},
+ {k:'politics',g:'المعرفة والمجتمع',t:'السياسة',ic:'bank',c:'#3a3a5a',d:'الفكر السياسي، الأنظمة والدساتير، العلاقات الدولية',jobs:[I('السياسة'),I('الفكر السياسي'),I('العلاقات الدولية'),T('السياسة الشرعية'),T('الأحكام السلطانية'),W('السياسة'),GB('سياسة',1),OS('political_science'),OS('politics_and_government'),G('','politics')]},
+ {k:'philo',g:'المعرفة والمجتمع',t:'الفلسفة',ic:'lightbulb',c:'#3d3d5c',d:'فلاسفة العرب والعالم، المنطق والحكمة',jobs:[W('فلسفة'),T('الفلسفة'),T('المنطق'),I('فلسفة'),I('المنطق'),GB('فلسفة',1),OS('philosophy'),G('','philosophy')]},
+ {k:'social',g:'المعرفة والمجتمع',t:'اجتماع وفكر',ic:'users-three',c:'#6b3d22',d:'علم الاجتماع والفكر والنهضة',jobs:[W('ابن خلدون'),I('علم الاجتماع'),I('الفكر العربي'),G('','sociology'),OS('sociology')]},
+ {k:'psych',g:'المعرفة والمجتمع',t:'علم النفس',ic:'brain',c:'#5a2a6b',d:'النفس والسلوك والأخلاق',jobs:[I('علم النفس'),W('الأخلاق'),G('','psychology'),OS('psychology'),GB('علم النفس',1)]},
+ {k:'self',g:'المعرفة والمجتمع',t:'تطوير الذات',ic:'plant',c:'#4f7a3a',d:'العادات والنجاح والتفكير',jobs:[I('تطوير الذات'),I('التنمية البشرية'),OS('self-help'),OS('success'),GB('تنمية بشرية',1)]},
+ {k:'biog',g:'المعرفة والمجتمع',t:'سير وتراجم',ic:'user-focus',c:'#7a5a2e',d:'حياة العلماء والقادة والأدباء',jobs:[I('سيرة'),W('ترجمة'),T('سير أعلام النبلاء'),T('وفيات الأعيان'),OS('biography'),GB('سيرة',1)]},
+ {k:'law',g:'المعرفة والمجتمع',t:'القانون والحقوق',ic:'gavel',c:'#4a3a2a',d:'القوانين والدساتير وشروحها وحقوق الإنسان',jobs:[I('القانون'),I('الدستور'),I('القانون المدني'),I('حقوق الإنسان'),OS('law'),GB('قانون',1)]},
+ {k:'edu',g:'المعرفة والمجتمع',t:'التربية والتعليم',ic:'chalkboard-teacher',c:'#2e6b6b',d:'طرق التدريس، تربية الأطفال، المناهج',jobs:[I('التربية'),I('طرق التدريس'),I('تربية الأطفال'),OS('education'),OS('teaching'),GB('تربية',1)]},
+ {k:'encyc',g:'المعرفة والمجتمع',t:'معاجم وموسوعات',ic:'books',c:'#5a4a3a',d:'المعاجم اللغوية والموسوعات العامة',jobs:[T('معجم'),T('القاموس المحيط'),I('موسوعة'),I('معجم'),W('معجم'),OS('encyclopedias_and_dictionaries')]},
+ {k:'world',g:'المعرفة والمجتمع',t:'الأدب العالمي',ic:'globe',c:'#4a4f6b',d:'روائع الأدب المترجم والعالمي',jobs:[G(''),O('classic literature'),GB('classic novel')]},
+ {k:'religion',g:'المكتبة الإسلامية',t:'الدين والفقه',ic:'mosque',c:'#2e5a3a',d:'الفقه والعقيدة والحديث والتفسير لكل المذاهب',jobs:[L('عقائد'),T('الفقه'),T('العقيدة'),W('تفسير'),W('صحيح'),I('تفسير القرآن'),I('فقه'),I('السيرة النبوية'),GB('تفسير',1),OS('islam')]},
+ {k:'quran',g:'المكتبة الإسلامية',t:'القرآن: المصاحف والتلاوات والتعليم',ic:'book-open',c:'#1f5a3a',d:'مصاحف بكل الروايات، تلاوات مرتلة ومجودة وتعليمية، والتجويد',jobs:[I('مصحف'),I('المصحف الشريف'),I('مصحف التجويد'),I('رواية ورش'),IA_A('القرآن الكريم'),IA_A('تلاوة'),IA_A('المصحف المعلم'),T('علوم القرآن'),T('التجويد'),T('القراءات'),W('القرآن'),OS('koran')]},
+ {k:'tafsir',g:'المكتبة الإسلامية',t:'التفسير',ic:'book-bookmark',c:'#2a4a3a',d:'تفاسير قديمة وحديثة لكل المذاهب',jobs:[T('تفسير القرآن'),L('تفسير'),W('تفسير'),I('تفسير'),T('الميزان في تفسير القرآن'),T('مجمع البيان'),T('تفسير الطبري'),T('تفسير ابن كثير')]},
+ {k:'hadith',g:'المكتبة الإسلامية',t:'الحديث وشروحه',ic:'scroll',c:'#5a4a1a',d:'الصحاح والسنن والكتب الأربعة وشروحها',jobs:[T('صحيح البخاري'),T('صحيح مسلم'),T('سنن'),T('الكافي للكليني'),T('من لا يحضره الفقيه'),T('بحار الأنوار'),W('صحيح'),I('الحديث الشريف'),OS('hadith')]},
+ {k:'fiqh_shia',g:'المكتبة الإسلامية',t:'الفقه الشيعي (الجعفري)',ic:'scales',c:'#1f4e5a',d:'فقه الإمامية، الرسائل العملية، الاستدلال',jobs:[L('فقه'),T('فقه الإمامية'),T('جواهر الكلام'),T('العروة الوثقى'),T('شرائع الإسلام'),I('رسالة عملية'),I('الفقه الجعفري'),I('منهاج الصالحين'),OS('shiah')]},
+ {k:'fiqh_sunni',g:'المكتبة الإسلامية',t:'الفقه على المذاهب الأربعة',ic:'scales',c:'#3a4a1f',d:'الحنفي، المالكي، الشافعي، الحنبلي',jobs:[T('الفقه الحنفي'),T('الفقه المالكي'),T('الفقه الشافعي'),T('الفقه الحنبلي'),T('الفقه على المذاهب الأربعة'),T('المغني'),I('الفقه الحنفي'),I('الفقه الشافعي'),OS('islamic_law')]},
  {k:'fiqh_other',g:'المكتبة الإسلامية',t:'الزيدية والإباضية والمذاهب الأخرى',ic:'users-four',c:'#4a3a5a',d:'فقه وعقائد المذاهب الإسلامية الأخرى',jobs:[T('الزيدية'),T('الإباضية'),I('الزيدية'),I('الإباضية'),I('الظاهرية'),T('المحلى')]},
  {k:'usul',g:'المكتبة الإسلامية',t:'أصول الفقه',ic:'tree-structure',c:'#2e3a5a',d:'أصول الفقه وقواعده عند المذاهب',jobs:[T('أصول الفقه'),L('أصول'),I('أصول الفقه'),T('كفاية الأصول'),T('الرسالة للشافعي')]},
  {k:'aqida',g:'المكتبة الإسلامية',t:'العقيدة وعلم الكلام',ic:'sun',c:'#5a3a1f',d:'التوحيد، الإمامة، علم الكلام والفرق',jobs:[L('عقائد'),T('العقيدة'),T('علم الكلام'),I('علم الكلام'),I('العقائد'),W('عقيدة')]},
  {k:'sira',g:'المكتبة الإسلامية',t:'السيرة والتاريخ الإسلامي',ic:'mosque',c:'#2e5a3a',d:'سيرة النبي وأهل البيت والصحابة والتاريخ',jobs:[T('السيرة النبوية'),T('تاريخ الطبري'),I('السيرة النبوية'),I('أهل البيت'),W('سيرة'),OS('islamic_history')]},
+ {k:'ziyarat',g:'المكتبة الإسلامية',t:'الزيارات والأدعية الشيعية',ic:'hands-praying',c:'#1f4e6b',d:'مفاتيح الجنان، الصحيفة السجادية، زيارة عاشوراء، دعاء كميل، الزيارة الجامعة',jobs:[L('زيارة'),L('دعاء'),I('مفاتيح الجنان'),I('الصحيفة السجادية'),I('زيارة عاشوراء'),I('دعاء كميل'),I('ضياء الصالحين'),I('الزيارة الجامعة'),I('أدعية'),T('مصباح المتهجد'),T('إقبال الأعمال'),T('مفاتيح الجنان'),IA_A('دعاء كميل'),IA_A('زيارة عاشوراء')]},
+ {k:'dua',g:'المكتبة الإسلامية',t:'الأذكار والأدعية',ic:'hands-praying',c:'#3a5a7a',d:'الأذكار وكتب الدعاء العامة',jobs:[T('الأذكار'),T('حصن المسلم'),I('الأذكار'),W('دعاء')]},
  {k:'akhlaq',g:'المكتبة الإسلامية',t:'الأخلاق والتزكية والعرفان',ic:'heart',c:'#7a2e4f',d:'تهذيب النفس، التصوف، العرفان',jobs:[T('الأخلاق'),T('تزكية النفس'),T('التصوف'),L('أخلاق'),I('العرفان'),I('جامع السعادات')]},
- {k:'dua',g:'المكتبة الإسلامية',t:'الأدعية والأذكار والزيارات',ic:'hands-praying',c:'#3a5a7a',d:'مفاتيح الجنان، الصحيفة السجادية، الأذكار',jobs:[L('دعاء'),I('مفاتيح الجنان'),I('الصحيفة السجادية'),T('الأذكار'),T('حصن المسلم'),W('دعاء')]},
- {k:'marja',g:'المكتبة الإسلامية',t:'مراجع وعلماء معاصرون',ic:'graduation-cap',c:'#4a4f6b',d:'مؤلفات المراجع والعلماء المعاصرين من مختلف المذاهب',jobs:[I('السيستاني'),I('الخوئي'),I('محمد باقر الصدر'),I('ابن باز'),I('ابن عثيمين'),I('محمد الغزالي'),I('محمد حسين فضل الله')]},
+ {k:'marja',g:'المكتبة الإسلامية',t:'مراجع وعلماء معاصرون',ic:'graduation-cap',c:'#4a4f6b',d:'مؤلفات المراجع والعلماء المعاصرين من مختلف المذاهب',jobs:[I('السيستاني'),I('الخوئي'),I('محمد باقر الصدر'),I('محمد حسين فضل الله'),I('ابن باز'),I('ابن عثيمين'),I('محمد الغزالي')]},
  {k:'religions',g:'المكتبة الإسلامية',t:'الأديان والمقارنة',ic:'globe-stand',c:'#5a5a3a',d:'مقارنة الأديان والمذاهب والتاريخ الديني',jobs:[I('مقارنة الأديان'),OS('religions'),OS('christianity'),OS('judaism'),G('','religion')]},
- {k:'sports',g:'الرياضة',t:'الرياضة',ic:'trophy',c:'#c79a2e',d:'تاريخ الرياضة وتدريبها وقوانينها',jobs:[I('الرياضة'),I('التربية الرياضية'),OS('sports'),G('','sports'),GB('رياضة',1)]},
- {k:'football',g:'الرياضة',t:'كرة القدم',ic:'soccer-ball',c:'#2e7a3a',d:'تكتيك وتدريب وتاريخ اللعبة',jobs:[I('كرة القدم'),OS('soccer'),GB('كرة القدم',1),GB('football soccer')]},
- {k:'gym',g:'الرياضة',t:'كمال الأجسام واللياقة',ic:'barbell',c:'#8a2e2e',d:'تمارين، تغذية رياضية، وتشريح القوة',jobs:[I('كمال الأجسام'),I('اللياقة البدنية'),OS('bodybuilding'),OS('physical_fitness'),OS('weight_training'),GB('fitness training')]},
+ {k:'sports',g:'الرياضة',t:'الرياضة',ic:'trophy',c:'#c79a2e',d:'تاريخ الرياضة وتدريبها وقوانينها',jobs:[I('الرياضة'),I('التربية الرياضية'),I('التدريب الرياضي'),OS('sports'),G('','sports'),GB('رياضة',1),GB('subject:sports')]},
+ {k:'football',g:'الرياضة',t:'كرة القدم',ic:'soccer-ball',c:'#2e7a3a',d:'تكتيك وتدريب وتاريخ اللعبة',jobs:[I('كرة القدم'),OS('soccer'),GB('كرة القدم',1),GB('subject:soccer')]},
+ {k:'gym',g:'الرياضة',t:'كمال الأجسام واللياقة',ic:'barbell',c:'#8a2e2e',d:'تمارين، تغذية رياضية، وتشريح القوة',jobs:[I('كمال الأجسام'),I('اللياقة البدنية'),OS('bodybuilding'),OS('physical_fitness'),OS('weight_training'),GB('subject:physical fitness')]},
  {k:'martial',g:'الرياضة',t:'الفنون القتالية والملاكمة',ic:'hand-fist',c:'#5a2a2a',d:'كاراتيه، جودو، ملاكمة، مصارعة',jobs:[I('الفنون القتالية'),I('الكاراتيه'),OS('martial_arts'),OS('boxing'),OS('wrestling')]},
- {k:'basket',g:'الرياضة',t:'كرة السلة والطائرة',ic:'basketball',c:'#c0602a',d:'مهارات وخطط اللعب',jobs:[I('كرة السلة'),OS('basketball'),OS('volleyball')]},
+ {k:'basket',g:'الرياضة',t:'كرة السلة والطائرة',ic:'basketball',c:'#c0602a',d:'مهارات وخطط اللعب',jobs:[I('كرة السلة'),I('الكرة الطائرة'),OS('basketball'),OS('volleyball')]},
  {k:'running',g:'الرياضة',t:'الجري وألعاب القوى',ic:'person-simple-run',c:'#2e6b8a',d:'الجري، الماراثون، والعدو',jobs:[I('ألعاب القوى'),OS('running'),OS('track_and_field'),OS('marathon_running')]},
  {k:'swim',g:'الرياضة',t:'السباحة والرياضات المائية',ic:'swimming-pool',c:'#1f6b9a',d:'تعلّم السباحة والغوص',jobs:[I('السباحة'),OS('swimming'),OS('diving')]},
  {k:'chess',g:'الرياضة',t:'الشطرنج',ic:'crown-simple',c:'#3a3a3a',d:'افتتاحيات وخطط ومباريات',jobs:[I('الشطرنج'),OS('chess'),G('chess')]},
  {k:'tennis',g:'الرياضة',t:'التنس والريشة',ic:'tennis-ball',c:'#7a8a2e',d:'تنس الطاولة والأرضي والريشة',jobs:[OS('tennis'),OS('table_tennis'),OS('badminton')]},
  {k:'horse',g:'الرياضة',t:'الفروسية والرماية',ic:'horse',c:'#6b4a2e',d:'الخيل والفروسية والرماية',jobs:[I('الفروسية'),I('الخيل'),OS('horsemanship'),OS('archery')]},
- {k:'science',g:'العلوم والمهارات',t:'علوم وطب',ic:'flask',c:'#22566b',d:'تراث علمي وعلوم حديثة',jobs:[W('طب'),I('الطب'),I('علوم'),G('','science'),OS('medicine')]},
- {k:'health',g:'العلوم والمهارات',t:'الصحة والتغذية',ic:'heartbeat',c:'#a03a4a',d:'تغذية، أمراض، وطب وقائي',jobs:[I('التغذية'),I('الصحة'),OS('nutrition'),OS('health'),GB('تغذية',1)]},
- {k:'tech',g:'العلوم والمهارات',t:'حاسوب وبرمجة',ic:'code',c:'#2a3a5a',d:'برمجة، شبكات، وذكاء اصطناعي',jobs:[I('البرمجة'),I('الحاسوب'),OS('computers'),OS('programming_languages'),GB('programming')]},
+ {k:'science',g:'العلوم والمهارات',t:'العلوم',ic:'flask',c:'#22566b',d:'الأحياء والكيمياء والطب وتاريخ العلوم عند العرب',jobs:[W('طب'),T('الطب'),I('العلوم'),I('الكيمياء'),I('الأحياء'),I('الطب'),G('','science'),OS('science'),OS('medicine'),GB('علوم',1)]},
+ {k:'health',g:'العلوم والمهارات',t:'الصحة والتغذية',ic:'heartbeat',c:'#a03a4a',d:'تغذية، أمراض، وطب وقائي',jobs:[I('التغذية'),I('الصحة'),I('الطب البديل'),OS('nutrition'),OS('health'),GB('تغذية',1),GB('subject:health')]},
+ {k:'space',g:'العلوم والمهارات',t:'الفلك',ic:'planet',c:'#2a2a5a',d:'النجوم والكواكب وعلم الفلك والهيئة',jobs:[I('علم الفلك'),I('الفلك'),W('فلك'),T('الهيئة'),T('الفلك'),OS('astronomy'),G('','astronomy'),GB('فلك',1)]},
  {k:'math',g:'العلوم والمهارات',t:'الرياضيات والفيزياء',ic:'math-operations',c:'#3a5a8a',d:'جبر، هندسة، فيزياء',jobs:[I('الرياضيات'),I('الفيزياء'),W('الجبر'),OS('mathematics'),OS('physics')]},
- {k:'space',g:'العلوم والمهارات',t:'الفلك والفضاء',ic:'planet',c:'#2a2a5a',d:'النجوم والكواكب وعلم الفلك',jobs:[I('علم الفلك'),W('فلك'),OS('astronomy')]},
- {k:'econ',g:'العلوم والمهارات',t:'اقتصاد وإدارة',ic:'chart-line-up',c:'#2e6b4f',d:'مال، أعمال، وتسويق',jobs:[I('الاقتصاد'),I('الإدارة'),OS('economics'),OS('business'),GB('اقتصاد',1)]},
- {k:'lang',g:'العلوم والمهارات',t:'اللغات وتعلّمها',ic:'translate',c:'#5a3a8a',d:'نحو عربي، إنجليزي، وقواميس',jobs:[I('قواعد اللغة العربية'),I('تعلم اللغة الإنجليزية'),W('نحو'),OS('english_language'),OS('arabic_language')]},
- {k:'art',g:'العلوم والمهارات',t:'فنون وخط عربي',ic:'palette',c:'#a0522d',d:'رسم، خط عربي، عمارة',jobs:[I('الخط العربي'),I('الفن'),OS('art'),OS('calligraphy'),OS('architecture')]},
+ {k:'tech',g:'العلوم والمهارات',t:'حاسوب وبرمجة',ic:'code',c:'#2a3a5a',d:'برمجة، شبكات، وذكاء اصطناعي',jobs:[I('البرمجة'),I('الحاسوب'),OS('computers'),OS('programming_languages'),GB('programming')]},
+ {k:'eng',g:'العلوم والمهارات',t:'الهندسة والصناعة',ic:'gear',c:'#4a4a4a',d:'هندسة مدنية وكهربائية وميكانيكية',jobs:[I('الهندسة'),I('الكهرباء'),OS('engineering'),GB('subject:engineering')]},
+ {k:'nature',g:'العلوم والمهارات',t:'الطبيعة والزراعة والحيوان',ic:'leaf',c:'#3a6b2e',d:'النبات والحيوان والزراعة والبيئة',jobs:[W('كتاب الحيوان'),I('الزراعة'),I('الحيوان'),I('النبات'),OS('agriculture'),OS('animals'),OS('plants')]},
+ {k:'econ',g:'العلوم والمهارات',t:'اقتصاد وإدارة',ic:'chart-line-up',c:'#2e6b4f',d:'مال، أعمال، تسويق، ومحاسبة',jobs:[I('الاقتصاد'),I('الإدارة'),I('التسويق'),I('المحاسبة'),T('الخراج'),T('الأموال'),OS('economics'),OS('business'),OS('management'),G('','economics'),GB('اقتصاد',1)]},
+ {k:'art',g:'العلوم والمهارات',t:'فنون وعمارة',ic:'palette',c:'#a0522d',d:'رسم، عمارة، زخرفة',jobs:[I('الفن'),I('العمارة'),I('الزخرفة الإسلامية'),OS('art'),OS('architecture')]},
  {k:'cook',g:'العلوم والمهارات',t:'الطبخ',ic:'cooking-pot',c:'#b5651d',d:'أكلات عربية وعالمية',jobs:[I('الطبخ'),I('أكلات'),OS('cooking'),GB('طبخ',1)]},
- {k:'travel',g:'العلوم والمهارات',t:'سفر وجغرافيا',ic:'airplane-tilt',c:'#2a7a8a',d:'بلدان، خرائط، ورحلات',jobs:[I('جغرافيا'),W('رحلة'),OS('travel'),OS('geography')]}];
+ {k:'travel',g:'العلوم والمهارات',t:'سفر وجغرافيا',ic:'airplane-tilt',c:'#2a7a8a',d:'بلدان، خرائط، ورحلات',jobs:[I('جغرافيا'),W('رحلة'),T('معجم البلدان'),OS('travel'),OS('geography')]}];
 /* كلمات كل قسم: الكتاب لازم يحتوي وحدة منها بالعنوان أو الوصف حتى ينحط بالقسم */
 const KW={kids:'طفل|اطفال|قصص|قصه|حكايه|حكايات|صغار|child|kid|fairy|stories|tale|picture book',
  poetry:'ديوان|شعر|قصيد|معلق|ارجوز|poem|poetry|verse',
@@ -764,10 +808,14 @@ const KW={kids:'طفل|اطفال|قصص|قصه|حكايه|حكايات|صغار
  cook:'طبخ|اكل|اكلات|وصفات|مطبخ|حلويات|cook|recipe|food|kitchen|baking',
  travel:'سفر|رحله|جغرافي|بلدان|خرائط|travel|geograph|journey|map|atlas'};
 KW.sports+='|'+['football','gym','martial','basket','running','swim','chess','tennis','horse'].map(k=>KW[k]).join('|');
+Object.assign(KW,{politics:'سياس|حكم|دوله|دستور|ديمقراط|انتخاب|حزب|علاقات دوليه|politic|government|democra|state|international',callig:'خط|كراسه|رقعه|نسخ|ثلث|ديواني|كوفي|calligraph|lettering|script',law:'قانون|دستور|حقوق|تشريع|قضاء|محاكم|law|legal|constitution|rights',edu:'تربيه|تعليم|تدريس|مناهج|مدرس|طفل|educat|teach|school|pedagog',encyc:'معجم|قاموس|موسوعه|لسان|dictionar|encyclop|lexicon',eng:'هندس|كهرباء|ميكانيك|صناع|انشاء|engineer|electric|mechanic|industr',nature:'زراع|حيوان|نبات|بيئه|طيور|اشجار|agricult|animal|plant|nature|bird|garden'});
+KW.science+='|فيزياء|كيمياء|احياء|فلك';KW.space+='|هيئه';KW.lang+='|اعراب|الفيه|شرح ابن عقيل|لسان العرب';KW.history+='|البدايه|الكامل|مروج';KW.econ+='|خراج|اموال';
 const NX={sports:'رياضيات|رياضيه البحته|mathemat',health:'رياضيات',math:'',science:'',psych:'نفسه'};
 SECTIONS.forEach(s=>{if(KW[s.k])s.re=new RegExp(norm(KW[s.k]));if(NX[s.k])s.nx=new RegExp(norm(NX[s.k]))});
 const fits=(sec,b,j)=>{if(!sec||!sec.re||(j&&j.tr))return true;const t=norm([b.t,b.a,b.d].join(' '));return sec.re.test(t)&&!(sec.nx&&sec.nx.test(t))};
 let curSec=null;
+/* مفتاح عدم التكرار: نفس العنوان من مصادر مختلفة = كتاب واحد */
+const dkey=b=>{const t=norm(b.t||'').replace(/[^\p{L}\p{N}]+/gu,'');return t.length>10?t:t+'|'+norm(b.a||'').replace(/[^\p{L}\p{N}]+/gu,'').slice(0,8)};
 const secJobs=sec=>sec.jobs.filter(j=>S.src.some(s=>s.id===j.src&&s.on));
 function loadShelf(sec){
  const el=$('#sh-'+sec.k);if(!el)return;
@@ -775,7 +823,7 @@ function loadShelf(sec){
  const jobs=secJobs(sec);if(!jobs.length){el.closest('section').remove();return}
  Promise.allSettled(jobs.map(j=>runJob(j,1))).then(rs=>{
   const seen=new Set(),out=[];const lists=rs.map((r,k)=>r.status==='fulfilled'?r.value.filter(b=>fits(sec,b,jobs[k])):[]);
-  for(let i=0;i<30;i++)lists.forEach(l=>{const b=l[i];if(b&&!seen.has(norm(b.t))){seen.add(norm(b.t));out.push(b)}});
+  for(let i=0;i<30;i++)lists.forEach(l=>{const b=l[i];if(b&&!seen.has(dkey(b))){seen.add(dkey(b));out.push(b)}});
   shelfCache[sec.k]=out;fillShelf(sec)});
 }
 function fillShelf(sec){const el=$('#sh-'+sec.k);if(!el)return;const l=shelfCache[sec.k].filter(b=>!S.empty[b.id]);l.forEach(b=>MEM[b.id]=b);el.className='rail';el.innerHTML=l.length?ordered(l).slice(0,16).map((b,i)=>card(b,i)).join(''):'<span class="mut">تعذّر التحميل — تأكد من الإنترنت</span>'}
@@ -798,6 +846,7 @@ function home(){
  const n=reading.length||1;
  return `<div class="top"><div class="logo"><i><i class="ph-fill ph-feather"></i></i>مداد</div><span class="mut greet"><i class="ph-duotone ph-${h<12?'sun-horizon':h<18?'sun':'moon-stars'}"></i>${h<12?'صباح الخير':h<18?'نهارك سعيد':'مساء الخير'}</span></div>
  ${installCard()}
+ <button class="qcard" data-act="qopen"><span class="qstar"><i class="ph-fill ph-book-open"></i></span><span><b>القرآن الكريم</b><small>١١٤ سورة · تلاوات مرتّلة ومجوّدة وتعليمية · تفاسير</small></span><i class="ph-bold ph-caret-left"></i></button>
  <button class="sbar" data-tab="explore" data-focus="1"><i class="ph-duotone ph-magnifying-glass"></i>ابحث في ${ar(enabled().length)} مصادر…</button>
  <div class="feat" id="feat">${hero}</div>
  ${n>1?`<div class="dots">${[...Array(Math.min(n,3))].map((_,i)=>`<i class="${i?'':'on'}"></i>`).join('')}</div>`:''}
@@ -1208,6 +1257,70 @@ function ensureEntry(b){
  if(!S.lib[b.id]||S.lib[b.id].s!=='reading'){const o=S.lib[b.id];S.lib[b.id]={...(o||{}),s:'reading',p:o&&o.s!=='done'&&o.p?o.p:1,part:o&&o.s!=='done'?o.part||0:0,marks:o&&o.marks||[]}}
  S.lib[b.id].last=Date.now();save();
 }
+/* ---------- القرآن الكريم: كل السور، تلاوات (منها المعلّم)، وتفاسير ---------- */
+const QB='https://api.quran.com/api/v4';
+const qget=async(path,key)=>{if(key){const c=await IDB.get(key).catch(()=>null);if(c)return c}const g=await getVia(QB+path,20000);const j=await g.r.json();if(key)IDB.set(key,j).catch(()=>{});return j};
+const qd=n=>ary(n);
+let QS=null;
+function openQuranCh(ch){if(R&&R.quran&&$('#qview'))quranSurah(ch);else openQuran(ch)}
+async function openQuran(ch){
+ closeSheet();R={id:'quran',b:{t:'القرآن الكريم',a:'',kind:'quran'},parts:[],pages:null,quran:true};
+ if(!document.querySelector('link[href*="Amiri+Quran"]')){const l=document.createElement('link');l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?family=Amiri+Quran&display=swap';document.head.appendChild(l)}
+ const rd=$('#reader');rd.classList.add('fr','on');applyR();rStart=Date.now();$('#rtitle').textContent='القرآن الكريم';$('#rext').href='https://quran.com/ar';
+ S.quran=S.quran||{ch:0,ay:0,rid:7,tid:0};
+ $('#frame').innerHTML='<div class="qv" id="qview"><div class="lstate"><span class="spin">◌</span><b>جارٍ فتح المصحف…</b></div></div>';
+ try{QS=QS||(await qget('/chapters?language=ar','q:ch')).chapters;if(ch)return quranSurah(ch);quranList()}catch(e){$('#qview').innerHTML=`<div class="lstate"><b>تعذّر فتح المصحف</b><span>تأكد من الإنترنت للمرة الأولى.</span><button class="btn" data-act="qopen">إعادة المحاولة</button></div>`}
+}
+function quranList(f){
+ const v=$('#qview');if(!v)return;const nf=norm(f||'');const q=S.quran;
+ const list=QS.filter(c=>!nf||norm(c.name_arabic+' '+c.id).includes(nf));
+ v.innerHTML=`${!f&&q.ch?`<button class="qcont" data-qch="${q.ch}"><i class="ph-fill ph-bookmark-simple"></i><span>تابع التلاوة<b>سورة ${esc((QS[q.ch-1]||{}).name_arabic||'')}${q.ay?` · الآية ${qd(q.ay)}`:''}</b></span><i class="ph-bold ph-caret-left"></i></button>`:''}
+ <label class="sbar" style="margin-top:12px"><i class="ph-duotone ph-magnifying-glass"></i><input id="qf" type="search" placeholder="ابحث عن سورة…" value="${esc(f||'')}"></label>
+ <div class="qlist">${list.map(c=>`<button class="qrow" data-qch="${c.id}"><span class="qn">${qd(c.id)}</span><span class="qnm">${esc(c.name_arabic)}</span><span class="mut">${c.revelation_place==='makkah'?'مكية':'مدنية'} · ${qd(c.verses_count)} آية</span></button>`).join('')}</div>`;
+ const qf=$('#qf');qf.oninput=()=>{const p=qf.selectionStart;quranList(qf.value);const n=$('#qf');n.focus();try{n.setSelectionRange(p,p)}catch(e){}};
+}
+async function quranSurah(ch){
+ const v=$('#qview');const c=QS[ch-1];if(!c||!v)return;S.quran.ch=ch;save();
+ v.innerHTML=`<div class="qbar"><button data-act="qlist"><i class="ph-bold ph-list-bullets"></i> السور</button><b>سورة ${esc(c.name_arabic)}</b><span style="display:flex;gap:4px"><button data-act="qrec" aria-label="القارئ"><i class="ph-duotone ph-microphone-stage"></i></button><button data-act="qplay" id="qplay" aria-label="استماع"><i class="ph-fill ph-play-circle"></i></button></span></div><div class="qtext"><div class="lstate"><span class="spin">◌</span></div></div>`;
+ try{const j=await qget(`/quran/verses/uthmani?chapter_number=${ch}`,'q:v:'+ch);const vs=j.verses||[];
+  const bism=ch!==1&&ch!==9?'<div class="qbism">بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</div>':'';
+  v.querySelector('.qtext').innerHTML=`<div class="qhead"><span>${c.revelation_place==='makkah'?'مكية':'مدنية'}</span><h3>سورة ${esc(c.name_arabic)}</h3><span>${qd(c.verses_count)} آية</span></div>${bism}<p class="qp">${vs.map(x=>{const n=+x.verse_key.split(':')[1];return `<span class="qa${S.quran.ay===n?' on':''}" data-qa="${n}" data-k="${x.verse_key}">${esc(x.text_uthmani)} <i class="qnum">﴿${qd(n)}﴾</i></span>`}).join(' ')}</p>
+  <div class="qnav">${ch>1?`<button class="btn alt" data-qch="${ch-1}"><i class="ph-bold ph-caret-right"></i> ${esc(QS[ch-2].name_arabic)}</button>`:'<span></span>'}${ch<114?`<button class="btn alt" data-qch="${ch+1}">${esc(QS[ch].name_arabic)} <i class="ph-bold ph-caret-left"></i></button>`:''}</div>`;
+  const on=v.querySelector('.qa.on');if(on)setTimeout(()=>on.scrollIntoView({block:'center'}),80);else v.scrollTop=0;
+ }catch(e){v.querySelector('.qtext').innerHTML='<div class="lstate"><b>تعذّر تحميل السورة</b></div>'}
+}
+async function quranAyah(n,key){
+ document.querySelectorAll('.qa.on').forEach(x=>x.classList.remove('on'));const el=document.querySelector(`.qa[data-qa="${n}"]`);if(el)el.classList.add('on');S.quran.ay=n;save();
+ let ts=[];try{ts=((await qget('/resources/tafsirs?language=ar','q:tafs')).tafsirs||[]).filter(t=>/arab/i.test(t.language_name||''))}catch(e){}
+ if(!S.quran.tid&&ts[0])S.quran.tid=ts[0].id;
+ const txt=el?el.textContent:'';
+ $('#rmt').textContent='الآية '+qd(n)+' — سورة '+((QS[S.quran.ch-1]||{}).name_arabic||'');
+ const m=$('#rmodal');m.classList.add('on');$('#rmta').style.display='none';
+ let box=$('#qtaf');if(!box){box=document.createElement('div');box.id='qtaf';$('#rmta').after(box)}
+ box.innerHTML=`<p class="qay">${esc(txt)}</p>${ts.length?`<div class="chips" style="padding-top:0">${ts.map(t=>`<button class="chip ${t.id===S.quran.tid?'on':''}" data-qt="${t.id}" data-qk="${key}">${esc(t.name)}</button>`).join('')}</div>`:''}<div class="qtafx" id="qtafx"><span class="spin">◌</span></div>`;
+ rmCb=null;$('[data-act=rmsave]').style.display='none';
+ loadTafsir(key);
+}
+async function loadTafsir(key){const x=$('#qtafx');if(!x||!S.quran.tid)return;x.innerHTML='<span class="spin">◌</span>';
+ try{const j=await qget(`/tafsirs/${S.quran.tid}/by_ayah/${key}`,`q:t:${S.quran.tid}:${key}`);x.textContent=strip((j.tafsir||{}).text||'')||'لا يوجد تفسير لهذه الآية بهذا التفسير.'}catch(e){x.textContent='تعذّر تحميل التفسير.'}}
+async function quranReciters(){try{return ((await qget('/resources/recitations?language=ar','q:recs')).recitations||[])}catch(e){return []}}
+async function quranPlay(){
+ const ch=S.quran.ch;if(!ch)return;let au=$('#qaudio');
+ if(au&&!au.paused){au.pause();return}
+ const recs=await quranReciters();
+ if(!au){au=document.createElement('audio');au.id='qaudio';au.preload='none';$('#frame').appendChild(au);
+  au.onplay=()=>{const b=$('#qplay');if(b)b.innerHTML='<i class="ph-fill ph-pause-circle"></i>'};au.onpause=()=>{const b=$('#qplay');if(b)b.innerHTML='<i class="ph-fill ph-play-circle"></i>'};
+  au.onended=()=>{if(S.quran.ch<114){quranSurah(S.quran.ch+1).then(()=>{S.quran.cur=0;quranPlay()})}}}
+ if(S.quran.cur!==ch+':'+S.quran.rid){try{const j=await qget(`/chapter_recitations/${S.quran.rid}/${ch}`);au.src=((j.audio_file||{}).audio_url||'').replace('http:','https:');S.quran.cur=ch+':'+S.quran.rid}catch(e){toast('تعذّر تحميل التلاوة');return}}
+ au.play().catch(()=>toast('اضغط مرة ثانية للتشغيل'));
+ const r=recs.find(x=>x.id===S.quran.rid);if(r)toast('القارئ: '+(r.translated_name&&r.translated_name.name||r.reciter_name)+(r.style?' — '+r.style:''));
+}
+async function quranPickReciter(){
+ const recs=await quranReciters();if(!recs.length){toast('تعذّر تحميل قائمة القرّاء');return}
+ $('#rmt').textContent='اختر القارئ';const m=$('#rmodal');m.classList.add('on');$('#rmta').style.display='none';$('[data-act=rmsave]').style.display='none';
+ let box=$('#qtaf');if(!box){box=document.createElement('div');box.id='qtaf';$('#rmta').after(box)}
+ box.innerHTML=`<div class="qrecs">${recs.map(r=>`<button class="${r.id===S.quran.rid?'on':''}" data-qr="${r.id}"><span>${esc(r.translated_name&&r.translated_name.name||r.reciter_name)}</span><small>${r.style==='Muallim'?'تعليمي (المصحف المعلّم)':r.style==='Mujawwad'?'مجوّد':r.style==='Murattal'?'مرتّل':''}</small></button>`).join('')}</div>`;
+}
 /* ---------- مشغّل الكتب الصوتية ---------- */
 async function openAudio(b){
  const rd=$('#reader');rd.classList.add('fr');const e=S.lib[b.id];e.pages=0;save();
@@ -1318,7 +1431,8 @@ async function turn(d){
 }
 function stopTTS(){try{speechSynthesis.cancel()}catch(e){}$('#tts').classList.remove('on')}
 function closeReader(){
- stopTTS();try{if(R&&R.audio)R.audio.pause()}catch(e){}
+ stopTTS();try{if(R&&R.audio)R.audio.pause();const qa=$('#qaudio');if(qa)qa.pause()}catch(e){}
+ $('#rmta').style.display='';$('[data-act=rmsave]').style.display='';{const qb=$('#qtaf');if(qb)qb.remove()}
  const mins=Math.max(1,Math.round((Date.now()-rStart)/60000));
  S.days[today()]=(S.days[today()]||0)+mins;save();
  hlMode=false;closeAnn();$('#rmodal').classList.remove('on');$('#reader').classList.remove('hlm','imm','idle');$('#hlb').classList.remove('on');if(pdfIO){pdfIO.disconnect();pdfIO=null}try{if(document.fullscreenElement)document.exitFullscreen()}catch(e){}
@@ -1334,7 +1448,7 @@ function toc(){
 
 /* ---------- الأحداث ---------- */
 document.addEventListener('click',async ev=>{
- const t=ev.target.closest('button,[data-act]');if(!t)return;const d=t.dataset;
+ const t=ev.target.closest('button,[data-act],[data-qa]');if(!t)return;const d=t.dataset;
  if(d.tab){buzz();if(d.tab===tab&&t.closest('.nav')){$('#view').scrollTo({top:0,behavior:'smooth'});$('#nav').classList.remove('mini');return}if(d.lang)fLang=d.lang;go(d.tab,d.focus);return}
  if(d.open){openBook(d.open);return}
  if(d.read){openReader(d.read);return}
@@ -1366,6 +1480,10 @@ document.addEventListener('click',async ev=>{
  if(d.ach!=null&&R&&R.audplay){R.audplay(+d.ach,0,true);return}
  if(d.ast&&R&&R.audio){R.audio.currentTime=Math.max(0,R.audio.currentTime+(+d.ast));return}
  if(d.arate!=null&&R&&R.audio){const rs=[1,1.25,1.5,2,.75],k=(rs.indexOf(R.audio.playbackRate)+1)%rs.length;R.audio.playbackRate=rs[k];t.textContent=ar(rs[k])+'×';return}
+ if(d.qch){openQuranCh(+d.qch);return}
+ if(d.qa){quranAyah(+d.qa,d.k);return}
+ if(d.qt){S.quran.tid=+d.qt;save();document.querySelectorAll('[data-qt]').forEach(x=>x.classList.toggle('on',x===t));loadTafsir(d.qk);return}
+ if(d.qr){S.quran.rid=+d.qr;S.quran.cur=0;save();$('#rmodal').classList.remove('on');$('#rmta').style.display='';$('[data-act=rmsave]').style.display='';const qb=$('#qtaf');if(qb)qb.remove();const au=$('#qaudio');if(au)au.pause();quranPlay();return}
  if(d.dl){downloadBook(d.dl);return}
  if(d.dlx){removeDownload(d.dlx);return}
  if(d.pdfx){exportPDF(d.pdfx);return}
@@ -1375,8 +1493,12 @@ document.addEventListener('click',async ev=>{
  if(d.pdfs){sharePDF(d.pdfs);return}
  if(d.annj){const [id,pt,pp]=d.annj.split('|');openReader(id,{part:+pt,p:+pp});return}
  const a=d.act;
+ if(a==='qopen'){openQuran();return}
+ if(a==='qlist'){quranList();$('#qview').scrollTop=0;return}
+ if(a==='qplay'){quranPlay();return}
+ if(a==='qrec'){quranPickReciter();return}
  if(a==='rmsave'){const cb=rmCb;rmCb=null;$('#rmodal').classList.remove('on');if(cb)cb($('#rmta').value);return}
- if(a==='rmcancel'){rmCb=null;$('#rmodal').classList.remove('on');return}
+ if(a==='rmcancel'){rmCb=null;$('#rmodal').classList.remove('on');$('#rmta').style.display='';$('[data-act=rmsave]').style.display='';const qb=$('#qtaf');if(qb)qb.remove();return}
  if(a==='fs'){const rd=$('#reader');const on=!rd.classList.contains('imm');try{if(!on&&document.fullscreenElement)document.exitFullscreen();else if(on&&rd.requestFullscreen)rd.requestFullscreen().catch(()=>{})}catch(e){}rd.classList.toggle('imm',on);immIdle();document.querySelectorAll('.pnl').forEach(x=>x.classList.remove('on'));closeAnn();return}
  if(a==='rdl'){if(R)downloadBook(R.id);$('#rsetp').classList.remove('on');return}
  if(a==='rpdf'){if(R){if(R.b.kind==='wiki'||R.b.kind==='gut')exportPDF(R.id);else downloadBook(R.id)}$('#rsetp').classList.remove('on');return}

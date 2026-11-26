@@ -1425,18 +1425,20 @@ async function openScan(b){
  const id=b.id;closeSheet();R={id,b,pdf:true,parts:[],pages:null};ensureEntry(b);
  const rd=$('#reader');rd.classList.add('fr','on');applyR();rStart=Date.now();$('#rtitle').textContent=b.t;$('#rext').href=extUrl(b);
  $('#frame').innerHTML='<div class="lstate"><div class="spin"></div><p>جارٍ تجهيز صفحات الكتاب…</p></div>';
- let n=b.np||0;
- if(!n){try{const j=await getJSON(`/api/acon?id=${enc(b.ref)}`,20000);n=j.n||0}catch(e){}}
+ const isIA=b.kind==='ia';let n=b.np||0;
+ if(!n){try{if(isIA){const m=await(await getVia(`https://archive.org/metadata/${enc(b.ref)}`,20000)).r.json();n=Math.min(2000,+((m.metadata||{}).imagecount)||0)}else{const j=await getJSON(`/api/acon?id=${enc(b.ref)}`,20000);n=j.n||0}}catch(e){}}
  if(!R||R.id!==id)return;
+ if(isIA&&n<2){openFrame(Object.assign({},b,{noscan:1}));return}
  if(!n){$('#frame').innerHTML=`<div class="lstate"><p>تعذّر جلب صفحات هذا الكتاب الآن.</p><button class="btn" data-acopdf="${esc(id)}">تحميل PDF ⤓</button></div>`;return}
+ const IMG=(i,w)=>isIA?`https://archive.org/download/${enc(b.ref)}/page/n${i-1}_w${w}.jpg`:ACO_IMG(b.ref,i,w);
  b.np=n;S.books[id]=b;const e=S.lib[id];if(e){e.pages=n}save();
- $('#frame').innerHTML=`<div class="pdfv scanv" id="pdfv"></div><div class="scanbar"><span id="scpos">١ / ${ar(n)}</span><input type="range" id="scr" min="1" max="${n}" value="1" dir="rtl" aria-label="انتقال إلى صفحة"><button data-acopdf="${esc(id)}" aria-label="تحميل PDF"><i class="ph-bold ph-download-simple"></i></button></div>`;
+ $('#frame').innerHTML=`<div class="pdfv scanv" id="pdfv"></div><div class="scanbar"><span id="scpos">١ / ${ar(n)}</span><input type="range" id="scr" min="1" max="${n}" value="1" dir="rtl" aria-label="انتقال إلى صفحة"><button ${isIA?`data-dl="${esc(id)}"`:`data-acopdf="${esc(id)}"`} aria-label="تحميل"><i class="ph-bold ph-download-simple"></i></button></div>`;
  const v=$('#pdfv');const frag=document.createDocumentFragment();
  for(let i=1;i<=n;i++){const el=document.createElement('div');el.className='pp';el.dataset.n=i;el.style.aspectRatio='0.69';el.innerHTML=`<span class="pn">${ar(i)}</span>`;frag.appendChild(el)}
  v.appendChild(frag);
  const show=el=>{if(el.dataset.done)return;el.dataset.done=1;const i=+el.dataset.n;const im=new Image();im.decoding='async';im.alt=`صفحة ${i}`;im.referrerPolicy='no-referrer';
   im.onload=()=>{el.style.aspectRatio=(im.naturalWidth/im.naturalHeight)||'';el.classList.add('ok')};im.onerror=()=>{el.dataset.done='';el.innerHTML=`<span class="pn">تعذّر تحميل الصفحة ${ar(i)} — اسحب للمحاولة</span>`};
-  im.src=ACO_IMG(b.ref,i,Math.min(1400,Math.round(innerWidth*(devicePixelRatio||1))));el.appendChild(im)};
+  im.src=IMG(i,isIA?(innerWidth*(devicePixelRatio||1)>900?1200:800):Math.min(1400,Math.round(innerWidth*(devicePixelRatio||1))));el.appendChild(im)};
  let cur=1,lock=0;const pos=$('#scpos'),rng=$('#scr');
  if(pdfIO)pdfIO.disconnect();
  pdfIO=new IntersectionObserver(en=>en.forEach(x=>{if(x.isIntersecting){show(x.target)}}),{root:v,rootMargin:'1400px 0px'});
@@ -1627,7 +1629,7 @@ async function loadPart(i,p){
  if(R.parts.length>1&&i+1<R.parts.length)wikiParse(R.parts[i+1].ref).catch(()=>{});
 }
 function openFrame(b){
- if(b.kind==='aco'){openScan(b);return}
+ if(b.kind==='aco'||(b.kind==='ia'&&b.media!=='audio'&&!b.noscan)){openScan(b);return}
  if(b.kind==='scribd'){/* Scribd يضع تحقّقاً من المتصفح يمنع عرضه داخل التطبيقات على آيفون: يُفتح في موقعه */
   const rd=$('#reader');rd.classList.add('fr');const paid=/book|audiobook/.test(b.stype||'');
   $('#frame').innerHTML=`<div class="swcard">${b.cover?`<img src="${esc(b.cover)}" alt="" style="aspect-ratio:.75">`:cover(b)}<h3>${esc(b.t)}</h3>${b.a?`<div class="mut">${esc(b.a)}</div>`:''}<a class="btn full" href="${esc(b.link)}" target="_blank" rel="noopener"><i class="ph-fill ph-arrow-square-out"></i> افتح المستند في Scribd</a><small class="mut">${paid?'هذا كتاب من مكتبة Scribd المدفوعة ويحتاج اشتراكاً.':'Scribd لا يسمح بعرض مستنداته داخل التطبيقات على آيفون، فيفتح في موقعه أو تطبيقه. المستند محفوظ في مكتبتك للرجوع إليه.'}</small></div>`;return}

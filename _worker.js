@@ -184,6 +184,32 @@ async function shTafsir(url) {
   } catch (e) { return err('fetch failed', 502); }
 }
 
+/* rafed.net (كتب شيعية رقمية): استخراج الفهرس ونص الصفحة من حمولة Next.js */
+function rfDecode(h) {
+  let out = ''; const re = /self\.__next_f\.push\(\[1,"((?:[^"\\]|\\.)*)"\]\)/g; let m;
+  while ((m = re.exec(h))) { try { out += JSON.parse('"' + m[1] + '"') } catch (e) { } }
+  return out || h;
+}
+async function rfPage(b, p) {
+  const r = await fetch(`https://books.rafed.net/view/${b}/page/${p}`, { headers: { 'user-agent': 'Mozilla/5.0 MidadReader/1.0', 'accept-language': 'ar' }, cf: { cacheTtl: 2592000, cacheEverything: true } });
+  if (!r.ok) throw new Error('rafed ' + r.status);
+  const d = rfDecode(await r.text());
+  const idx = []; { const re = /\{"title":"((?:[^"\\]|\\.)*)","page":(\d+)/g; let m; while ((m = re.exec(d))) { try { idx.push([decEnt(JSON.parse('"' + m[1] + '"')), +m[2]]) } catch (e) { } } }
+  let html = ''; { const re = /"(?:content|text|body|html)":"((?:[^"\\]|\\.)*?rfd(?:[^"\\]|\\.)*)"/; const m = d.match(re); if (m) { try { html = JSON.parse('"' + m[1] + '"') } catch (e) { } } }
+  if (!html) { const i = d.indexOf('<p class=rfd'); if (i >= 0) html = d.slice(Math.max(0, d.lastIndexOf('"', i) + 1), d.indexOf('"', i + 20)); }
+  const paras = html.replace(/<br\s*\/?>/gi, '\n').split(/<\/p>|<\/h[1-6]>|<\/div>/i).flatMap(x => decEnt(x.replace(/<[^>]+>/g, '')).split(/\n+/)).map(x => x.replace(/[ \t\r]+/g, ' ').trim()).filter(Boolean);
+  const title = ((d.match(/"book":\{"id":\d+,"title":"((?:[^"\\]|\\.)*)"/) || [])[1] || '');
+  const part = +((d.match(/"part":(\d+)/) || [])[1] || 0);
+  const pagesN = +((d.match(/"page_count":(\d+)/) || d.match(/"pages_count":(\d+)/) || [])[1] || 0);
+  return { title: decEnt(title), part, pagesN, idx, paras };
+}
+async function rafedApi(url) {
+  const b = +url.searchParams.get('b'), p = +url.searchParams.get('p') || 1;
+  if (!(b > 0)) return err('bad params', 400);
+  try { const x = await rfPage(b, p); return new Response(JSON.stringify({ ok: true, b, p, ...x, idx: url.searchParams.get('full') ? x.idx : x.idx.slice(0, 12), nidx: x.idx.length }), { headers: { ...CORS, 'content-type': 'application/json', 'cache-control': 'public, max-age=86400' } }) }
+  catch (e) { return err(String(e.message || e), 502) }
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -195,6 +221,7 @@ export default {
     if (url.pathname.replace(/\/$/, '') === '/api/libiq') return libiq(request);
     if (url.pathname.replace(/\/$/, '') === '/api/aco') return aco(request);
     if (url.pathname.replace(/\/$/, '') === '/api/shtaf') return shTafsir(url);
+    if (url.pathname.replace(/\/$/, '') === '/api/rafed') return rafedApi(url);
     if (url.pathname.replace(/\/$/, '') === '/api/ai') return aiHandler(request, env || {});
     if (url.pathname.replace(/\/$/, '') === '/api/acon') {
       const id = (url.searchParams.get('id') || '').replace(/[^a-z0-9_]/gi, '');

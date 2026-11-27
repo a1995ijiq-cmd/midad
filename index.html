@@ -2555,7 +2555,7 @@ async function aiPanel(out){const p=$('#raip');if(!p)return;
  if(AI_ST===null){p.innerHTML='<div class="lstate"><span class="spin">◌</span></div>';try{AI_ST=(await getJSON('/api/ai',8000)).provider||''}catch(e){AI_ST='x'}}
  const [a,b]=aiRange();const notes=Object.keys((ANN()[R.id])||{}).length;
  p.innerHTML=`<div class="aih"><span class="aiic"><i class="ph-fill ph-sparkle"></i></span><div><b>المساعد الذكي</b><small class="mut">يجيب من نص هذا الكتاب فقط، ويحيل إلى الصفحات</small></div></div>
- ${!AI_ST||AI_ST==='x'?`<div class="ainote"><i class="ph-duotone ph-info"></i><span>${AI_ST==='x'?'تعذّر الاتصال بخادم المساعد.':'المساعد غير مفعّل على الخادم بعد. يحتاج صاحب التطبيق تفعيل Workers AI المجاني أو إضافة مفتاح API في إعدادات Cloudflare.'}</span></div>`:''}
+ ${!AI_ST||AI_ST==='x'?`<div class="ainote"><i class="ph-duotone ph-info"></i><span>${AI_ST==='x'?'تعذّر الاتصال بخادم المساعد.':'المساعد الذكي غير مفعّل بعد على هذا التطبيق.'}</span></div>`:''}
  <div class="aiscope"><button class="${aiScope==='page'?'on':''}" data-aisc="page">هذه الصفحة</button><button class="${aiScope==='chap'?'on':''}" data-aisc="chap">الفصل الحالي</button></div>
  <p class="mut" style="font-size:12px;margin:6px 0 10px">النطاق: ${a===b?`صفحة ${ar(a)}`:`الصفحات ${ar(a)}–${ar(b)}`}</p>
  <div class="aiacts">${AI_ACTS.map(([k,l,ic])=>`<button data-ait="${k}" ${k==='notes'&&!notes?'disabled title="لا توجد ملاحظات أو تظليلات بعد"':''}><i class="ph-duotone ph-${ic}"></i>${l}</button>`).join('')}</div>

@@ -130,7 +130,7 @@ const AI_TASKS = {
 async function aiHandler(request, env) {
   const J = (o, st = 200) => new Response(JSON.stringify(o), { status: st, headers: { ...CORS, 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' } });
   if (request.method === 'OPTIONS') return new Response(null, { headers: { ...CORS, 'access-control-allow-methods': 'POST, OPTIONS', 'access-control-allow-headers': 'content-type' } });
-  if (request.method === 'GET') return J({ ok: true, provider: env.ANTHROPIC_API_KEY ? 'claude' : env.AI ? 'workers-ai' : null });
+  if (request.method === 'GET') return J({ ok: true, provider: env.GEMINI_API_KEY ? 'gemini' : env.ANTHROPIC_API_KEY ? 'claude' : env.AI ? 'workers-ai' : null });
   if (request.method !== 'POST') return J({ error: 'method' }, 405);
   let b; try { b = await request.json(); } catch { return J({ error: 'bad json' }, 400); }
   const task = AI_TASKS[b.task] ? b.task : 'ask';
@@ -148,6 +148,19 @@ async function aiHandler(request, env) {
 - اكتب بالعربية الفصحى المبسّطة، بإيجاز ووضوح، ونسّق بنقاط عند الحاجة. لا تستخدم Markdown معقداً (عناوين قصيرة ونقاط فقط).`;
   const user = `${AI_TASKS[task]}${task === 'ask' ? `\nسؤال القارئ: ${q}` : ''}\n<النص>${text}</النص>`;
   try {
+    /* Gemini (مفتاح مجاني من Google AI Studio) — المفتاح يبقى بإعدادات الخادم فقط */
+    if (env.GEMINI_API_KEY) {
+      const models = [env.GEMINI_MODEL, 'gemini-flash-latest', 'gemini-2.5-flash'].filter(Boolean);
+      let lastErr = '';
+      for (const m of models) {
+        const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent`, { method: 'POST', headers: { 'content-type': 'application/json', 'x-goog-api-key': env.GEMINI_API_KEY },
+          body: JSON.stringify({ systemInstruction: { parts: [{ text: system }] }, contents: [{ role: 'user', parts: [{ text: user }] }], generationConfig: { maxOutputTokens: 1500, temperature: 0.3 } }) });
+        const j = await r.json().catch(() => ({}));
+        if (r.ok) { const ans = ((((j.candidates || [])[0] || {}).content || {}).parts || []).map(x => x.text || '').join('').trim(); if (ans) return J({ ok: true, provider: 'gemini', answer: ans }); lastErr = 'empty'; continue }
+        lastErr = (j.error && j.error.message) || ('HTTP ' + r.status); if (r.status !== 404) break;
+      }
+      if (!env.ANTHROPIC_API_KEY && !env.AI) return J({ error: 'provider', message: lastErr }, 502);
+    }
     if (env.ANTHROPIC_API_KEY) {
       const r = await fetch('https://api.anthropic.com/v1/messages', { method: 'POST', headers: { 'x-api-key': env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
         body: JSON.stringify({ model: env.AI_MODEL || 'claude-haiku-5-5', max_tokens: 1200, system, messages: [{ role: 'user', content: user }] }) });

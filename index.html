@@ -1186,6 +1186,18 @@ em[class*=mfk-],.mffam [class*=mfk-] em,.mffam button em{color:var(--k);backgrou
 .mfnav small{grid-column:1;font-size:11.5px;color:var(--gold);font-weight:600}.mfnav b{grid-column:1;font-size:13.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.mfnav button>i{grid-column:2;grid-row:1/3;color:var(--rmute)}
 .mfnav button:last-child{grid-template-columns:auto 1fr;text-align:end}.mfnav button:last-child>i{grid-column:1}.mfnav button:last-child small,.mfnav button:last-child b{grid-column:2}
 @media (prefers-reduced-motion:reduce){.mforn,.mffam button,.mfpc{animation:none}}
+
+/* ===== أداء: تقليل إعادة الرسم المستمرة وتسريع التنقل ===== */
+.njorn,.mforn,.qpat,.hero .cv,.empty>i{animation:none!important}
+.skel i,.grid .skel-c,.skl i{animation:none!important;background:var(--soft)!important}.skl i{background:var(--rline)!important}
+.skel,.grid:has(>.skel-c),.skl{animation:skp 1.4s ease-in-out infinite}
+@keyframes skp{50%{opacity:.5}}
+#view.vin>*{animation:none!important}
+#view.vin{animation:vfade .18s var(--out) both}
+@keyframes vfade{from{opacity:.4}}
+#view>section,#view>.duo,#view>.dcard{content-visibility:auto;contain-intrinsic-size:auto 280px}
+.njc,.mfch,.mfpc,.cat{content-visibility:auto;contain-intrinsic-size:auto 200px}
+@media(prefers-reduced-motion:reduce){.skel,.grid:has(>.skel-c),.skl,#view.vin{animation:none!important}}
 </style>
 <link rel="stylesheet" href="fonts/ph.css">
 </head>
@@ -1665,7 +1677,7 @@ const NJ=[
   w:'رسالة تعريفية موجزة بالكتاب وجامعه وقيمته الأدبية والعلمية، والرد على من شكّك في نسبته.',
   c:['التعريف بالشريف الرضي','أدلة نسبة النصوص إلى الإمام','مكانة النهج عند الأدباء والعلماء']}];
 const NJ_HIKAM=[['قيمةُ كلِّ امرئٍ ما يُحسِنُه'],['النّاسُ أعداءُ ما جَهِلوا'],['إذا تمَّ العقلُ نقصَ الكلام'],['المرءُ مخبوءٌ تحتَ لسانه'],['لا غِنى كالعقلِ، ولا فقرَ كالجهل'],['الفرصةُ تمرُّ مرَّ السَّحاب، فانتهزوا فُرصَ الخير'],['مَن لانَ عُودُه كثُفَت أغصانُه'],['قلوبُ الرجالِ وحشيّة، فمَن تألّفها أقبلت عليه']];
-function openNahj(){tab='nahj';render();$('#view').scrollTop=0}
+function openNahj(){tab='nahj';$('#view').scrollTop=0;render()}
 const acoB=(id,t,a,y)=>mkB({src:'aco',key:id,t,a:a||'',year:y||'',lang:'ar',kind:'aco',ref:id,pdf:`http://mc.dlib.nyu.edu/files/books/${id}/${id}_lo.pdf`});
 /* نهج البلاغة: نص إلكتروني كامل مرتّب (نص الشريف الرضي من OpenITI) */
 const NJB=()=>mkB({src:'nahj',key:'radi',t:'نهج البلاغة',a:'الشريف الرضي — كلام أمير المؤمنين علي (ع)',lang:'ar',kind:'nahj',ref:'radi',d:'النص الكامل مرتّباً: المقدمة، الخطب، الكتب والرسائل، الحِكَم'});
@@ -1716,7 +1728,7 @@ async function mfIndex(){if(MFI)return MFI;let d=await IDB.get('mf:v1:i').catch(
 async function mfPartData(pid){if(MFP[pid])return MFP[pid];let d=await IDB.get('mf:v1:p'+pid).catch(()=>null);
  if(!d){const r=await fetch(`/mf/p${pid}.json`);if(!r.ok)throw new Error('net');d=await r.json();IDB.set('mf:v1:p'+pid,d).catch(()=>{})}return MFP[pid]=d}
 async function mfLoadAll(cb){const I=await mfIndex();let n=0;for(const p of I.parts){await mfPartData(p.id);cb&&cb(++n,I.parts.length)}}
-function openMf(pid){tab='mafatih';mfPart=pid||0;render();$('#view').scrollTop=0}
+function openMf(pid){tab='mafatih';mfPart=pid||0;$('#view').scrollTop=0;render()}
 const mfMins=n=>Math.max(1,Math.round(n/900));
 const mfRow=x=>{const k=MFK[x.k]||MFK.txt;return `<button class="mfrow" data-mfopen="${x.i}"><em class="mfk-${x.k}"><i class="ph-duotone ph-${k[1]}"></i></em><span><b>${esc(mfClean(x.t))}</b><small>${k[0]} · ${ar(mfMins(x.n))} د قراءة</small></span>${mfS().fav.some(f=>f.i===x.i)?'<i class="ph-fill ph-bookmark-simple mfbm"></i>':''}<i class="ph-bold ph-caret-left"></i></button>`};
 function mfHijri(){try{return new Intl.DateTimeFormat('ar-IQ-u-ca-islamic-umalqura',{day:'numeric',month:'long',year:'numeric'}).format(new Date())}catch(e){return ''}}
@@ -1804,13 +1816,13 @@ function mfSavePos(){const v=$('#mfv');if(!v||!mfCur)return;const y=v.getBoundin
 document.addEventListener('click',async e=>{const b=e.target.closest('[data-mfopen],[data-mfpart],[data-mfback],[data-mfg],[data-mffam],[data-mfidx],[data-mfk],[data-mfdl],[data-mffs],[data-mffont],[data-mffav],[data-mfcopy],[data-mfqx],[data-mfhome],[data-mfch]');if(!b)return;const D=b.dataset;
  if(D.mfhome){openMf(0);return}
  if(D.mfopen){e.preventDefault();buzz();mfRead(D.mfopen,+(D.mfj||0),D.mfhl||'');return}
- if(D.mfpart){mfPart=+D.mfpart;render();$('#view').scrollTop=0;return}
+ if(D.mfpart){mfPart=+D.mfpart;$('#view').scrollTop=0;render();return}
  if(D.mfback){mfPart=0;render();const t=$('#mfidx');if(t)t.scrollIntoView();return}
  if(D.mfch){const t=$('#mfch'+D.mfch);if(t)t.scrollIntoView({behavior:'smooth',block:'start'});return}
  if(D.mfg){mfG=D.mfg;const y=$('#view').scrollTop;render();$('#view').scrollTop=y;return}
  if(D.mffam){mfFamAll=!mfFamAll;const y=$('#view').scrollTop;render();$('#view').scrollTop=y;return}
  if(D.mfidx){const t=$('#mfidx');if(t)t.scrollIntoView({behavior:'smooth'});return}
- if(D.mfk){mfG='m';const pid={dua:2,ziy:4,sal:3}[D.mfk];if(pid){mfPart=pid;render();$('#view').scrollTop=0}return}
+ if(D.mfk){mfG='m';const pid={dua:2,ziy:4,sal:3}[D.mfk];if(pid){mfPart=pid;$('#view').scrollTop=0;render()}return}
  if(D.mfqx){mfQ='';const qi=$('#mfq');if(qi){qi.value='';qi.focus()}b.hidden=true;mfSearch('');return}
  if(D.mfdl){if(mfDl)return;mfDl=1;b.classList.add('busy');try{await mfLoadAll((a,n)=>{const s=$('#mfdls');if(s)s.textContent=`جارٍ الحفظ… ${ar(Math.round(a/n*100))}٪`});mfS().dl=1;save();toast('صار مفاتيح الجنان محفوظ بجهازك');if(tab==='mafatih')render()}catch(err){toast('تعذّر الحفظ، تأكد من الإنترنت');const s=$('#mfdls');if(s)s.textContent='حاول مرة ثانية'}mfDl=0;b.classList.remove('busy');return}
  const M=mfS(),w=document.querySelector('.mfwrap');
@@ -1933,8 +1945,8 @@ addEventListener('resize',movePill);
 $('#nav').addEventListener('transitionend',movePill);
 function render(){
  $('#view').innerHTML=({home,explore,library,sources,profile,nahj,mafatih})[tab]();
- document.querySelectorAll('.nav button').forEach(b=>{const on=b.dataset.tab===tab;b.classList.toggle('on',on);b.firstElementChild.className=(on?'ph-fill ph-':'ph ph-')+b.dataset.ic});countUp();movePill();
- if(lastTab!==tab){const v=$('#view');v.classList.remove('vin');void v.offsetWidth;v.classList.add('vin');lastTab=tab}
+ document.querySelectorAll('.nav button').forEach(b=>{const on=b.dataset.tab===tab;b.classList.toggle('on',on);b.firstElementChild.className=(on?'ph-fill ph-':'ph ph-')+b.dataset.ic});countUp();requestAnimationFrame(movePill);
+ if(lastTab!==tab){const v=$('#view');v.getAnimations().forEach(a=>a.cancel());v.animate([{opacity:.4},{opacity:1}],{duration:180,easing:'cubic-bezier(.2,.8,.2,1)'});lastTab=tab}
  if(tab==='home')observeShelves();
  if(tab==='nahj'){const sc=SECTIONS.find(x=>x.k==='nahj');if(sc)loadShelf(sc)}
  if(tab==='mafatih')mfHook();
@@ -1945,7 +1957,7 @@ function render(){
  const yi=$('#yg');if(yi)yi.oninput=()=>{S.set.yearGoal=+yi.value;$('#ygv').textContent=ar(yi.value)+' كتاباً';save()};
  const f=$('#feat');if(f)f.onscroll=()=>{const i=Math.round(Math.abs(f.scrollLeft)/f.clientWidth);document.querySelectorAll('.dots i').forEach((d,j)=>d.classList.toggle('on',i===j))};
 }
-function go(t,focus){tab=t;render();$('#view').scrollTop=0;$('#nav').classList.remove('mini');if(focus)setTimeout(()=>$('#q')?.focus(),60)}
+function go(t,focus){tab=t;$('#view').scrollTop=0;render();$('#nav').classList.remove('mini');if(focus)setTimeout(()=>$('#q')?.focus(),60)}
 /* Scribd: لا يوفّر فهرساً عاماً؛ أي مستند عام يُلصق رابطه يُفتح بالتضمين الرسمي داخل التطبيق */
 const SCRIBD_RE=/scribd\.com\/(?:[a-z]{2}\/)?(document|doc|presentation|book|read|audiobook)\/(\d+)(?:\/([^/?#\s]+))?/i;
 async function openScribd(url){const m=String(url).match(SCRIBD_RE);

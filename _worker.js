@@ -211,6 +211,55 @@ async function rafedApi(url) {
   catch (e) { return err(String(e.message || e), 502) }
 }
 
+/* الأمثل (مكارم الشيرازي) من rafed: فهرس الأجزاء العشرين يحدد صفحات تفسير كل آية */
+const AMTHAL_VOLS = [2022, 2023, 2030, 2037, 2042, 2043, 2047, 2048, 2049, 2050, 2051, 2056, 2057, 2059, 2060, 2062, 2063, 2065, 2066, 2067];
+const SURA_N = 'الفاتحة البقرة آل_عمران النساء المائدة الأنعام الأعراف الأنفال التوبة يونس هود يوسف الرعد إبراهيم الحجر النحل الإسراء الكهف مريم طه الأنبياء الحج المؤمنون النور الفرقان الشعراء النمل القصص العنكبوت الروم لقمان السجدة الأحزاب سبأ فاطر يس الصافات ص الزمر غافر فصلت الشورى الزخرف الدخان الجاثية الأحقاف محمد الفتح الحجرات ق الذاريات الطور النجم القمر الرحمن الواقعة الحديد المجادلة الحشر الممتحنة الصف الجمعة المنافقون التغابن الطلاق التحريم الملك القلم الحاقة المعارج نوح الجن المزمل المدثر القيامة الإنسان المرسلات النبأ النازعات عبس التكوير الانفطار المطففين الانشقاق البروج الطارق الأعلى الغاشية الفجر البلد الشمس الليل الضحى الشرح التين العلق القدر البينة الزلزلة العاديات القارعة التكاثر العصر الهمزة الفيل قريش الماعون الكوثر الكافرون النصر المسد الإخلاص الفلق الناس'.split(' ').map(x => x.replace('_', ' '));
+const SURA_ALIAS = { 'الحمد': 1, 'بني اسرائيل': 17, 'المؤمن': 40, 'حم السجدة': 41, 'الدهر': 76, 'هل اتى': 76, 'عم': 78, 'التطفيف': 83, 'الم نشرح': 94, 'الانشراح': 94, 'اقرا': 96, 'لم يكن': 98, 'الزلزال': 99, 'تبت': 111, 'اللهب': 111, 'التوحيد': 112, 'القتال': 47, 'الملائكة': 35, 'التطفيف': 83 };
+const arNorm = t => t.replace(/[ً-ْٰـ]/g, '').replace(/[إأآ]/g, 'ا').replace(/ى/g, 'ي').replace(/ة/g, 'ه').replace(/ی/g, 'ي').replace(/\s+/g, ' ').trim();
+const SURA_MAP = (() => { const m = {}; SURA_N.forEach((n, i) => { m[arNorm(n)] = i + 1; m[arNorm(n).replace(/^ال/, '')] = i + 1 }); for (const k in SURA_ALIAS) m[arNorm(k)] = SURA_ALIAS[k]; return m })();
+const toEn = t => +String(t).replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
+async function amthalIndex() {
+  const ck = new Request('https://midad.cache/amthal-index-v1'); const c = caches.default;
+  const hit = await c.match(ck); if (hit) return hit.json();
+  const vols = await Promise.all(AMTHAL_VOLS.map(b => rfPage(b, 1).then(x => x.idx).catch(() => [])));
+  const ent = []; let sura = 0;
+  vols.forEach((idx, vi) => {
+    const seen = new Set();
+    for (const [t0, pg] of idx) {
+      const key = t0 + '|' + pg; if (seen.has(key)) continue; seen.add(key);
+      const t = arNorm(t0);
+      const sm = t.match(/^سوره\s+(.+?)(\s*\(.*\))?$/);
+      if (sm) { const n = SURA_MAP[sm[1].trim()] || SURA_MAP[sm[1].trim().replace(/^ال/, '')]; if (n && n >= sura) { if (n !== sura) ent.push({ v: vi, p: pg, s: n, h: 1 }); sura = n } continue }
+      const am = t.match(/تفسير\s*ال?اي?[يی]*(?:ه|ات|تين|تان|ت?ين)?\s*:?\s*([0-9٠-٩۰-۹]+)(?:\s*[ـ\-–—]\s*([0-9٠-٩۰-۹]+))?/);
+      if (am && sura) { const a1 = toEn(am[1]), a2 = am[2] ? toEn(am[2]) : a1; ent.push({ v: vi, p: pg, s: sura, a1, a2 }) }
+    }
+  });
+  const res = new Response(JSON.stringify(ent), { headers: { 'content-type': 'application/json', 'cache-control': 'public, max-age=2592000' } });
+  await c.put(ck, res.clone()); return ent;
+}
+async function amthalApi(url) {
+  const s = +url.searchParams.get('s'), a = +url.searchParams.get('a');
+  if (!(s >= 1 && s <= 114) || !(a >= 1 && a <= 286)) return err('bad params', 400);
+  try {
+    const ent = await amthalIndex();
+    if (url.searchParams.get('dbg')) return new Response(JSON.stringify({ n: ent.length, s: ent.filter(e => e.s === s) }), { headers: { ...CORS, 'content-type': 'application/json' } });
+    const list = ent.filter(e => e.s === s && !e.h);
+    let i = list.findIndex(e => a >= e.a1 && a <= e.a2);
+    if (i < 0) { const prev = list.filter(e => e.a1 <= a); if (prev.length) i = list.indexOf(prev[prev.length - 1]) }
+    if (i < 0) return new Response(JSON.stringify({ ok: false }), { headers: { ...CORS, 'content-type': 'application/json' } });
+    const e = list[i]; const gi = ent.indexOf(e); const nx = ent[gi + 1];
+    const b = AMTHAL_VOLS[e.v]; const endP = nx && nx.v === e.v ? nx.p : e.p + 6;
+    const pages = []; for (let p = e.p; p <= Math.min(endP, e.p + 14); p++) pages.push(p);
+    const got = await Promise.all(pages.map(p => rfPage(b, p).then(x => x.paras).catch(() => [])));
+    let paras = got.flat().filter(x => x !== '>' && !/^[٠-٩0-9]+$/.test(x));
+    const H = /^(الآية|الآيتان|الآيات|الآیة|الآیات)$/;
+    const first = paras.findIndex(x => H.test(x)); if (first > 0) paras = paras.slice(first);
+    const second = paras.findIndex((x, k) => k > 2 && H.test(x)); if (second > 0) paras = paras.slice(0, second);
+    const range = e.a1 === e.a2 ? `تفسير الآية ${e.a1}` : `تفسير الآيات ${e.a1} – ${e.a2}`;
+    return new Response(JSON.stringify({ ok: paras.length > 0, range, paras: paras.slice(0, 500), src: `https://books.rafed.net/view/${b}/page/${e.p}`, vol: e.v + 1, page: e.p }), { headers: { ...CORS, 'content-type': 'application/json', 'cache-control': 'public, max-age=604800' } });
+  } catch (x) { return err(String(x.message || x), 502) }
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -223,6 +272,7 @@ export default {
     if (url.pathname.replace(/\/$/, '') === '/api/aco') return aco(request);
     if (url.pathname.replace(/\/$/, '') === '/api/shtaf') return shTafsir(url);
     if (url.pathname.replace(/\/$/, '') === '/api/rafed') return rafedApi(url);
+    if (url.pathname.replace(/\/$/, '') === '/api/amthal') return amthalApi(url);
     if (url.pathname.replace(/\/$/, '') === '/api/ai') return aiHandler(request, env || {});
     if (url.pathname.replace(/\/$/, '') === '/api/acon') {
       const id = (url.searchParams.get('id') || '').replace(/[^a-z0-9_]/gi, '');

@@ -573,6 +573,57 @@ html[dir=rtl] .npill{right:auto;left:0}
  .qcard,.njcard{margin-top:16px!important;min-height:76px}
 }
 .qfrom{margin:0 0 12px;display:flex;align-items:center;justify-content:center;gap:8px}
+
+/* ===== القرآن الكريم: هوية زمرّدية ذهبية ===== */
+.qv{--qg1:#0d4a35;--qg2:#062b1f;--qgold:#d9b25f;--qgold2:#f3dc9a;padding:0 0 70px}
+.qhero{position:relative;overflow:hidden;isolation:isolate;padding:30px 18px 18px;color:#f7efd9;text-align:center;background:radial-gradient(120% 90% at 50% 0%,#1a6b4c 0%,var(--qg1) 45%,var(--qg2) 100%);border-radius:0 0 30px 30px;box-shadow:0 18px 40px rgb(6 43 31/.35)}
+.qpat{position:absolute;inset:-40px;z-index:-1;opacity:.13;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72' viewBox='0 0 72 72'%3E%3Cg fill='none' stroke='%23f3dc9a' stroke-width='1.1'%3E%3Cpath d='M36 6l8 12 14-3-3 14 12 7-12 7 3 14-14-3-8 12-8-12-14 3 3-14-12-7 12-7-3-14 14 3z'/%3E%3Ccircle cx='36' cy='36' r='10'/%3E%3Cpath d='M0 0l12 12M72 0L60 12M0 72l12-12M72 72L60 60'/%3E%3C/g%3E%3C/svg%3E");animation:qdrift 60s linear infinite}
+@keyframes qdrift{to{transform:translate(72px,72px)}}
+.qarch{position:relative;margin:0 auto;max-width:420px;padding:22px 16px 18px;border:1.5px solid rgb(243 220 154/.55);border-radius:200px 200px 22px 22px;background:linear-gradient(180deg,rgb(255 255 255/.06),rgb(255 255 255/.01))}
+.qarch::before{content:"";position:absolute;inset:6px;border:1px dashed rgb(243 220 154/.3);border-radius:190px 190px 17px 17px;pointer-events:none}
+.qarch small{display:block;font:20px/1.6 "Amiri Quran",Amiri,serif;color:var(--qgold2);margin-top:8px}
+.qarch h1{margin:2px 0 10px;font:700 46px/1.35 "Amiri Quran",Amiri,serif;color:#fff;text-shadow:0 4px 22px rgb(0 0 0/.35);letter-spacing:0}
+.qstat{display:flex;justify-content:center;gap:8px}
+.qstat span{display:grid;min-width:76px;padding:7px 8px;border-radius:14px;background:rgb(0 0 0/.18);border:1px solid rgb(243 220 154/.25);font-size:12px;color:rgb(247 239 217/.85)}
+.qstat b{font:700 20px Amiri;color:var(--qgold2)}
+.qgo{display:flex;align-items:center;gap:12px;width:100%;max-width:460px;margin:16px auto 0;padding:12px 14px;border-radius:20px;text-align:start;color:#fff;background:rgb(255 255 255/.1);border:1px solid rgb(243 220 154/.35);backdrop-filter:blur(8px);transition:transform .15s}
+.qgo:active{transform:scale(.98)}
+.qgoi{width:46px;height:46px;flex:none;border-radius:14px;display:grid;place-items:center;font-size:24px;color:#2a1c00;background:linear-gradient(135deg,var(--qgold2),var(--qgold))}
+.qgot{flex:1;display:grid;gap:2px}.qgot small{font-size:11.5px;color:var(--qgold2)}.qgot b{font:700 19px "Amiri Quran",Amiri,serif}.qgot em{font-style:normal;font-size:12px;opacity:.8}
+.qprog{display:block;height:5px;border-radius:9px;background:rgb(255 255 255/.15);overflow:hidden;margin-top:4px}.qprog i{display:block;height:100%;border-radius:9px;background:linear-gradient(90deg,var(--qgold2),var(--qgold))}
+.qtools{position:sticky;top:0;z-index:3;display:grid;gap:10px;padding:14px 16px 10px;background:linear-gradient(var(--rbg) 82%,transparent)}
+.qsearch{display:flex;align-items:center;gap:8px;padding:0 14px;height:46px;border-radius:15px;background:color-mix(in srgb,var(--rink) 6%,var(--rbg));border:1px solid var(--rline)}
+.qsearch i{color:var(--qgold);font-size:20px}.qsearch input{flex:1;border:0;background:none;font:inherit;color:var(--rink);outline:none}
+.qseg{display:flex;gap:4px;padding:4px;border-radius:14px;background:color-mix(in srgb,var(--rink) 5%,var(--rbg));border:1px solid var(--rline)}
+.qseg button{flex:1;height:34px;border-radius:10px;font-size:14px;color:var(--rmute);transition:background .25s,color .25s}
+.qseg button.on{background:linear-gradient(135deg,#1a6b4c,var(--qg1));color:#fff;box-shadow:0 4px 12px rgb(13 74 53/.3)}
+.qgrid{display:grid;gap:8px;padding:2px 16px 10px}
+.qsr{display:grid;grid-template-columns:52px 1fr auto;align-items:center;gap:12px;padding:10px 12px;border-radius:18px;text-align:start;color:var(--rink);background:color-mix(in srgb,var(--rink) 3%,var(--rbg));border:1px solid var(--rline);transition:transform .15s,border-color .25s,box-shadow .25s;animation:qin .45s var(--d) both cubic-bezier(.2,.8,.2,1)}
+@keyframes qin{from{opacity:0;transform:translateY(10px)}}
+.qsr:active{transform:scale(.98)}
+.qsr.cur{border-color:color-mix(in srgb,var(--qgold) 70%,transparent);box-shadow:0 0 0 3px color-mix(in srgb,var(--qgold) 18%,transparent)}
+.qstar{position:relative;width:48px;height:48px;display:grid;place-items:center;color:var(--qgold)}
+.qstar svg{position:absolute;inset:0;width:100%;height:100%;transition:transform .6s cubic-bezier(.2,.8,.2,1)}
+.qsr:hover .qstar svg,.qsr:active .qstar svg{transform:rotate(45deg)}
+.qstar b{position:relative;font:700 14px Amiri;color:color-mix(in srgb,var(--qgold) 75%,var(--rink))}
+.qsn{display:grid;min-width:0}.qsn b{font:700 23px/1.5 "Amiri Quran",Amiri,serif}.qsn small{font-size:11.5px;color:var(--rmute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qmeta{display:grid;justify-items:end;gap:4px}.qmeta small{font-size:12px;color:var(--rmute)}
+.qpl{font-style:normal;font-size:11px;padding:3px 9px;border-radius:99px}
+.qpl.mk{color:#8a6100;background:color-mix(in srgb,var(--qgold) 22%,transparent)}.qpl.md{color:#0d6b47;background:color-mix(in srgb,#1a9a6a 18%,transparent)}
+.qbar{top:0;margin:0 0 8px;padding:10px 12px;background:linear-gradient(135deg,#145c42,var(--qg2));border-bottom:0;border-radius:0 0 20px 20px;box-shadow:0 8px 22px rgb(6 43 31/.28);color:#fff}
+.qbar b{font:700 20px "Amiri Quran",Amiri,serif;color:#fff}.qbar button{background:rgb(255 255 255/.12);color:#fff}.qbar button i{color:var(--qgold2)}
+.qtext{padding:0 16px}
+.qframe{position:relative;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:8px;margin:14px 0 6px;padding:14px 22px;border-radius:16px;color:#fff;background:linear-gradient(135deg,#145c42,var(--qg2));border:2px solid var(--qgold);box-shadow:inset 0 0 0 4px var(--qg2),inset 0 0 0 5px rgb(243 220 154/.6),0 10px 24px rgb(6 43 31/.25)}
+.qframe h3{margin:0;text-align:center;font:700 26px/1.5 "Amiri Quran",Amiri,serif;color:var(--qgold2)}
+.qfm{font-size:12px;color:rgb(255 255 255/.8);padding:3px 10px;border-radius:99px;background:rgb(0 0 0/.2)}
+.qfc{position:absolute;top:50%;right:-11px;width:20px;height:20px;transform:translateY(-50%) rotate(45deg);background:var(--qgold);border:3px solid var(--rbg);border-radius:4px}.qfc.r{right:auto;left:-11px}
+.qbism{font:32px/2.1 "Amiri Quran",Amiri,serif;color:color-mix(in srgb,var(--qgold) 65%,var(--rink));margin:6px 0 4px}
+.qend{display:flex;align-items:center;justify-content:center;gap:10px;margin:26px 0 4px;color:var(--qgold)}.qend svg{width:26px;height:26px}.qend span{font:700 18px "Amiri Quran",Amiri,serif;color:color-mix(in srgb,var(--qgold) 70%,var(--rink))}
+.qnav{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
+.qnb{display:flex;align-items:center;gap:8px;padding:12px;border-radius:16px;border:1px solid var(--rline);background:color-mix(in srgb,var(--rink) 3%,var(--rbg));color:var(--rink);text-align:start}
+.qnb span{flex:1;display:grid}.qnb small{font-size:11px;color:var(--rmute)}.qnb b{font:700 18px "Amiri Quran",Amiri,serif}.qnb i{color:var(--qgold);font-size:18px}.qnb.nx{text-align:end}
+@media (min-width:700px){.qgrid{grid-template-columns:repeat(auto-fill,minmax(300px,1fr));padding-inline:max(16px,calc((100% - 1000px)/2))}.qtools{grid-template-columns:1fr 280px;padding-inline:max(16px,calc((100% - 1000px)/2))}.qtext{max-width:820px;margin:0 auto}.qarch h1{font-size:56px}}
+@media (prefers-reduced-motion:reduce){.qpat,.qsr{animation:none}}
 </style>
 <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
 </head>
@@ -1559,13 +1610,24 @@ async function openQuran(ch){
  $('#frame').innerHTML='<div class="qv" id="qview"><div class="lstate"><span class="spin">◌</span><b>جارٍ فتح المصحف…</b></div></div>';
  try{QS=QS||(await qget('/chapters?language=ar','q:ch')).chapters;if(ch)return quranSurah(ch);quranList()}catch(e){$('#qview').innerHTML=`<div class="lstate"><b>تعذّر فتح المصحف</b><span>تأكد من الإنترنت للمرة الأولى.</span><button class="btn" data-act="qopen">إعادة المحاولة</button></div>`}
 }
+let qPlace='all';
+const QSTAR='<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 2l6.2 8.8L41 9l-1.8 10.8L48 24l-8.8 6.2L41 39l-10.8-1.8L24 46l-6.2-8.8L7 39l1.8-10.8L0 24l8.8-6.2L7 9l10.8 1.8z" fill="currentColor" opacity=".14"/><path d="M24 2l6.2 8.8L41 9l-1.8 10.8L48 24l-8.8 6.2L41 39l-10.8-1.8L24 46l-6.2-8.8L7 39l1.8-10.8L0 24l8.8-6.2L7 9l10.8 1.8z" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="24" cy="24" r="13" fill="none" stroke="currentColor" stroke-width=".9" opacity=".6"/></svg>';
 function quranList(f){
- const v=$('#qview');if(!v)return;const nf=norm(f||'');const q=S.quran;
- const list=QS.filter(c=>!nf||norm(c.name_arabic+' '+c.id).includes(nf));
- v.innerHTML=`${!f&&q.ch?`<button class="qcont" data-qch="${q.ch}"><i class="ph-fill ph-bookmark-simple"></i><span>تابع التلاوة<b>سورة ${esc((QS[q.ch-1]||{}).name_arabic||'')}${q.ay?` · الآية ${qd(q.ay)}`:''}</b></span><i class="ph-bold ph-caret-left"></i></button>`:''}
- <label class="sbar" style="margin-top:12px"><i class="ph-duotone ph-magnifying-glass"></i><input id="qf" type="search" placeholder="ابحث عن سورة…" value="${esc(f||'')}"></label>
- <div class="qlist">${list.map(c=>`<button class="qrow" data-qch="${c.id}"><span class="qn">${qd(c.id)}</span><span class="qnm">${esc(c.name_arabic)}</span><span class="mut">${c.revelation_place==='makkah'?'مكية':'مدنية'} · ${qd(c.verses_count)} آية</span></button>`).join('')}</div>`;
- const qf=$('#qf');qf.oninput=()=>{const p=qf.selectionStart;quranList(qf.value);const n=$('#qf');n.focus();try{n.setSelectionRange(p,p)}catch(e){}};
+ const v=$('#qview');if(!v)return;const typing=f!=null;f=f||'';const nf=norm(f);const q=S.quran;
+ const list=QS.filter(c=>(qPlace==='all'||c.revelation_place===qPlace)&&(!nf||norm(c.name_arabic+' '+(c.name_simple||'')+' '+c.id).includes(nf)));
+ const cur=q.ch&&QS[q.ch-1],pct=cur?Math.min(100,Math.round((q.ay||0)/cur.verses_count*100)):0;
+ const tot=QS.reduce((a,c)=>a+(+c.verses_count||0),0)||6236;
+ const cards=list.map((c,k)=>`<button class="qsr${q.ch===c.id?' cur':''}" data-qch="${c.id}" style="--d:${typing?0:Math.min(k,24)*18}ms"><span class="qstar">${QSTAR}<b>${qd(c.id)}</b></span><span class="qsn"><b>${esc(c.name_arabic)}</b><small dir="auto">${esc(c.name_simple||'')}${c.translated_name&&c.translated_name.name?' · '+esc(c.translated_name.name):''}</small></span><span class="qmeta"><i class="qpl ${c.revelation_place==='makkah'?'mk':'md'}">${c.revelation_place==='makkah'?'مكية':'مدنية'}</i><small>${qd(c.verses_count)} آية</small></span></button>`).join('');
+ if(typing&&$('#qgrid')){$('#qgrid').innerHTML=cards||'<p class="mut" style="text-align:center;padding:30px">لا توجد سورة بهذا الاسم</p>';return}
+ v.innerHTML=`<section class="qhero"><div class="qpat"></div>
+  <div class="qarch"><small>بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</small><h1>القرآن الكريم</h1>
+   <div class="qstat"><span><b>${qd(114)}</b>سورة</span><span><b>${qd(tot)}</b>آية</span><span><b>${qd(30)}</b>جزءاً</span></div></div>
+  ${cur?`<button class="qgo" data-qch="${q.ch}"><span class="qgoi"><i class="ph-fill ph-book-open-text"></i></span><span class="qgot"><small>تابع التلاوة</small><b>سورة ${esc(cur.name_arabic)}</b><em>${q.ay?`الآية ${qd(q.ay)} من ${qd(cur.verses_count)}`:'من البداية'}</em><i class="qprog"><i style="width:${pct}%"></i></i></span><i class="ph-bold ph-caret-left"></i></button>`:''}
+ </section>
+ <div class="qtools"><label class="qsearch"><i class="ph-duotone ph-magnifying-glass"></i><input id="qf" type="search" placeholder="ابحث باسم السورة أو رقمها…" value="${esc(f)}" autocomplete="off"></label>
+  <div class="qseg">${[['all','الكل'],['makkah','مكية'],['madinah','مدنية']].map(([k,l])=>`<button class="${qPlace===k?'on':''}" data-qpl="${k}">${l}</button>`).join('')}</div></div>
+ <div class="qgrid" id="qgrid">${cards}</div>`;
+ const qf=$('#qf');qf.oninput=()=>quranList(qf.value);
 }
 async function quranSurah(ch){
  const v=$('#qview');const c=QS[ch-1];if(!c||!v)return;S.quran.ch=ch;save();
@@ -1573,8 +1635,8 @@ async function quranSurah(ch){
  v.innerHTML=`<div class="qbar"><button data-act="qlist"><i class="ph-bold ph-list-bullets"></i> السور</button><b>سورة ${esc(c.name_arabic)}</b><span style="display:flex;gap:4px"><button data-act="qrec" aria-label="القارئ"><i class="ph-duotone ph-microphone-stage"></i></button><button data-act="qplay" id="qplay" aria-label="استماع"><i class="ph-fill ph-play-circle"></i></button></span></div><div class="qtext"><div class="lstate"><span class="spin">◌</span></div></div>`;
  try{const j=await qget(`/quran/verses/uthmani?chapter_number=${ch}`,'q:v:'+ch);const vs=j.verses||[];
   const bism=ch!==1&&ch!==9?'<div class="qbism">بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</div>':'';
-  v.querySelector('.qtext').innerHTML=`<div class="qhead"><span>${c.revelation_place==='makkah'?'مكية':'مدنية'}</span><h3>سورة ${esc(c.name_arabic)}</h3><span>${qd(c.verses_count)} آية</span></div>${bism}<p class="qp">${vs.map(x=>{const n=+x.verse_key.split(':')[1];return `<span class="qa${S.quran.ay===n?' on':''}" data-qa="${n}" data-k="${x.verse_key}">${esc(x.text_uthmani)} <i class="qnum">﴿${qd(n)}﴾</i></span>`}).join(' ')}</p>
-  <div class="qnav">${ch>1?`<button class="btn alt" data-qch="${ch-1}"><i class="ph-bold ph-caret-right"></i> ${esc(QS[ch-2].name_arabic)}</button>`:'<span></span>'}${ch<114?`<button class="btn alt" data-qch="${ch+1}">${esc(QS[ch].name_arabic)} <i class="ph-bold ph-caret-left"></i></button>`:''}</div>`;
+  v.querySelector('.qtext').innerHTML=`<div class="qframe"><span class="qfc"></span><span class="qfm">${c.revelation_place==='makkah'?'مكية':'مدنية'}</span><h3>سورة ${esc(c.name_arabic)}</h3><span class="qfm">${qd(c.verses_count)} آية</span><span class="qfc r"></span></div>${bism}<p class="qp">${vs.map(x=>{const n=+x.verse_key.split(':')[1];return `<span class="qa${S.quran.ay===n?' on':''}" data-qa="${n}" data-k="${x.verse_key}">${esc(x.text_uthmani)} <i class="qnum">﴿${qd(n)}﴾</i></span>`}).join(' ')}</p>
+  <div class="qend">${QSTAR}<span>نهاية سورة ${esc(c.name_arabic)}</span>${QSTAR}</div><div class="qnav">${ch>1?`<button class="qnb" data-qch="${ch-1}"><i class="ph-bold ph-caret-right"></i><span><small>السورة السابقة</small><b>${esc(QS[ch-2].name_arabic)}</b></span></button>`:'<span></span>'}${ch<114?`<button class="qnb nx" data-qch="${ch+1}"><span><small>السورة التالية</small><b>${esc(QS[ch].name_arabic)}</b></span><i class="ph-bold ph-caret-left"></i></button>`:''}</div>`;
   const on=v.querySelector('.qa.on');if(on)setTimeout(()=>on.scrollIntoView({block:'center'}),80);else v.scrollTop=0;
  }catch(e){v.querySelector('.qtext').innerHTML='<div class="lstate"><b>تعذّر تحميل السورة</b></div>'}
 }
@@ -1819,6 +1881,7 @@ document.addEventListener('click',async ev=>{
  if(d.ast&&R&&R.audio){R.audio.currentTime=Math.max(0,R.audio.currentTime+(+d.ast));return}
  if(d.arate!=null&&R&&R.audio){const rs=[1,1.25,1.5,2,.75],k=(rs.indexOf(R.audio.playbackRate)+1)%rs.length;R.audio.playbackRate=rs[k];t.textContent=ar(rs[k])+'×';return}
  if(d.qch){openQuranCh(+d.qch);return}
+ if(d.qpl){qPlace=d.qpl;const y=$('#qview').scrollTop;quranList();$('#qview').scrollTop=y;return}
  if(d.qfrom){$('[data-act=rmcancel]')?.click();qPlayFrom(+d.qfrom);return}
  if(d.qa){const au=$('#qaudio');if(au&&!au.paused){qPlayFrom(+d.qa);return}quranAyah(+d.qa,d.k);return}
  if(d.qt){S.quran.tid=+d.qt;save();document.querySelectorAll('[data-qt]').forEach(x=>x.classList.toggle('on',x===t));loadTafsir(d.qk);return}

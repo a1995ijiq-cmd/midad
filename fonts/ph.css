@@ -34,10 +34,12 @@
 .ph.ph-caret-right:before { content: "\e13a"; }
 .ph.ph-cat:before { content: "\e748"; }
 .ph.ph-chalkboard-teacher:before { content: "\e600"; }
+.ph.ph-chart-bar:before { content: "\e150"; }
 .ph.ph-chart-line-up:before { content: "\e156"; }
 .ph.ph-check:before { content: "\e182"; }
 .ph.ph-check-circle:before { content: "\e184"; }
 .ph.ph-circle:before { content: "\e18a"; }
+.ph.ph-circle-notch:before { content: "\eb44"; }
 .ph.ph-clipboard:before { content: "\e196"; }
 .ph.ph-clock-clockwise:before { content: "\e19e"; }
 .ph.ph-clock-counter-clockwise:before { content: "\e1a0"; }
@@ -146,6 +148,7 @@
 .ph.ph-shapes:before { content: "\ec5e"; }
 .ph.ph-share:before { content: "\e406"; }
 .ph.ph-share-network:before { content: "\e408"; }
+.ph.ph-sliders-horizontal:before { content: "\e434"; }
 .ph.ph-soccer-ball:before { content: "\e716"; }
 .ph.ph-sort-ascending:before { content: "\e444"; }
 .ph.ph-sparkle:before { content: "\e6a2"; }
@@ -221,10 +224,12 @@
 .ph-bold.ph-caret-right:before { content: "\e13a"; }
 .ph-bold.ph-cat:before { content: "\e748"; }
 .ph-bold.ph-chalkboard-teacher:before { content: "\e600"; }
+.ph-bold.ph-chart-bar:before { content: "\e150"; }
 .ph-bold.ph-chart-line-up:before { content: "\e156"; }
 .ph-bold.ph-check:before { content: "\e182"; }
 .ph-bold.ph-check-circle:before { content: "\e184"; }
 .ph-bold.ph-circle:before { content: "\e18a"; }
+.ph-bold.ph-circle-notch:before { content: "\eb44"; }
 .ph-bold.ph-clipboard:before { content: "\e196"; }
 .ph-bold.ph-clock-clockwise:before { content: "\e19e"; }
 .ph-bold.ph-clock-counter-clockwise:before { content: "\e1a0"; }
@@ -333,6 +338,7 @@
 .ph-bold.ph-shapes:before { content: "\ec5e"; }
 .ph-bold.ph-share:before { content: "\e406"; }
 .ph-bold.ph-share-network:before { content: "\e408"; }
+.ph-bold.ph-sliders-horizontal:before { content: "\e434"; }
 .ph-bold.ph-soccer-ball:before { content: "\e716"; }
 .ph-bold.ph-sort-ascending:before { content: "\e444"; }
 .ph-bold.ph-sparkle:before { content: "\e6a2"; }
@@ -408,10 +414,12 @@
 .ph-fill.ph-caret-right:before { content: "\e13a"; }
 .ph-fill.ph-cat:before { content: "\e748"; }
 .ph-fill.ph-chalkboard-teacher:before { content: "\e600"; }
+.ph-fill.ph-chart-bar:before { content: "\e150"; }
 .ph-fill.ph-chart-line-up:before { content: "\e156"; }
 .ph-fill.ph-check:before { content: "\e182"; }
 .ph-fill.ph-check-circle:before { content: "\e184"; }
 .ph-fill.ph-circle:before { content: "\e18a"; }
+.ph-fill.ph-circle-notch:before { content: "\eb44"; }
 .ph-fill.ph-clipboard:before { content: "\e196"; }
 .ph-fill.ph-clock-clockwise:before { content: "\e19e"; }
 .ph-fill.ph-clock-counter-clockwise:before { content: "\e1a0"; }
@@ -520,6 +528,7 @@
 .ph-fill.ph-shapes:before { content: "\ec5e"; }
 .ph-fill.ph-share:before { content: "\e406"; }
 .ph-fill.ph-share-network:before { content: "\e408"; }
+.ph-fill.ph-sliders-horizontal:before { content: "\e434"; }
 .ph-fill.ph-soccer-ball:before { content: "\e716"; }
 .ph-fill.ph-sort-ascending:before { content: "\e444"; }
 .ph-fill.ph-sparkle:before { content: "\e6a2"; }
@@ -629,6 +638,8 @@
 .ph-duotone.ph-cat:after { content: "\e749"; margin-left: -1em; }
 .ph-duotone.ph-chalkboard-teacher:before { content: "\e600"; opacity: 0.2; }
 .ph-duotone.ph-chalkboard-teacher:after { content: "\e601"; margin-left: -1em; }
+.ph-duotone.ph-chart-bar:before { content: "\e150"; opacity: 0.2; }
+.ph-duotone.ph-chart-bar:after { content: "\e151"; margin-left: -1em; }
 .ph-duotone.ph-chart-line-up:before { content: "\e156"; opacity: 0.2; }
 .ph-duotone.ph-chart-line-up:after { content: "\e157"; margin-left: -1em; }
 .ph-duotone.ph-check:before { content: "\e182"; opacity: 0.2; }
@@ -637,6 +648,8 @@
 .ph-duotone.ph-check-circle:after { content: "\e185"; margin-left: -1em; }
 .ph-duotone.ph-circle:before { content: "\e18a"; opacity: 0.2; }
 .ph-duotone.ph-circle:after { content: "\e18b"; margin-left: -1em; }
+.ph-duotone.ph-circle-notch:before { content: "\eb44"; opacity: 0.2; }
+.ph-duotone.ph-circle-notch:after { content: "\eb45"; margin-left: -1em; }
 .ph-duotone.ph-clipboard:before { content: "\e196"; opacity: 0.2; }
 .ph-duotone.ph-clipboard:after { content: "\e197"; margin-left: -1em; }
 .ph-duotone.ph-clock-clockwise:before { content: "\e19e"; opacity: 0.2; }
@@ -853,6 +866,8 @@
 .ph-duotone.ph-share:after { content: "\e409"; margin-left: -1em; }
 .ph-duotone.ph-share-network:before { content: "\e408"; opacity: 0.2; }
 .ph-duotone.ph-share-network:after { content: "\e40b"; margin-left: -1em; }
+.ph-duotone.ph-sliders-horizontal:before { content: "\e434"; opacity: 0.2; }
+.ph-duotone.ph-sliders-horizontal:after { content: "\e435"; margin-left: -1em; }
 .ph-duotone.ph-soccer-ball:before { content: "\e716"; opacity: 0.2; }
 .ph-duotone.ph-soccer-ball:after { content: "\e717"; margin-left: -1em; }
 .ph-duotone.ph-sort-ascending:before { content: "\e444"; opacity: 0.2; }

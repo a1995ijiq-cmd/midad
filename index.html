@@ -1029,6 +1029,38 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 #fbar .fbq i{color:var(--gold)}
 mark.sfind.cur{background:var(--gold);color:#2a1900;box-shadow:0 0 0 3px rgb(199 154 46/.35);border-radius:4px}
 @media(max-width:430px){.rtop [data-act=fs]{display:none}}
+
+/* شاشة البحث داخل الكتاب */
+.rfv{position:fixed;inset:0;z-index:60;display:flex;flex-direction:column;background:var(--rbg,var(--bg));color:var(--rink,var(--ink));opacity:0;transform:translateY(12px);pointer-events:none;transition:opacity .2s var(--e-out),transform .28s var(--e-out)}
+.rfv.on{opacity:1;transform:none;pointer-events:auto}
+.rfh{display:flex;align-items:center;gap:8px;padding:calc(10px + env(safe-area-inset-top)) 14px 10px;border-bottom:1px solid color-mix(in srgb,var(--rline,var(--line2)) 80%,transparent);background:color-mix(in srgb,var(--rbg,var(--bg)) 92%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.rfx{width:42px;height:42px;flex:none;border-radius:13px;display:grid;place-items:center;font-size:20px;background:color-mix(in srgb,var(--gold) 12%,transparent)}
+.rfin{flex:1;display:flex;align-items:center;gap:8px;height:46px;padding:0 12px;border-radius:14px;background:var(--surf);border:1.5px solid color-mix(in srgb,var(--gold) 55%,var(--line2));box-shadow:0 0 0 4px rgb(199 154 46/.12)}
+.rfin>i{font-size:19px;color:var(--gold)}
+.rfin input{flex:1;min-width:0;border:0;outline:0;background:none;font:500 17px/1.2 "IBM Plex Sans Arabic";color:var(--ink);-webkit-appearance:none}
+.rfin input::-webkit-search-cancel-button{display:none}
+.rfclr{font-size:20px;color:var(--mute);display:grid;place-items:center}
+.rfclr[hidden]{display:none}
+.rfopts{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 14px 6px}
+.rfseg{display:inline-flex;padding:3px;border-radius:99px;background:color-mix(in srgb,var(--plum) 8%,transparent)}
+.rfseg button{min-height:32px;padding:0 14px;border-radius:99px;font-size:var(--fs-xs);font-weight:600;color:var(--mute);transition:background .2s,color .2s}
+.rfseg button.on{background:var(--surf);color:var(--plum);box-shadow:var(--sh1)}
+#rfcount{font-size:var(--fs-xs);color:var(--mute);font-weight:600}
+.rfres{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;padding:4px 14px calc(18px + env(safe-area-inset-bottom))}
+.rfch{position:sticky;top:-4px;z-index:1;display:flex;align-items:center;gap:6px;margin:12px -14px 4px;padding:8px 14px;font:700 14px/1.3 Amiri,serif;color:var(--gold);background:color-mix(in srgb,var(--rbg,var(--bg)) 94%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.rfch i{font-size:13px}
+.rfres .fres{display:flex;align-items:flex-start;gap:12px;width:100%;text-align:start;padding:12px;margin:6px 0;border-radius:16px;background:var(--surf);border:1px solid var(--line2);box-shadow:var(--sh1);transition:transform .16s var(--e-out)}
+.rfres .fres:active{transform:scale(.985)}
+.frp{flex:none;width:50px;padding:6px 0;border-radius:12px;display:flex;flex-direction:column;align-items:center;background:color-mix(in srgb,var(--gold) 12%,transparent);color:var(--plum)}
+.frp small{font-size:10px;color:var(--mute)}
+.frp b{font:700 16px/1.2 "IBM Plex Sans Arabic"}
+.frt{flex:1;font:400 17px/1.85 Amiri,serif;color:var(--ink);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.frt mark{background:var(--gold);color:#2a1900;border-radius:4px;padding:0 2px;font-weight:700}
+.rfempty{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;padding:48px 20px;color:var(--mute)}
+.rfempty i{font-size:44px;color:var(--gold);margin-bottom:6px}
+.rfempty b{font-size:var(--fs-lg);color:var(--ink)}
+.rfempty span{font-size:var(--fs-sm);line-height:1.8}
+.rfnote{text-align:center;font-size:var(--fs-xs);color:var(--mute);margin:12px 0}
 </style>
 <link rel="stylesheet" href="fonts/ph.css">
 </head>
@@ -2322,7 +2354,7 @@ async function turn(d){
  e.p=n;e.last=Date.now();if(d>0)S.stat.pages=(S.stat.pages||0)+1;save();drawPage(d);if(R.lazy)prefetchTr(n);
 }
 function stopTTS(){try{speechSynthesis.cancel()}catch(e){}$('#tts').classList.remove('on')}
-function closeReader(){S.lastOpen=null;{const fb=$('#fbar');if(fb)fb.classList.remove('on')}try{save()}catch(e){}setTimeout(()=>{try{if(window.__pendingSW)location.reload()}catch(e){}},400);
+function closeReader(){S.lastOpen=null;closeFind();{const fb=$('#fbar');if(fb)fb.classList.remove('on')}try{save()}catch(e){}setTimeout(()=>{try{if(window.__pendingSW)location.reload()}catch(e){}},400);
  stopTTS();try{if(R&&R.audio)R.audio.pause();const qa=$('#qaudio');if(qa)qa.pause()}catch(e){}
  $('#rmta').style.display='';$('[data-act=rmsave]').style.display='';{const qb=$('#qtaf');if(qb)qb.remove()}
  const mins=Math.max(1,Math.round((Date.now()-rStart)/60000));
@@ -2335,14 +2367,35 @@ const mkOf=m=>typeof m==='string'?{k:m,n:'',at:0}:m;
 const marksOf=e=>(e&&e.marks||[]).map(mkOf);
 const hasMark=(e,k)=>marksOf(e).some(m=>m.k===k);
 let tocTab='toc';
-function findIn(q){R.findQ=q;const box=$('#rfres');if(!box)return;const nq=norm(q.trim());if(nq.length<2){box.innerHTML='<p class="mut" style="font-size:13px">اكتب حرفين على الأقل. البحث يتجاهل التشكيل والهمزات.</p>';return}
- const res=[];R.fres=res;const part=(S.lib[R.id]||{}).part||0;
- (R.pages||[]).forEach((pg,i)=>pg.forEach(b=>{if(!b.t||res.length>=150)return;const raw=String(b.t),n=norm(raw);let at=n.indexOf(nq);while(at>-1&&res.length<150){res.push({p:i+1,raw,at});at=n.indexOf(nq,at+nq.length)}}));
- box.innerHTML=res.length?`<p class="mut" style="font-size:12.5px;margin:0 0 6px">${res.length>=150?'أكثر من ١٥٠':ar(res.length)} نتيجة${R.parts.length>1?' في هذا الجزء':''}</p>`+res.map((r,ri)=>{const a=Math.max(0,r.at-40),sn=r.raw.slice(a,r.at+nq.length+60);const rel=r.at-a;return `<button class="fres" data-tj="${r.p}" data-fq="1" data-fi="${ri}"><span>${a?'…':''}${esc(sn.slice(0,rel))}<mark>${esc(sn.slice(rel,rel+nq.length))}</mark>${esc(sn.slice(rel+nq.length))}…</span><span class="mut">ص ${ar(r.p)}</span></button>`}).join(''):'<p class="mut">لا توجد نتائج.</p>';if(R.lazy)box.insertAdjacentHTML('beforeend','<p class="mut" style="font-size:12px;margin-top:8px">هذا الكتاب يُحمَّل صفحة صفحة، فالبحث يشمل الصفحات اللي فتحتها فقط.</p>')}
+/* ===== البحث داخل الكتاب: شاشة كاملة، نتائج مرتبة حسب الفصل ===== */
+function normMap(raw){let n='',map=[];for(let i=0;i<raw.length;i++){const c=raw[i];if(/[ً-ْـ]/.test(c))continue;n+=norm(c);map.push(i)}map.push(raw.length);return {n,map}}
+const reEsc=x=>x.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+function findRe(nq){return (R.fmode||'w')==='w'?new RegExp(`(?:^|[^\\u0621-\\u064A0-9a-z])(?:وال|فال|بال|كال|ولل|لل|ال|و|ف|ب|ل|ك)?(${reEsc(nq)})`,'g'):new RegExp(`(${reEsc(nq)})`,'g')}
+function chapOf(p){const t=R._tocS||(R._tocS=(R.toc||[]).filter(x=>x.page).slice().sort((a,b)=>a.page-b.page));let c='';for(const x of t){if(x.page<=p)c=x.title;else break}return c}
+function findIn(q){R.findQ=q;const box=$('#rfres'),cnt=$('#rfcount');if(!box)return;const nq=norm(q.trim());
+ if(nq.length<2){R.fres=[];box.innerHTML=`<div class="rfempty"><i class="ph-duotone ph-text-aa"></i><b>ابحث داخل «${esc(R.b.t)}»</b><span>اكتب كلمة من حرفين أو أكثر. البحث يتجاهل التشكيل والهمزات.</span></div>`;if(cnt)cnt.textContent='';return}
+ const res=[];R.fres=res;const re=findRe(nq),MAX=300;
+ (R.pages||[]).forEach((pg,i)=>pg.forEach(b=>{if(!b.t||res.length>=MAX)return;const raw=String(b.t),{n,map}=normMap(raw);re.lastIndex=0;let m;while((m=re.exec(n))&&res.length<MAX){const st=m.index+m[0].length-m[1].length;res.push({p:i+1,raw,a:map[st],b:map[st+nq.length]});if(m[0].length===0)re.lastIndex++}}));
+ if(cnt)cnt.textContent=res.length?`${res.length>=MAX?'أكثر من ٣٠٠':ar(res.length)} نتيجة`:'';
+ if(!res.length){box.innerHTML=`<div class="rfempty"><i class="ph-duotone ph-magnifying-glass-minus"></i><b>ما لگينا «${esc(q.trim())}»</b><span>${(R.fmode||'w')==='w'?'جرّب «جزء من كلمة» حتى يشمل الكلمات اللي تحتوي هذي الحروف.':'جرّب كلمة ثانية أو تهجئة مختلفة.'}${R.lazy?'<br>هذا الكتاب يتحمّل صفحة صفحة، فالبحث يشمل الصفحات اللي فتحتها فقط.':''}</span></div>`;return}
+ let last='',h='';res.forEach((r,ri)=>{const ch=chapOf(r.p);if(ch&&ch!==last){h+=`<div class="rfch"><i class="ph-fill ph-bookmark-simple"></i>${esc(ch)}</div>`;last=ch}
+  const a=Math.max(0,r.a-55),e=Math.min(r.raw.length,r.b+75);const pre=r.raw.slice(a,r.a),hit=r.raw.slice(r.a,r.b),post=r.raw.slice(r.b,e);
+  h+=`<button class="fres" data-tj="${r.p}" data-fq="1" data-fi="${ri}"><span class="frp"><small>صفحة</small><b>${ar(r.p)}</b></span><span class="frt">${a?'…':''}${esc(pre)}<mark>${esc(hit)}</mark>${esc(post)}${e<r.raw.length?'…':''}</span></button>`});
+ if(R.lazy)h+='<p class="rfnote">هذا الكتاب يتحمّل صفحة صفحة، فالبحث يشمل الصفحات اللي فتحتها فقط.</p>';
+ box.innerHTML=h;box.scrollTop=0}
+function openFind(){if(!R||!R.pages){toast('البحث متاح للكتب النصية');return}$('#rtocp').classList.remove('on');$('#rsetp').classList.remove('on');$('#raip').classList.remove('on');
+ let v=$('#rfv');if(!v){v=document.createElement('div');v.id='rfv';v.className='rfv';$('#reader').appendChild(v)}
+ v.innerHTML=`<div class="rfh"><button class="rfx" data-act="rfvclose" aria-label="رجوع"><i class="ph-bold ph-arrow-right"></i></button><label class="rfin"><i class="ph-bold ph-magnifying-glass"></i><input id="rfind" type="search" placeholder="ابحث داخل الكتاب" value="${esc(R.findQ||'')}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="search"><button class="rfclr" data-act="rfclr" aria-label="مسح" ${R.findQ?'':'hidden'}><i class="ph-fill ph-x-circle"></i></button></label></div>
+ <div class="rfopts"><div class="rfseg"><button class="${(R.fmode||'w')==='w'?'on':''}" data-fmode="w">كلمة</button><button class="${R.fmode==='a'?'on':''}" data-fmode="a">جزء من كلمة</button></div><span id="rfcount"></span></div><div id="rfres" class="rfres"></div>`;
+ v.classList.add('on');const inp=$('#rfind');let ft;inp.oninput=()=>{const c=$('.rfclr');if(c)c.hidden=!inp.value;clearTimeout(ft);ft=setTimeout(()=>findIn(inp.value),200)};inp.onkeydown=e=>{if(e.key==='Enter'){inp.blur()}};findIn(R.findQ||'');
+ const fit=()=>{const vv=window.visualViewport;if(!vv||!v.classList.contains('on'))return;v.style.height=vv.height+'px';v.style.top=vv.offsetTop+'px'};if(window.visualViewport&&!v._vv){v._vv=1;visualViewport.addEventListener('resize',fit);visualViewport.addEventListener('scroll',fit)}fit();
+ setTimeout(()=>inp.focus(),50)}
+function closeFind(){const v=$('#rfv');if(v){v.classList.remove('on');v.style.height='';v.style.top=''}const i=$('#rfind');if(i)i.blur()}
 /* تمييز كلمة البحث داخل الصفحة بعد الانتقال */
 function markFind(){const q=R&&R.findQ&&norm(R.findQ.trim());const pg=$('#page');if(!q||q.length<2||!pg)return;
- const tw=document.createTreeWalker(pg,NodeFilter.SHOW_TEXT);const hits=[];let n;while(n=tw.nextNode()){const nn=norm(n.data);if(nn.length===n.data.length&&nn.includes(q))hits.push(n)}
- let firstEl=null;hits.forEach(node=>{const nn=norm(node.data);let i=nn.indexOf(q);if(i<0)return;let st=i,en=i+q.length;const D=node.data;while(st>0&&!/\s/.test(D[st-1]))st--;while(en<D.length&&!/[\s.،؛:!?؟]/.test(D[en]))en++;const r=document.createRange();r.setStart(node,st);r.setEnd(node,en);const m=document.createElement('mark');m.className='sfind';try{r.surroundContents(m);firstEl=firstEl||m}catch(e){}});
+ const tw=document.createTreeWalker(pg,NodeFilter.SHOW_TEXT);const nodes=[];let n;while(n=tw.nextNode())nodes.push(n);const re=findRe(q);
+ let firstEl=null;nodes.forEach(node=>{const D=node.data,{n:nn,map}=normMap(D);re.lastIndex=0;const ms=[];let m;while((m=re.exec(nn))){const st=m.index+m[0].length-m[1].length;ms.push([map[st],map[st+q.length]]);if(!m[0].length)re.lastIndex++}
+  for(let k=ms.length-1;k>=0;k--){let [st,en]=ms[k];if((R.fmode||'w')==='a'){while(st>0&&!/\s/.test(D[st-1]))st--;while(en<D.length&&!/[\s.،؛:!?؟]/.test(D[en]))en++}const r=document.createRange();r.setStart(node,st);r.setEnd(node,Math.min(en,D.length));const mk=document.createElement('mark');mk.className='sfind';try{r.surroundContents(mk);firstEl=mk}catch(e){}}});
  const all=pg.querySelectorAll('mark.sfind');const k=R.fordinal||0;const tgt=all[Math.min(k,all.length-1)]||firstEl;all.forEach(x=>x.classList.remove('cur'));if(tgt){tgt.classList.add('cur');tgt.scrollIntoView({block:'center'})}}
 function findBar(){let b=$('#fbar');if(!b){b=document.createElement('div');b.id='fbar';$('#reader').appendChild(b)}const n=(R.fres||[]).length;if(!n){b.classList.remove('on');return}
  b.innerHTML=`<button data-act="fprev" aria-label="النتيجة السابقة"><i class="ph-bold ph-caret-right"></i></button><button class="fbq" data-act="rfind"><i class="ph-bold ph-magnifying-glass"></i><b>${esc(R.findQ||'')}</b><span>${ar((R.fi||0)+1)} / ${ar(n)}</span></button><button data-act="fnext" aria-label="النتيجة التالية"><i class="ph-bold ph-caret-left"></i></button><button data-act="fclose" aria-label="إغلاق البحث"><i class="ph-bold ph-x"></i></button>`;b.classList.add('on')}
@@ -2383,7 +2436,7 @@ function toc(){
  const e=S.lib[R.id];const ms=marksOf(e);
  let h=`<div class="tabs3"><button class="${tocTab==='toc'?'on':''}" data-toct="toc"><i class="ph-duotone ph-list-bullets"></i> الفهرس</button><button class="${tocTab==='bm'?'on':''}" data-toct="bm"><i class="ph-duotone ph-bookmarks-simple"></i> العلامات${ms.length?` <b>${ar(ms.length)}</b>`:''}</button><button class="${tocTab==='find'?'on':''}" data-toct="find"><i class="ph-duotone ph-magnifying-glass"></i> بحث</button></div>`;
  if(tocTab==='bm'){h+=ms.length?ms.map((m,i)=>{const [pt,p]=m.k.split(':');return `<div class="bmrow"><button data-bmj="${m.k}"><i class="ph-fill ph-bookmark-simple"></i><span><b>${esc(m.n||'علامة بدون اسم')}</b><small class="mut">${+pt?`الجزء ${ar(+pt+1)} · `:''}صفحة ${ar(p)}${m.at?' · '+ago(m.at):''}</small></span></button><button class="ib" data-bmren="${i}" aria-label="إعادة تسمية"><i class="ph-duotone ph-pencil-simple"></i></button><button class="ib" data-bmdel="${i}" aria-label="حذف"><i class="ph-duotone ph-trash"></i></button></div>`}).join(''):'<div class="empty" style="padding:24px 8px"><i class="ph-duotone ph-bookmark-simple"></i><b>لا توجد علامات</b>اضغط زر العلامة بالأعلى لحفظ الصفحة الحالية باسم تختاره</div>';$('#rtocp').innerHTML=h;return}
- if(tocTab==='find'){h+=`<label class="sbar" style="margin:6px 0 10px"><i class="ph-duotone ph-magnifying-glass"></i><input id="rfind" type="search" placeholder="ابحث داخل الكتاب…" value="${esc(R.findQ||'')}" autocomplete="off"></label><div id="rfres"></div>`;$('#rtocp').innerHTML=h;const inp=$('#rfind');let ft;inp.oninput=()=>{clearTimeout(ft);ft=setTimeout(()=>findIn(inp.value),220)};if(R.findQ)findIn(R.findQ);setTimeout(()=>inp.focus(),60);return}
+ if(tocTab==='find'){tocTab='toc';openFind();return;h+=`<label class="sbar" style="margin:6px 0 10px"><i class="ph-duotone ph-magnifying-glass"></i><input id="rfind" type="search" placeholder="ابحث داخل الكتاب…" value="${esc(R.findQ||'')}" autocomplete="off"></label><div id="rfres"></div>`;$('#rtocp').innerHTML=h;const inp=$('#rfind');let ft;inp.oninput=()=>{clearTimeout(ft);ft=setTimeout(()=>findIn(inp.value),220)};if(R.findQ)findIn(R.findQ);setTimeout(()=>inp.focus(),60);return}
  if(R.toc&&R.toc.length)h+=R.toc.map(t=>`<button class="${e.p===+t.page?'cur':''}${t.level===1&&R.b.kind==='nahj'?' tocsec':''}" data-tj="${t.page}" style="${t.level>1?'padding-inline-start:18px;font-size:14px':''}"><span>${esc(t.title)}</span><span class="mut">ص ${ar(t.page)}</span></button>`).join('');
  else if(R.parts.length>1)h+=R.parts.map((pt,i)=>`<button class="${(e.part||0)===i?'cur':''}" data-tpart="${i}"><span>${esc(pt.t)}</span><span class="mut">${ar(i+1)}</span></button>`).join('');
  else{const hs=[];(R.pages||[]).forEach((pg,i)=>pg.forEach(b=>{if(b.k==='h')hs.push([b.t,i+1])}));h+=hs.length?hs.map(([t,p])=>`<button class="${e.p===p?'cur':''}" data-tj="${p}"><span>${esc(t)}</span><span class="mut">ص ${ar(p)}</span></button>`).join(''):'<p class="mut">لا يوجد فهرس لهذا الكتاب. استخدم شريط التقدم بالأسفل.</p>'}
@@ -2396,6 +2449,7 @@ document.addEventListener('click',async ev=>{
  if(d.tab){buzz();if(d.tab===tab&&t.closest('.nav')){$('#view').scrollTo({top:0,behavior:'smooth'});$('#nav').classList.remove('mini');return}if(d.lang)fLang=d.lang;go(d.tab,d.focus);return}
  if(d.open){const sk=t.closest('[data-shelf-k]');if(sk){S.secHit[sk.dataset.shelfK]=(S.secHit[sk.dataset.shelfK]||0)+1}openBook(d.open);return}
  if(d.zm){const v=$('#pdfv');if(v&&v._zoom)v._zoom(d.zm);return}
+ if(d.fmode){R.fmode=d.fmode;document.querySelectorAll('[data-fmode]').forEach(x=>x.classList.toggle('on',x===t));findIn(($('#rfind')||{}).value||'');return}
  if(d.dq){dqMode=d.dq;dqOff=0;dqPaint();return}
  if(d.fso){fSort=d.fso;document.querySelectorAll('[data-fso]').forEach(x=>x.classList.toggle('on',x.dataset.fso===fSort));drawResults();return}
  if(d.golib){libTab=d.golib;tab='library';render();return}
@@ -2411,7 +2465,7 @@ document.addEventListener('click',async ev=>{
  if(d.hclr){if(confirmDel==='hist'){S.hist=[];confirmDel='';save();render()}else{confirmDel='hist';toast('اضغط مرة ثانية لمسح السجل')}return}
  if(d.read){openReader(d.read);return}
  if(d.hj){openReader(d.hj,{part:+d.part,p:+d.p});return}
- if(d.tj){const p=Math.min(+d.tj,R.pages.length);$('#rtocp').classList.remove('on');if(d.fi!=null&&R.fres){R.fi=+d.fi;findBar()}if(R.lazy&&!(await ensurePage(p)))return;S.lib[R.id].p=p;save();drawPage(1);if(d.fq){R.fordinal=R.fres&&R.fi!=null?R.fres.slice(0,R.fi).filter(x=>x.p===p).length:0;setTimeout(markFind,60)}if(R.lazy)prefetchTr(p);return}
+ if(d.tj){const p=Math.min(+d.tj,R.pages.length);$('#rtocp').classList.remove('on');if(d.fq)closeFind();if(d.fi!=null&&R.fres){R.fi=+d.fi;findBar()}if(R.lazy&&!(await ensurePage(p)))return;S.lib[R.id].p=p;save();drawPage(1);if(d.fq){R.fordinal=R.fres&&R.fi!=null?R.fres.slice(0,R.fi).filter(x=>x.p===p).length:0;setTimeout(markFind,60)}if(R.lazy)prefetchTr(p);return}
  if(d.tpart){$('#rtocp').classList.remove('on');await loadPart(+d.tpart,1);return}
  if(d.toct){tocTab=d.toct;toc();return}
  if(d.aisc){aiScope=d.aisc;aiPanel($('#aiout')?$('#aiout').innerHTML:'');return}
@@ -2517,7 +2571,9 @@ document.addEventListener('click',async ev=>{
  else if(a==='next')turn(1);else if(a==='prev')turn(-1);
  else if(a==='rset'){$('#rtocp').classList.remove('on');$('#raip').classList.remove('on');$('#rsetp').classList.toggle('on')}
  else if(a==='rai'){if(!R||!R.pages)return;$('#rtocp').classList.remove('on');$('#rsetp').classList.remove('on');const p=$('#raip');p.classList.toggle('on');if(p.classList.contains('on'))aiPanel()}
- else if(a==='rfind'){if(!R||!R.pages){toast('البحث متاح للكتب النصية');return}tocTab='find';$('#rsetp').classList.remove('on');$('#raip').classList.remove('on');toc();$('#rtocp').classList.add('on');setTimeout(()=>{const i=$('#rfind');if(i)i.focus()},80)}
+ else if(a==='rfind')openFind();
+ else if(a==='rfvclose')closeFind();
+ else if(a==='rfclr'){const i=$('#rfind');if(i){i.value='';i.oninput();i.focus()}}
  else if(a==='fnext'||a==='fprev'){if(!R||!R.fres||!R.fres.length)return;R.fi=(R.fi+(a==='fnext'?1:-1)+R.fres.length)%R.fres.length;const r=R.fres[R.fi],e=S.lib[R.id];R.fordinal=R.fres.slice(0,R.fi).filter(x=>x.p===r.p).length;findBar();if(e.p!==r.p){if(R.lazy&&!(await ensurePage(r.p)))return;e.p=r.p;save();drawPage(a==='fnext'?1:-1);setTimeout(markFind,60)}else markFind()}
  else if(a==='fclose'){R.fres=null;R.findQ='';const b=$('#fbar');if(b)b.classList.remove('on');document.querySelectorAll('mark.sfind').forEach(m=>m.replaceWith(...m.childNodes))}
  else if(a==='rtoc'){if(!R||!R.pages)return;$('#rsetp').classList.remove('on');$('#raip').classList.remove('on');toc();$('#rtocp').classList.toggle('on')}

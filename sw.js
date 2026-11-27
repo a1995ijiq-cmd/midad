@@ -1,5 +1,5 @@
 // مداد — يشتغل بدون إنترنت بعد أول فتح
-const CACHE = 'midad-v63';
+const CACHE = 'midad-v64';
 const CORE = ['./', './index.html', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png', './fonts/ph.css', './daily.json', './fonts/Phosphor.woff', './fonts/Phosphor-Bold.woff', './fonts/Phosphor-Fill.woff', './fonts/Phosphor-Duotone.woff'];
 
 self.addEventListener('install', e => {

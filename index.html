@@ -1067,6 +1067,16 @@ mark.sfind.cur{background:var(--gold);color:#2a1900;box-shadow:0 0 0 3px rgb(199
 @keyframes qflash{0%,40%{background:rgb(199 154 46/.45)}100%{background:transparent}}
 .qvs{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 14px;border-radius:14px;font-size:var(--fs-sm);font-weight:600;color:#fff;background:linear-gradient(150deg,#1d5f4f,#0f3a31);box-shadow:inset 0 1px 0 rgb(255 255 255/.15);white-space:nowrap}.qvs i{color:#e6c26a}
 .qtools{grid-template-columns:1fr auto}.qtools .qseg{grid-column:1/-1}@media(min-width:900px){.qtools{grid-template-columns:1fr auto 280px}.qtools .qseg{grid-column:auto}}
+
+/* مؤشر التلاوة: شريط ناعم داخل السطر بدل المربعات المتداخلة، مع لون نص مميز */
+.qa{border-radius:0;padding:0 .12em;-webkit-box-decoration-break:clone;box-decoration-break:clone;background:linear-gradient(180deg,transparent 18%,var(--qhl,transparent) 18%,var(--qhl,transparent) 86%,transparent 86%);transition:color .4s var(--e-out),--qhl .4s}
+.qa.on{--qhl:color-mix(in srgb,var(--gold) 16%,transparent);background-color:transparent}
+.qa.qon{--qhl:color-mix(in srgb,var(--gold) 20%,transparent);box-shadow:none;color:light-dark(#0b5a45,#9fe3c9)}
+.qa.qon .qnum{color:var(--gold);text-shadow:0 0 12px rgb(199 154 46/.55)}
+.qa.on,.qa.qon{background-image:linear-gradient(180deg,transparent 18%,var(--qhl) 18%,var(--qhl) 86%,transparent 86%)}
+@property --qhl{syntax:'<color>';inherits:false;initial-value:transparent}
+.qa.qflash{animation:none}
+.qa.qflash{--qhl:rgb(199 154 46/.38)}
 </style>
 <link rel="stylesheet" href="fonts/ph.css">
 </head>

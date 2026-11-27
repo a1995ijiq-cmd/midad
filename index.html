@@ -981,6 +981,23 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 .njha button[hidden]{display:none}
 .njha .njread{width:auto!important;display:inline-flex!important;gap:6px;padding:0 14px;margin-inline-start:auto;font-size:var(--fs-sm);font-weight:600;background:var(--plumg)!important;color:#fff!important}
 .njha .njread i{color:var(--gold2)}
+
+/* تصغير بطاقة البيت والهدف */
+.goal.gh{padding:10px 14px;gap:12px;border-radius:var(--r-lg)}
+.goal.gh svg{width:48px;height:48px}
+.ghx b{font-size:var(--fs-md)}
+.dq{padding:12px 14px 14px;border-radius:var(--r-lg)}
+.dq::after{font-size:96px;bottom:-24px;inset-inline-end:10px}
+.dqh{flex-wrap:nowrap}
+.dqt button{min-height:30px;padding:0 10px;font-size:12px}
+.dqt button i{font-size:14px}
+.dq .qact{margin:0;gap:6px;flex:none}
+.dq .qact button{width:32px;height:32px;border-radius:10px;font-size:15px}
+.dqb{padding:12px 2px 0;min-height:0}
+.dqp{font-size:17px;line-height:1.7;gap:0}
+.dqw{font-size:16.5px;line-height:1.75}
+.dqa{margin-top:6px;font-size:11.5px}
+@media(min-width:700px){.dqp{font-size:19px}.dqw{font-size:18px}}
 </style>
 <link rel="stylesheet" href="fonts/ph.css">
 </head>
@@ -1251,7 +1268,7 @@ fetch('/daily.json').then(r=>r.ok?r.json():null).then(d=>{if(!d)return;DAILY=d;d
 function wisList(){if(!DAILY)return [['قيمةُ كلِّ امرئٍ ما يُحسِنُه','الإمام علي — نهج البلاغة']];const a=DAILY.wisdom,b=DAILY.nahj,o=[];for(let i=0;i<Math.max(a.length,b.length);i++){if(b[i])o.push([b[i][0],`الإمام علي (ع) — نهج البلاغة، الحكمة ${ar(b[i][1])}`,b[i][1]]);if(a[i])o.push(a[i])}return o}
 function dqItem(){if(dqMode==='w')return pick(wisList(),dqOff);const L=DAILY?DAILY.poetry:QUO;return pick(L,dqOff)}
 function dqHTML(){const x=dqItem();return dqMode==='w'?`<p class="dqw">${esc(x[0])}</p><span class="dqa">— ${esc(x[1])}</span>`:`<p class="dqp"><span>${esc(x[0])}</span><span>${esc(x[1])}</span></p><span class="dqa">— ${esc(x[2])}</span>`}
-function dailyCard(){const d=new Date();return `<section class="dq" id="dq"><div class="dqh"><div class="dqt" role="tablist"><button role="tab" class="${dqMode==='p'?'on':''}" data-dq="p"><i class="ph-duotone ph-feather"></i>بيت اليوم</button><button role="tab" class="${dqMode==='w'?'on':''}" data-dq="w"><i class="ph-duotone ph-lightbulb"></i>حكمة اليوم</button></div><span class="dqd">${d.toLocaleDateString('ar-IQ',{weekday:'long',day:'numeric',month:'long'})}</span></div><div class="dqb" id="dqb">${dqHTML()}</div><div class="qact"><button data-act="nextq" aria-label="غيرها"><i class="ph-bold ph-arrows-clockwise"></i></button><button data-act="copyq" aria-label="نسخ"><i class="ph-bold ph-copy"></i></button><button data-act="shareq" aria-label="مشاركة"><i class="ph-bold ph-share-network"></i></button>${dqOff?`<button data-act="todayq" class="dqtd"><i class="ph-bold ph-calendar-check"></i>اليوم</button>`:''}</div></section>`}
+function dailyCard(){const d=new Date();return `<section class="dq" id="dq"><div class="dqh"><div class="dqt" role="tablist"><button role="tab" class="${dqMode==='p'?'on':''}" data-dq="p"><i class="ph-duotone ph-feather"></i>بيت اليوم</button><button role="tab" class="${dqMode==='w'?'on':''}" data-dq="w"><i class="ph-duotone ph-lightbulb"></i>حكمة اليوم</button></div><div class="qact"><button data-act="nextq" aria-label="غيرها"><i class="ph-bold ph-arrows-clockwise"></i></button><button data-act="copyq" aria-label="نسخ"><i class="ph-bold ph-copy"></i></button><button data-act="shareq" aria-label="مشاركة"><i class="ph-bold ph-share-network"></i></button>${dqOff?`<button data-act="todayq" class="dqtd" aria-label="رجوع لليوم"><i class="ph-bold ph-calendar-check"></i></button>`:''}</div></div><div class="dqb" id="dqb">${dqHTML()}</div></section>`}
 function dqPaint(anim=true){const b=$('#dqb');if(!b)return;const go=()=>{const c=$('#dq');if(c)c.outerHTML=dailyCard();const nb=$('#dqb');if(nb&&anim){nb.style.opacity=0;requestAnimationFrame(()=>{nb.style.opacity=1})}};go()}
 function dqText(){const x=dqItem();return dqMode==='w'?`${x[0]}\n— ${x[1]}`:`${x[0]} ... ${x[1]}\n— ${x[2]}`}
 function njItem(){return DAILY?pick(DAILY.nahj,njOff):[NJ_HIKAM[0][0],81]}

@@ -644,6 +644,19 @@ mark.sfind{animation:sfl 1.6s ease 2}@keyframes sfl{50%{background:color-mix(in 
 .lbody{padding:0 12px 12px}.lbk{display:flex;align-items:center;gap:4px}.lbk .row{flex:1}.lacts{display:flex;gap:8px;margin-top:8px}
 .sugt{font:600 11px inherit;color:#fff;background:var(--gold);border-radius:99px;padding:2px 8px;vertical-align:middle}
 .askin{width:100%;height:50px;border-radius:14px;border:1px solid var(--line);background:var(--soft);padding:0 14px;font:inherit;font-size:16px;color:var(--ink)}
+.sortc{align-items:center}.sortc>span{font-size:12.5px;white-space:nowrap;display:flex;align-items:center;gap:4px}
+
+/* المساعد الذكي */
+.aib i{background:linear-gradient(135deg,#c79a2e,#8a5cf6);-webkit-background-clip:text;background-clip:text;color:transparent!important}
+.aip{max-height:72%}.aih{display:flex;align-items:center;gap:10px;margin-bottom:12px}.aih>div{display:grid}.aih b{font-size:17px}.aih small{font-size:12px}
+.aiic{width:40px;height:40px;border-radius:13px;display:grid;place-items:center;color:#fff;font-size:20px;background:linear-gradient(135deg,#c79a2e,#7b4fd6)}
+.aiscope{display:flex;gap:4px;padding:4px;border-radius:12px;background:var(--soft)}.aiscope button{flex:1;height:34px;border-radius:9px;font-size:13px;color:var(--mute)}.aiscope button.on{background:var(--card);color:var(--ink);box-shadow:0 2px 8px rgb(0 0 0/.08)}
+.aiacts{display:flex;flex-wrap:wrap;gap:6px}.aiacts button{display:inline-flex;align-items:center;gap:5px;padding:8px 11px;border-radius:12px;border:1px solid var(--line);background:var(--card);font-size:13px;color:var(--ink)}.aiacts button i{color:var(--gold);font-size:17px}.aiacts button:disabled{opacity:.45}
+.aiask{display:flex;gap:6px;margin-top:10px}.aiask input{flex:1;height:44px;border-radius:13px;border:1px solid var(--line);background:var(--soft);padding:0 12px;font:inherit;color:var(--ink)}.aiask button{width:44px;height:44px;border-radius:13px;background:var(--plumbg);color:#fff;font-size:18px}
+.aiout{margin-top:12px}.aians{font-size:15px;line-height:1.9}.aians h5{margin:10px 0 4px;font-size:15px;color:var(--plum)}.aians ul{margin:4px 0;padding-inline-start:18px}.aians p{margin:0 0 8px}
+.pref{display:inline-block;padding:0 7px;margin:0 2px;border-radius:8px;font-size:12px;background:color-mix(in srgb,var(--gold) 22%,transparent);color:inherit;vertical-align:middle}
+.aisrc{font-size:11.5px;margin:8px 0 0;border-top:1px dashed var(--line);padding-top:6px}.aiload{display:flex;gap:8px;align-items:center;color:var(--mute);font-size:14px}
+.ainote{display:flex;gap:8px;align-items:flex-start;padding:10px 12px;border-radius:12px;background:color-mix(in srgb,var(--gold) 12%,transparent);font-size:13px;line-height:1.7;margin-bottom:10px}.ainote i{color:var(--gold);font-size:18px;margin-top:2px}
 </style>
 <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
 </head>
@@ -673,6 +686,7 @@ mark.sfind{animation:sfl 1.6s ease 2}@keyframes sfl{50%{background:color-mix(in 
       <button class="ib" data-act="hlm" data-tx id="hlb" aria-label="أدوات التعديل والملاحظات"><i class="ph-duotone ph-highlighter-circle"></i></button>
       <button class="ib" data-act="rmark" data-tx id="rmark" aria-label="علامة"><i class="ph-duotone ph-bookmark-simple"></i></button>
       <button class="ib" data-act="fs" aria-label="ملء الشاشة"><i class="ph-duotone ph-arrows-out"></i></button>
+      <button class="ib aib" data-act="rai" data-tx aria-label="المساعد الذكي"><i class="ph-duotone ph-sparkle"></i></button>
       <button class="ib" data-act="rset" data-tx aria-label="إعدادات القراءة"><i class="ph-duotone ph-text-aa"></i></button>
     </div>
     <div class="immx"><button data-act="rclose" aria-label="رجوع"><i class="ph-bold ph-arrow-right"></i></button><button data-act="fs" aria-label="خروج من ملء الشاشة"><i class="ph-bold ph-arrows-in"></i></button></div>
@@ -698,6 +712,7 @@ mark.sfind{animation:sfl 1.6s ease 2}@keyframes sfl{50%{background:color-mix(in 
       <div class="set" style="border:0;gap:8px"><button class="btn alt" style="flex:1" data-act="rdl"><i class="ph-bold ph-download-simple"></i> بدون نت</button><button class="btn" style="flex:1" data-act="rpdf"><i class="ph-bold ph-file-pdf"></i> PDF</button></div>
     </div>
     <div class="pnl toc" id="rtocp"></div>
+    <div class="pnl aip" id="raip"></div>
     <div class="annbar" id="annbar"><div class="cols"><span class="mut" style="font-size:13px">تظليل</span><button data-ac="y" style="background:#f5d76e" aria-label="أصفر"></button><button data-ac="g" style="background:#8fd19e" aria-label="أخضر"></button><button data-ac="b" style="background:#8cc4f0" aria-label="أزرق"></button><button data-ac="p" style="background:#f3a3c4" aria-label="وردي"></button><button class="x" data-aa="close" aria-label="إغلاق"><i class="ph-bold ph-x"></i></button></div>
      <div class="tools"><button data-aa="note"><i class="ph-duotone ph-note-pencil"></i>ملاحظة</button><button data-aa="edit"><i class="ph-duotone ph-pencil-simple-line"></i>تعديل</button><button data-aa="add"><i class="ph-duotone ph-text-indent"></i>إضافة نص</button><button data-aa="copy"><i class="ph-duotone ph-copy"></i>نسخ</button><button data-aa="share"><i class="ph-duotone ph-share-network"></i>مشاركة</button><button data-aa="clear"><i class="ph-duotone ph-eraser"></i>مسح</button></div></div>
     <div class="rmodal" id="rmodal"><div><h6 id="rmt"></h6><textarea id="rmta" dir="auto"></textarea><div class="acts"><button class="btn full" data-act="rmsave"><i class="ph-bold ph-check"></i> حفظ</button><button class="btn alt" data-act="rmcancel">إلغاء</button></div></div></div>
@@ -833,6 +848,7 @@ const srcMeta=s=>BUILTIN[s.id]?{...BUILTIN[s.id],...s}:s;
 const srcOf=id=>{const s=S.src.find(x=>x.id===id);return s&&srcMeta(s)};
 const remember=b=>{const {txtCache,...m}=b;S.books[b.id]=m};
 
+let fSort='rel';
 let tab='home',q='',fLang='all',fSrc='all',libTab='reading',hlMode=false,add=null,R=null,rStart=0;
 let results=[],rstat={},stoken=0,shelfCache={};
 
@@ -887,6 +903,7 @@ function drawResults(){
  setTimeout(()=>{const mb=el.querySelector('[data-act=more]');if(moreIO)moreIO.disconnect();if(mb&&'IntersectionObserver' in window){moreIO=new IntersectionObserver(en=>{if(en[0].isIntersecting){moreIO.disconnect();loadMore()}},{root:$('#view'),rootMargin:'500px'});moreIO.observe(mb)}},50);
  let r=results.filter(b=>!S.empty[b.id]&&(fLang==='all'||b.lang===fLang)&&(fSrc==='all'||b.src===fSrc));
  r=q&&!curSec&&!curTitle?rankRes(r,q):ordered(r);
+ if(fSort!=='rel'){const yr=b=>{const m=String(b.year||'').match(/\d{3,4}/);return m?+m[0]:null};r=[...r].sort((x,y)=>{if(fSort==='title')return String(x.t||'').localeCompare(String(y.t||''),'ar');const a=yr(x),c=yr(y);if(a==null&&c==null)return 0;if(a==null)return 1;if(c==null)return -1;return fSort==='new'?c-a:a-c})}
  const more=curJobs&&curJobs.some(j=>j.more);
  const gc=(()=>{const g=document.querySelector('#res .grid');if(!g)return 3;const n=getComputedStyle(g).gridTemplateColumns.split(' ').filter(Boolean).length;return Math.max(1,n||3)})();
  if(more&&r.length>gc)r=r.slice(0,r.length-r.length%gc);
@@ -1168,6 +1185,7 @@ function explore(){
  <label class="sbar"><i class="ph-duotone ph-magnifying-glass"></i><input id="q" type="search" placeholder="عنوان، مؤلف، موضوع…" value="${esc(q)}" autocomplete="off" enterkeyhint="search"></label>
  <div class="chips">${ch('all',fLang,'كل اللغات','fl')}${ch('ar',fLang,'العربية','fl')}${ch('en',fLang,'الإنجليزية','fl')}</div>
  <div class="chips" style="padding-top:4px">${ch('all',fSrc,'كل المصادر','fs')}${enabled().map(s=>ch(s.id,fSrc,esc(srcMeta(s).n),'fs')).join('')}</div>
+ ${`<div class="chips sortc" style="padding-top:4px;${q||curTitle?'':'display:none'}"><span class="mut"><i class="ph-bold ph-sort-ascending"></i> ترتيب:</span>${ch('rel',fSort,'الأقرب للبحث','fso')}${ch('title',fSort,'العنوان','fso')}${ch('new',fSort,'الأحدث نشراً','fso')}${ch('old',fSort,'الأقدم','fso')}</div>`}
  ${curTitle&&!q?`<div class="shelf" style="margin-top:12px"><button class="chip on" data-act="clrsec"><i class="ph-bold ph-x"></i> ${esc(curTitle)}</button></div>`:''}
  <div id="res">${q||curTitle?'':`${S.recent.length?`<p class="mut" style="margin:14px 0 4px">عمليات البحث الأخيرة</p><div class="shelf" style="margin:0">${S.recent.map(r=>`<button class="chip" data-rq="${esc(r)}"><i class="ph ph-clock-counter-clockwise"></i>${esc(r)}</button>`).join('')}</div>`:''}
   <p class="mut" style="margin:18px 0 6px">اقتراحات</p><div class="shelf" style="margin:0">${['المتنبي','ألف ليلة وليلة','ابن خلدون','الجاحظ','المعلقات','طه حسين','Shakespeare','Dostoevsky'].map(r=>`<button class="chip" data-rq="${r}">${r}</button>`).join('')}</div>`}</div>`;
@@ -1250,7 +1268,7 @@ function render(){
  if(tab==='nahj'){const sc=SECTIONS.find(x=>x.k==='nahj');if(sc)loadShelf(sc)}
  {const so=document.querySelector('.sscroll .on');if(so){const p=so.parentElement;p.scrollLeft=so.offsetLeft-(p.clientWidth-so.offsetWidth)/2}}
  if(tab==='explore'&&(q||curTitle)){if(results.length||Object.keys(rstat).length)drawResults();else if(q)searchAll(q)}
- const qi=$('#q');if(qi){qi.oninput=()=>{q=qi.value;curTitle='';clearTimeout(qt);if(!q.trim()){render();return}if(SCRIBD_RE.test(q)){const u=q.trim();q='';qi.value='';openScribd(u);return}qt=setTimeout(()=>searchAll(q.trim()),500)};qi.onkeydown=e=>{if(e.key==='Enter'&&q.trim()){clearTimeout(qt);S.recent=[q.trim(),...S.recent.filter(x=>x!==q.trim())].slice(0,6);save();searchAll(q.trim());qi.blur()}}}
+ const qi=$('#q');if(qi){qi.oninput=()=>{q=qi.value;curTitle='';clearTimeout(qt);if(!q.trim()){render();return}{const sc=$('.sortc');if(sc)sc.style.display=''}if(SCRIBD_RE.test(q)){const u=q.trim();q='';qi.value='';openScribd(u);return}qt=setTimeout(()=>searchAll(q.trim()),500)};qi.onkeydown=e=>{if(e.key==='Enter'&&q.trim()){clearTimeout(qt);S.recent=[q.trim(),...S.recent.filter(x=>x!==q.trim())].slice(0,6);save();searchAll(q.trim());qi.blur()}}}
  const gi=$('#goal');if(gi)gi.oninput=()=>{S.set.goal=+gi.value;$('#gv').textContent=ar(gi.value)+' دقيقة';save()};
  const yi=$('#yg');if(yi)yi.oninput=()=>{S.set.yearGoal=+yi.value;$('#ygv').textContent=ar(yi.value)+' كتاباً';save()};
  const f=$('#feat');if(f)f.onscroll=()=>{const i=Math.round(Math.abs(f.scrollLeft)/f.clientWidth);document.querySelectorAll('.dots i').forEach((d,j)=>d.classList.toggle('on',i===j))};
@@ -1890,6 +1908,38 @@ function markFind(){const q=R&&R.findQ&&norm(R.findQ.trim());const pg=$('#page')
  let firstEl=null;hits.forEach(node=>{const nn=norm(node.data);let i=nn.indexOf(q);if(i<0)return;let st=i,en=i+q.length;const D=node.data;while(st>0&&!/\s/.test(D[st-1]))st--;while(en<D.length&&!/[\s.،؛:!?؟]/.test(D[en]))en++;const r=document.createRange();r.setStart(node,st);r.setEnd(node,en);const m=document.createElement('mark');m.className='sfind';try{r.surroundContents(m);firstEl=firstEl||m}catch(e){}});
  if(firstEl)firstEl.scrollIntoView({block:'center'})}
 function pageSnippet(pg){const b=(pg||[]).find(x=>x.t&&x.k!=='n');return b?String(b.t).replace(/\s+/g,' ').slice(0,60):''}
+/* ---------- المساعد الذكي (يعتمد على نص الكتاب الفعلي) ---------- */
+let AI_ST=null,aiScope='chap';
+const AI_ACTS=[['summary','لخّص','text-align-right'],['ideas','الأفكار الرئيسية','lightbulb'],['terms','اشرح المصطلحات','book-open-text'],['quiz','أسئلة مراجعة','exam'],['notes','لخّص ملاحظاتي','note-pencil']];
+function blocksText(pg){return (pg||[]).map(b=>b.t?(b.k==='p'||b.k==='q'?b.t:'## '+b.t):'').filter(Boolean).join('\n')}
+function aiRange(){const e=S.lib[R.id]||{},p=e.p||1,N=R.pages.length;if(aiScope==='page')return [p,Math.min(N,p+1)];
+ const hs=[];(R.toc&&R.toc.length?R.toc.map(t=>+t.page):[]).forEach(x=>x&&hs.push(x));if(!hs.length)R.pages.forEach((pg,i)=>{if(pg.some(b=>/^[hHn]$/.test(b.k)))hs.push(i+1)});
+ const st=Math.max(...hs.filter(x=>x<=p),Math.max(1,p-6));const nx=hs.filter(x=>x>p).sort((a,b)=>a-b)[0];const en=Math.min(N,nx?nx-1:p+6,st+19);return [st,Math.max(st,en)]}
+function aiFmt(t){let h=esc(t).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/^#{1,4}\s*(.+)$/gm,'<h5>$1</h5>').replace(/^\s*[-•*]\s+(.+)$/gm,'<li>$1</li>').replace(/^\s*(\d+)[.)-]\s+(.+)$/gm,'<li><b>$1.</b> $2</li>');
+ h=h.replace(/\((?:ص|صفحة)\s*([\d٠-٩]+)\)/g,(m,n)=>{const v=+String(n).replace(/[٠-٩]/g,d=>d.charCodeAt(0)-1632);return v&&v<=R.pages.length?`<button class="pref" data-tj="${v}">ص ${ar(v)}</button>`:m});
+ return h.split(/\n{2,}/).map(x=>/^<(h5|li)/.test(x.trim())?x.replace(/(<li>[\s\S]*<\/li>)/,'<ul>$1</ul>'):`<p>${x.replace(/\n/g,'<br>')}</p>`).join('')}
+async function aiPanel(out){const p=$('#raip');if(!p)return;
+ if(AI_ST===null){p.innerHTML='<div class="lstate"><span class="spin">◌</span></div>';try{AI_ST=(await getJSON('/api/ai',8000)).provider||''}catch(e){AI_ST='x'}}
+ const [a,b]=aiRange();const notes=Object.keys((ANN()[R.id])||{}).length;
+ p.innerHTML=`<div class="aih"><span class="aiic"><i class="ph-fill ph-sparkle"></i></span><div><b>المساعد الذكي</b><small class="mut">يجيب من نص هذا الكتاب فقط، ويحيل إلى الصفحات</small></div></div>
+ ${!AI_ST||AI_ST==='x'?`<div class="ainote"><i class="ph-duotone ph-info"></i><span>${AI_ST==='x'?'تعذّر الاتصال بخادم المساعد.':'المساعد غير مفعّل على الخادم بعد. يحتاج صاحب التطبيق تفعيل Workers AI المجاني أو إضافة مفتاح API في إعدادات Cloudflare.'}</span></div>`:''}
+ <div class="aiscope"><button class="${aiScope==='page'?'on':''}" data-aisc="page">هذه الصفحة</button><button class="${aiScope==='chap'?'on':''}" data-aisc="chap">الفصل الحالي</button></div>
+ <p class="mut" style="font-size:12px;margin:6px 0 10px">النطاق: ${a===b?`صفحة ${ar(a)}`:`الصفحات ${ar(a)}–${ar(b)}`}</p>
+ <div class="aiacts">${AI_ACTS.map(([k,l,ic])=>`<button data-ait="${k}" ${k==='notes'&&!notes?'disabled title="لا توجد ملاحظات أو تظليلات بعد"':''}><i class="ph-duotone ph-${ic}"></i>${l}</button>`).join('')}</div>
+ <form class="aiask" data-aiform="1"><input id="aiq" placeholder="اسأل عن محتوى هذا الجزء…" autocomplete="off" dir="auto"><button type="submit" aria-label="إرسال"><i class="ph-fill ph-paper-plane-tilt"></i></button></form>
+ <div class="aiout" id="aiout">${out||''}</div>`;
+ const f=p.querySelector('[data-aiform]');f.onsubmit=ev=>{ev.preventDefault();const v=$('#aiq').value.trim();if(v)aiRun('ask',v)}}
+async function aiRun(task,q){const box=$('#aiout');if(!box)return;const b=R.b||{};let ctx=[];
+ if(task==='notes'){const m=ANN()[R.id]||{};ctx=Object.entries(m).map(([k,v])=>({p:+k.split(':')[1]||0,text:[v.text,v.note?'ملاحظتي: '+v.note:''].filter(Boolean).join('\n')})).filter(x=>x.text)}
+ else{const [a,z]=aiRange();for(let i=a;i<=z;i++)ctx.push({p:i,text:blocksText(R.pages[i-1])})}
+ if(!ctx.some(x=>x.text&&x.text.trim())){box.innerHTML='<div class="ainote"><i class="ph-duotone ph-warning"></i><span>لا يوجد نص قابل للقراءة في هذا النطاق.</span></div>';return}
+ const key=`ai:${R.id}:${task}:${aiScope}:${ctx[0].p}-${ctx[ctx.length-1].p}:${q||''}`;
+ const cached=await IDB.get(key).catch(()=>null);if(cached){box.innerHTML=`<div class="aians">${aiFmt(cached)}</div><p class="mut aisrc">من الذاكرة المحلية · اعتمد على صفحات ${ar(ctx[0].p)}–${ar(ctx[ctx.length-1].p)}</p>`;return}
+ box.innerHTML='<div class="aiload"><span class="spin">◌</span> يقرأ المساعد النص…</div>';
+ try{const r=await fetch('/api/ai',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({task,q,title:b.t,author:b.a,ctx})});const j=await r.json();
+  if(!r.ok||!j.answer)throw new Error(j.message||'تعذّر الحصول على إجابة');
+  IDB.set(key,j.answer).catch(()=>{});box.innerHTML=`<div class="aians">${aiFmt(j.answer)}</div><p class="mut aisrc">اعتمد على صفحات ${ar(ctx[0].p)}–${ar(ctx[ctx.length-1].p)} من الكتاب · قد يخطئ المساعد، راجع الصفحات المذكورة</p>`}
+ catch(e){box.innerHTML=`<div class="ainote"><i class="ph-duotone ph-warning"></i><span>${esc(e.message||'تعذّر الاتصال')}</span></div>`}}
 function toc(){
  const e=S.lib[R.id];const ms=marksOf(e);
  let h=`<div class="tabs3"><button class="${tocTab==='toc'?'on':''}" data-toct="toc"><i class="ph-duotone ph-list-bullets"></i> الفهرس</button><button class="${tocTab==='bm'?'on':''}" data-toct="bm"><i class="ph-duotone ph-bookmarks-simple"></i> العلامات${ms.length?` <b>${ar(ms.length)}</b>`:''}</button><button class="${tocTab==='find'?'on':''}" data-toct="find"><i class="ph-duotone ph-magnifying-glass"></i> بحث</button></div>`;
@@ -1906,6 +1956,7 @@ document.addEventListener('click',async ev=>{
  const t=ev.target.closest('button,[data-act],[data-qa]');if(!t)return;const d=t.dataset;
  if(d.tab){buzz();if(d.tab===tab&&t.closest('.nav')){$('#view').scrollTo({top:0,behavior:'smooth'});$('#nav').classList.remove('mini');return}if(d.lang)fLang=d.lang;go(d.tab,d.focus);return}
  if(d.open){const sk=t.closest('[data-shelf-k]');if(sk){S.secHit[sk.dataset.shelfK]=(S.secHit[sk.dataset.shelfK]||0)+1}openBook(d.open);return}
+ if(d.fso){fSort=d.fso;document.querySelectorAll('[data-fso]').forEach(x=>x.classList.toggle('on',x.dataset.fso===fSort));drawResults();return}
  if(d.golib){libTab=d.golib;tab='library';render();return}
  if(d.fav){const id=d.fav;const b=getB(id);if(b)remember(b);if(S.fav[id]){delete S.fav[id];toast('أُزيل من المفضلة')}else{S.fav[id]=Date.now();toast('أُضيف للمفضلة ♥')}save();openBook(id,1);if(tab==='library')render();return}
  if(d.tolist){listPicker(d.tolist);return}
@@ -1922,6 +1973,8 @@ document.addEventListener('click',async ev=>{
  if(d.tj){const p=Math.min(+d.tj,R.pages.length);$('#rtocp').classList.remove('on');if(R.lazy&&!(await ensurePage(p)))return;S.lib[R.id].p=p;save();drawPage(1);if(d.fq)setTimeout(markFind,60);if(R.lazy)prefetchTr(p);return}
  if(d.tpart){$('#rtocp').classList.remove('on');await loadPart(+d.tpart,1);return}
  if(d.toct){tocTab=d.toct;toc();return}
+ if(d.aisc){aiScope=d.aisc;aiPanel($('#aiout')?$('#aiout').innerHTML:'');return}
+ if(d.ait){aiRun(d.ait);return}
  if(d.bmj){const [pt,p]=d.bmj.split(':');const e=S.lib[R.id];$('#rtocp').classList.remove('on');if(+pt!==(e.part||0)&&R.parts.length>1){e.part=+pt;e.p=+p;save();openReader(R.id);}else{e.p=+p;save();drawPage(0)}return}
  if(d.bmdel){const e=S.lib[R.id];const ms=marksOf(e);ms.splice(+d.bmdel,1);e.marks=ms;save();toc();drawPage(0);return}
  if(d.bmren){const e=S.lib[R.id];const ms=marksOf(e);const m=ms[+d.bmren];rmodal('اسم العلامة',m.n,v=>{m.n=v.trim().slice(0,80);e.marks=ms;save();toc()});return}
@@ -2012,8 +2065,9 @@ document.addEventListener('click',async ev=>{
  else if(a==='copyq'){try{navigator.clipboard.writeText(QUO[qi][0]+' ... '+QUO[qi][1]+' — '+QUO[qi][2]).then(()=>toast('نُسخ البيت'),()=>toast('تعذّر النسخ'))}catch(e){toast('تعذّر النسخ')}}
  else if(a==='rclose')closeReader();
  else if(a==='next')turn(1);else if(a==='prev')turn(-1);
- else if(a==='rset'){$('#rtocp').classList.remove('on');$('#rsetp').classList.toggle('on')}
- else if(a==='rtoc'){if(!R||!R.pages)return;$('#rsetp').classList.remove('on');toc();$('#rtocp').classList.toggle('on')}
+ else if(a==='rset'){$('#rtocp').classList.remove('on');$('#raip').classList.remove('on');$('#rsetp').classList.toggle('on')}
+ else if(a==='rai'){if(!R||!R.pages)return;$('#rtocp').classList.remove('on');$('#rsetp').classList.remove('on');const p=$('#raip');p.classList.toggle('on');if(p.classList.contains('on'))aiPanel()}
+ else if(a==='rtoc'){if(!R||!R.pages)return;$('#rsetp').classList.remove('on');$('#raip').classList.remove('on');toc();$('#rtocp').classList.toggle('on')}
  else if(a==='hlm'){hlMode=!hlMode;$('#reader').classList.toggle('hlm',hlMode);t.classList.toggle('on',hlMode);if(!hlMode)closeAnn();else{$('#reader').classList.remove('imm');toast('اضغط على أي فقرة')}}
  else if(a==='tts'){try{if(speechSynthesis.speaking){stopTTS();return}const u=new SpeechSynthesisUtterance([...$('#page').querySelectorAll('p[data-i]')].map(p=>p.textContent).join(' '));u.lang=R&&R.b.lang==='ar'?'ar-SA':'en-US';u.rate=.95;u.onend=()=>$('#tts').classList.remove('on');speechSynthesis.speak(u);t.classList.add('on')}catch(e){toast('القراءة الصوتية غير متاحة')}}
  else if(a==='rmark'){if(!R||!R.pages)return;const e=S.lib[R.id];const ms=marksOf(e);const k=(e.part||0)+':'+e.p,i=ms.findIndex(m=>m.k===k);

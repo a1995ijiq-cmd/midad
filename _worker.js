@@ -118,6 +118,51 @@ async function aco(request) {
   } catch (e) { return err('aco failed', 502); }
 }
 
+// ===== المساعد الذكي: يعتمد فقط على نص الكتاب المرسَل، والمفتاح محفوظ بالخادم =====
+const AI_TASKS = {
+  summary: 'لخّص النص التالي بالعربية في فقرة أو فقرتين واضحتين، ثم 3–6 نقاط بأهم ما ورد.',
+  ideas: 'استخرج الأفكار الرئيسية من النص التالي كنقاط مرقّمة، مع جملة توضيح لكل فكرة.',
+  terms: 'استخرج المصطلحات والكلمات الصعبة أو الغريبة من النص التالي، واشرح كل واحدة بإيجاز بحسب سياقها في النص.',
+  quiz: 'أنشئ 5 أسئلة مراجعة اختيار من متعدد (4 خيارات) من النص التالي فقط، واذكر الإجابة الصحيحة وموضعها بعد كل سؤال.',
+  ask: 'أجب عن سؤال القارئ اعتماداً على النص التالي فقط.',
+  notes: 'حوّل ملاحظات القارئ وتظليلاته التالية إلى ملخص شخصي منظّم بعناوين قصيرة ونقاط.'
+};
+async function aiHandler(request, env) {
+  const J = (o, st = 200) => new Response(JSON.stringify(o), { status: st, headers: { ...CORS, 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' } });
+  if (request.method === 'OPTIONS') return new Response(null, { headers: { ...CORS, 'access-control-allow-methods': 'POST, OPTIONS', 'access-control-allow-headers': 'content-type' } });
+  if (request.method === 'GET') return J({ ok: true, provider: env.ANTHROPIC_API_KEY ? 'claude' : env.AI ? 'workers-ai' : null });
+  if (request.method !== 'POST') return J({ error: 'method' }, 405);
+  let b; try { b = await request.json(); } catch { return J({ error: 'bad json' }, 400); }
+  const task = AI_TASKS[b.task] ? b.task : 'ask';
+  const ctx = (Array.isArray(b.ctx) ? b.ctx : []).filter(x => x && x.text).slice(0, 40);
+  let text = '', used = 0;
+  for (const c of ctx) { const t = String(c.text).slice(0, 4000); if (used + t.length > 22000) break; text += `\n[ص ${+c.p || '?'}]\n${t}\n`; used += t.length; }
+  if (!text.trim()) return J({ error: 'no_text', message: 'لا يوجد نص قابل للقراءة لهذا الكتاب.' }, 422);
+  const q = String(b.q || '').slice(0, 600);
+  const book = `«${String(b.title || '').slice(0, 150)}»${b.author ? ' — ' + String(b.author).slice(0, 100) : ''}`;
+  const system = `أنت مساعد قراءة داخل تطبيق «مداد». تعمل على كتاب ${book}.
+قواعد صارمة:
+- اعتمد فقط على النص المرفق بين وسوم <النص>. لا تضف معلومات من خارجه ولا تنسب للكتاب ما لم يرد فيه.
+- كل مقطع مسبوق برقم صفحته مثل [ص 12]. عند ذكر معلومة، أحِل إلى صفحتها بالصيغة (ص 12).
+- إذا لم يكن الجواب موجوداً في النص فقل بوضوح: «لا يذكر النص المرفق ذلك» ولا تخمّن.
+- اكتب بالعربية الفصحى المبسّطة، بإيجاز ووضوح، ونسّق بنقاط عند الحاجة. لا تستخدم Markdown معقداً (عناوين قصيرة ونقاط فقط).`;
+  const user = `${AI_TASKS[task]}${task === 'ask' ? `\nسؤال القارئ: ${q}` : ''}\n<النص>${text}</النص>`;
+  try {
+    if (env.ANTHROPIC_API_KEY) {
+      const r = await fetch('https://api.anthropic.com/v1/messages', { method: 'POST', headers: { 'x-api-key': env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
+        body: JSON.stringify({ model: env.AI_MODEL || 'claude-haiku-5-5', max_tokens: 1200, system, messages: [{ role: 'user', content: user }] }) });
+      const j = await r.json();
+      if (!r.ok) return J({ error: 'provider', message: (j.error && j.error.message) || ('HTTP ' + r.status) }, 502);
+      return J({ ok: true, provider: 'claude', answer: (j.content || []).map(x => x.text || '').join('').trim() });
+    }
+    if (env.AI) {
+      const r = await env.AI.run(env.AI_MODEL || '@cf/meta/llama-3.3-70b-instruct-fp8-fast', { messages: [{ role: 'system', content: system }, { role: 'user', content: user }], max_tokens: 1200 });
+      return J({ ok: true, provider: 'workers-ai', answer: String((r && (r.response || r.result && r.result.response)) || '').trim() });
+    }
+    return J({ error: 'not_configured', message: 'المساعد الذكي غير مفعّل على الخادم بعد.' }, 503);
+  } catch (e) { return J({ error: 'failed', message: String(e && e.message || e) }, 502); }
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -128,6 +173,7 @@ export default {
     }
     if (url.pathname.replace(/\/$/, '') === '/api/libiq') return libiq(request);
     if (url.pathname.replace(/\/$/, '') === '/api/aco') return aco(request);
+    if (url.pathname.replace(/\/$/, '') === '/api/ai') return aiHandler(request, env || {});
     if (url.pathname.replace(/\/$/, '') === '/api/acon') {
       const id = (url.searchParams.get('id') || '').replace(/[^a-z0-9_]/gi, '');
       if (!id) return err('missing id', 400);

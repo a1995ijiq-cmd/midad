@@ -219,7 +219,7 @@ const arNorm = t => t.replace(/[ً-ْٰـ]/g, '').replace(/[إأآ]/g, 'ا').rep
 const SURA_MAP = (() => { const m = {}; SURA_N.forEach((n, i) => { m[arNorm(n)] = i + 1; m[arNorm(n).replace(/^ال/, '')] = i + 1 }); for (const k in SURA_ALIAS) m[arNorm(k)] = SURA_ALIAS[k]; return m })();
 const toEn = t => +String(t).replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[۰-۹]/g, d => '۰۱۲۳۴۵۶۷۸۹'.indexOf(d));
 async function amthalIndex() {
-  const ck = new Request('https://midad.cache/amthal-index-v1'); const c = caches.default;
+  const ck = new Request('https://midad.cache/amthal-index-v2'); const c = caches.default;
   const hit = await c.match(ck); if (hit) return hit.json();
   const vols = await Promise.all(AMTHAL_VOLS.map(b => rfPage(b, 1).then(x => x.idx).catch(() => [])));
   const ent = []; let sura = 0;
@@ -230,7 +230,7 @@ async function amthalIndex() {
       const t = arNorm(t0);
       const sm = t.match(/^سوره\s+(.+?)(\s*\(.*\))?$/);
       if (sm) { const n = SURA_MAP[sm[1].trim()] || SURA_MAP[sm[1].trim().replace(/^ال/, '')]; if (n && n >= sura) { if (n !== sura) ent.push({ v: vi, p: pg, s: n, h: 1 }); sura = n } continue }
-      const am = t.match(/تفسير\s*ال?اي?[يی]*(?:ه|ات|تين|تان|ت?ين)?\s*:?\s*([0-9٠-٩۰-۹]+)(?:\s*[ـ\-–—]\s*([0-9٠-٩۰-۹]+))?/);
+      const am = t.match(/تفسير\s*ال?اي?[يی]*(?:ه|ات|تين|تان|ت?ين)?\s*:?\s*([0-9٠-٩۰-۹]+)(?:\s*[\-–—]?\s*([0-9٠-٩۰-۹]+))?/);
       if (am && sura) { const a1 = toEn(am[1]), a2 = am[2] ? toEn(am[2]) : a1; ent.push({ v: vi, p: pg, s: sura, a1, a2 }) }
     }
   });

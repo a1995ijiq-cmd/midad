@@ -1083,6 +1083,9 @@ mark.sfind.cur{background:var(--gold);color:#2a1900;box-shadow:0 0 0 3px rgb(199
 .qa.on,.qa.qon,.qa.qflash{background-image:linear-gradient(180deg,transparent 14%,var(--qhl) 32%,var(--qhl) 74%,transparent 92%)!important}
 .qa.qon{--qhl:color-mix(in srgb,var(--gold) 15%,transparent)!important}
 .qp:has(.qon) .qa.on:not(.qon){--qhl:transparent!important;background-image:none!important}
+
+.qtocr{font-size:11.5px;color:var(--mute);margin:8px 0 0;line-height:1.7}
+.qtna label.btn{cursor:pointer}
 </style>
 <link rel="stylesheet" href="fonts/ph.css">
 </head>
@@ -2180,7 +2183,12 @@ async function quranAyah(n,key){
  loadTafsir(key);
 }
 /* التفاسير: الميزان وروائي أهل البيت (نور الثقلين) نصاً حسب الآية؛ الأمثل والنور ككتب كاملة لعدم وجود مصدر مفتوح حسب الآية */
-const QTAFS=[{id:'mizan',n:'الميزان',full:'الميزان في تفسير القرآن',a:'العلامة الطباطبائي',b:'almizan',ic:'scales',site:'holyquran.net'},{id:'amthal',n:'الأمثل',full:'الأمثل في تفسير كتاب الله المنزل',a:'الشيخ ناصر مكارم الشيرازي',ic:'book-open-text',q:'تفسير الأمثل',api:(s,a)=>`/api/amthal?s=${s}&a=${a}`,b:'amthal',site:'books.rafed.net'},{id:'nour',n:'تفسير النور',full:'تفسير النور',a:'الشيخ محسن قرائتي',ic:'sun',q:'تفسير النور قرائتي'},{id:'thaq',n:'روائي أهل البيت (ع)',full:'تفسير نور الثقلين (روايات أهل البيت ع)',a:'الشيخ عبد علي الحويزي',b:'noor',ic:'scroll',site:'holyquran.net'}];
+const QTAFS=[{id:'mizan',n:'الميزان',full:'الميزان في تفسير القرآن',a:'العلامة الطباطبائي',b:'almizan',ic:'scales',site:'holyquran.net'},{id:'amthal',n:'الأمثل',full:'الأمثل في تفسير كتاب الله المنزل',a:'الشيخ ناصر مكارم الشيرازي',ic:'book-open-text',q:'تفسير الأمثل',api:(s,a)=>`/api/amthal?s=${s}&a=${a}`,b:'amthal',site:'books.rafed.net'},{id:'nour',n:'تفسير النور',full:'تفسير النور',a:'الشيخ محسن قرائتي',ic:'sun',q:'تفسير النور قرائتي',local:1},{id:'thaq',n:'روائي أهل البيت (ع)',full:'تفسير نور الثقلين (روايات أهل البيت ع)',a:'الشيخ عبد علي الحويزي',b:'noor',ic:'scroll',site:'holyquran.net'}];
+/* تفسير النور: ملف شخصي يستورده المستخدم، ينحفظ بالجهاز فقط (IDB) ولا يُرفع لأي خادم */
+const nourVols=()=>{try{return JSON.parse(localStorage.getItem('nourVols')||'[]')}catch(e){return []}};
+const NOURC={};
+async function nourGet(key){for(const v of nourVols()){if(!NOURC[v])NOURC[v]=await IDB.get('nour:vol:'+v).catch(()=>null);const a=NOURC[v]&&NOURC[v][key];if(a)return Object.assign({vol:v},a)}return null}
+async function nourImport(f,key){if(!f)return;toast('جارٍ الاستيراد…');try{const j=JSON.parse(await f.text());if(j.book!=='nour'||!j.a||!j.vol)throw new Error('bad');await IDB.set('nour:vol:'+j.vol,j.a);NOURC[j.vol]=j.a;const v=[...new Set([...nourVols(),+j.vol])].sort((a,b)=>a-b);localStorage.setItem('nourVols',JSON.stringify(v));toast(`استُورد الجزء ${ar(j.vol)} من تفسير النور — ${ar(Object.keys(j.a).length)} آية`);if(key)loadTafsir(key)}catch(e){toast('الملف مو ملف تفسير النور الصحيح')}}
 let qtSaving=false;
 async function saveTafSurah(tid,key){if(qtSaving)return;const t=QTAFS.find(z=>z.id===tid);if(!t||!(t.b||t.api))return;const s=+key.split(':')[0],c=(QS[s-1]||{}),n=c.verses_count||0;if(!n)return;qtSaving=true;let done=0,fail=0,ok=0;const btn=()=>document.querySelector('[data-qtsave]');
  const one=async a=>{const k=`${s}:${a}`,ck=`sht2:${t.b}:${k}`;try{let j=await IDB.get(ck).catch(()=>null);if(!j){j=await getJSON(t.api?t.api(s,a):`/api/shtaf?b=${t.b}&s=${s}&a=${a}`,40000);if(j&&j.ok)await IDB.set(ck,j)}if(j&&j.ok)ok++}catch(e){fail++}done++;const b=btn();if(b)b.innerHTML=`<span class="spin">◌</span> جارٍ الحفظ ${ar(done)} / ${ar(n)}`};
@@ -2190,6 +2198,10 @@ async function saveTafSurah(tid,key){if(qtSaving)return;const t=QTAFS.find(z=>z.
 async function loadTafsir(key){const x=$('#qtafx');if(!x)return;const t=QTAFS.find(z=>z.id===S.quran.tid)||QTAFS[0];
  document.querySelectorAll('[data-qt]').forEach(c=>{const on=c.dataset.qt===t.id;c.classList.toggle('on',on);const i=c.querySelector('i');if(i)i.className=(on?'ph-fill ph-':'ph ph-')+(QTAFS.find(z=>z.id===c.dataset.qt)||{}).ic});
  const head=`<div class="qth"><b>${esc(t.full)}</b><small>${esc(t.a)}</small></div>`;
+ if(t.local){const vols=nourVols();const it=vols.length?await nourGet(key):null;
+  if(!it){x.innerHTML=`${head}<div class="qtna"><i class="ph-duotone ph-file-arrow-down"></i><p>${vols.length?`هذه الآية ضمن جزء ما استوردته بعد. الأجزاء المحفوظة بجهازك: ${vols.map(v=>ar(v)).join('، ')}`:'تفسير النور يشتغل من ملف تستورده مرة وحدة، وينحفظ داخل جهازك فقط.'}</p><label class="btn"><i class="ph-bold ph-upload-simple"></i> استيراد ملف تفسير النور<input type="file" accept=".json,application/json" hidden data-nourimp="${key}"></label></div>`;const inp=x.querySelector('[data-nourimp]');if(inp)inp.onchange=()=>nourImport(inp.files[0],key);return}
+  const [s0]=key.split(':');x.innerHTML=`${head}${it.r?`<div class="qtr"><i class="ph-bold ph-bookmark-simple"></i>تفسير الآيات ${ar(it.r[0])} – ${ar(it.r[1])}</div>`:''}<div class="qtb">${it.p.map(p=>p.startsWith('## ')?`<h5>${esc(p.slice(3))}</h5>`:`<p>${esc(p)}</p>`).join('')}</div><div class="qtfoot"><span class="qtsrc"><i class="ph-bold ph-device-mobile"></i> نسخة شخصية بجهازك · الجزء ${ar(it.vol)} ص ${ar(it.pg[0])}${it.pg[1]!==it.pg[0]?'–'+ar(it.pg[1]):''}</span><label class="qtsave"><i class="ph-bold ph-upload-simple"></i> استيراد جزء آخر<input type="file" accept=".json,application/json" hidden data-nourimp="${key}"></label></div><p class="qtocr">النص مستخرج آلياً من صور صفحات الكتاب، فممكن يكون بي أخطاء حروف خصوصاً بالآيات المقتبسة.</p>`;
+  const inp=x.querySelector('[data-nourimp]');if(inp)inp.onchange=()=>nourImport(inp.files[0],key);return}
  if(!t.b){x.innerHTML=`${head}<div class="qtna"><i class="ph-duotone ph-books"></i><p>نص «${esc(t.n)}» غير متوفر حسب الآية من مصدر مفتوح يسمح بعرضه هنا. تگدر تفتح الكتاب كاملاً وتقرأ تفسير السورة منه.</p><button class="btn" data-qbook="${esc(t.q||t.full)}"><i class="ph-bold ph-magnifying-glass"></i> ابحث عن الكتاب كاملاً</button></div>`;return}
  x.innerHTML=head+'<span class="spin">◌</span>';const [s,a]=key.split(':'),ck=`sht2:${t.b}:${key}`;
  try{let j=await IDB.get(ck).catch(()=>null);if(!j){j=await getJSON(t.api?t.api(s,a):`/api/shtaf?b=${t.b}&s=${s}&a=${a}`,40000);if(j&&j.ok)IDB.set(ck,j).catch(()=>{})}

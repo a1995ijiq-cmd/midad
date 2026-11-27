@@ -104,6 +104,7 @@
 .ph.ph-magnifying-glass:before { content: "\e30c"; }
 .ph.ph-magnifying-glass-minus:before { content: "\e30e"; }
 .ph.ph-magnifying-glass-plus:before { content: "\e310"; }
+.ph.ph-map-pin:before { content: "\e316"; }
 .ph.ph-math-operations:before { content: "\e31e"; }
 .ph.ph-megaphone:before { content: "\e324"; }
 .ph.ph-microphone-stage:before { content: "\e75c"; }
@@ -159,6 +160,7 @@
 .ph.ph-star:before { content: "\e46a"; }
 .ph.ph-steps:before { content: "\ecbe"; }
 .ph.ph-stop:before { content: "\e46c"; }
+.ph.ph-stop-circle:before { content: "\e46e"; }
 .ph.ph-sun:before { content: "\e472"; }
 .ph.ph-sun-horizon:before { content: "\e5b6"; }
 .ph.ph-swap:before { content: "\e83c"; }
@@ -296,6 +298,7 @@
 .ph-bold.ph-magnifying-glass:before { content: "\e30c"; }
 .ph-bold.ph-magnifying-glass-minus:before { content: "\e30e"; }
 .ph-bold.ph-magnifying-glass-plus:before { content: "\e310"; }
+.ph-bold.ph-map-pin:before { content: "\e316"; }
 .ph-bold.ph-math-operations:before { content: "\e31e"; }
 .ph-bold.ph-megaphone:before { content: "\e324"; }
 .ph-bold.ph-microphone-stage:before { content: "\e75c"; }
@@ -351,6 +354,7 @@
 .ph-bold.ph-star:before { content: "\e46a"; }
 .ph-bold.ph-steps:before { content: "\ecbe"; }
 .ph-bold.ph-stop:before { content: "\e46c"; }
+.ph-bold.ph-stop-circle:before { content: "\e46e"; }
 .ph-bold.ph-sun:before { content: "\e472"; }
 .ph-bold.ph-sun-horizon:before { content: "\e5b6"; }
 .ph-bold.ph-swap:before { content: "\e83c"; }
@@ -488,6 +492,7 @@
 .ph-fill.ph-magnifying-glass:before { content: "\e30c"; }
 .ph-fill.ph-magnifying-glass-minus:before { content: "\e30e"; }
 .ph-fill.ph-magnifying-glass-plus:before { content: "\e310"; }
+.ph-fill.ph-map-pin:before { content: "\e316"; }
 .ph-fill.ph-math-operations:before { content: "\e31e"; }
 .ph-fill.ph-megaphone:before { content: "\e324"; }
 .ph-fill.ph-microphone-stage:before { content: "\e75c"; }
@@ -543,6 +548,7 @@
 .ph-fill.ph-star:before { content: "\e46a"; }
 .ph-fill.ph-steps:before { content: "\ecbe"; }
 .ph-fill.ph-stop:before { content: "\e46c"; }
+.ph-fill.ph-stop-circle:before { content: "\e46e"; }
 .ph-fill.ph-sun:before { content: "\e472"; }
 .ph-fill.ph-sun-horizon:before { content: "\e5b6"; }
 .ph-fill.ph-swap:before { content: "\e83c"; }
@@ -784,6 +790,8 @@
 .ph-duotone.ph-magnifying-glass-minus:after { content: "\e30f"; margin-left: -1em; }
 .ph-duotone.ph-magnifying-glass-plus:before { content: "\e310"; opacity: 0.2; }
 .ph-duotone.ph-magnifying-glass-plus:after { content: "\e311"; margin-left: -1em; }
+.ph-duotone.ph-map-pin:before { content: "\e316"; opacity: 0.2; }
+.ph-duotone.ph-map-pin:after { content: "\e317"; margin-left: -1em; }
 .ph-duotone.ph-math-operations:before { content: "\e31e"; opacity: 0.2; }
 .ph-duotone.ph-math-operations:after { content: "\e31f"; margin-left: -1em; }
 .ph-duotone.ph-megaphone:before { content: "\e324"; opacity: 0.2; }
@@ -894,6 +902,8 @@
 .ph-duotone.ph-steps:after { content: "\ecbf"; margin-left: -1em; }
 .ph-duotone.ph-stop:before { content: "\e46c"; opacity: 0.2; }
 .ph-duotone.ph-stop:after { content: "\e46d"; margin-left: -1em; }
+.ph-duotone.ph-stop-circle:before { content: "\e46e"; opacity: 0.2; }
+.ph-duotone.ph-stop-circle:after { content: "\e46f"; margin-left: -1em; }
 .ph-duotone.ph-sun:before { content: "\e472"; opacity: 0.2; }
 .ph-duotone.ph-sun:after { content: "\e473"; margin-left: -1em; }
 .ph-duotone.ph-sun-horizon:before { content: "\e5b6"; opacity: 0.2; }

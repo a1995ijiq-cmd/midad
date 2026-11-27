@@ -1093,6 +1093,14 @@ mark.sfind.cur{background:var(--gold);color:#2a1900;box-shadow:0 0 0 3px rgb(199
 .qrh{display:flex;align-items:center;gap:6px;margin:10px 2px 6px;font-size:var(--fs-sm);font-weight:700;color:#1d5f4f}
 .qrh i{color:var(--gold)}
 #qtaf:has(.qrh){max-height:62vh;overflow-y:auto;-webkit-overflow-scrolling:touch}#qtaf .qrecs{max-height:none!important;overflow:visible!important}
+
+.qdlp{font:700 11px/1 "IBM Plex Sans Arabic";color:#e6c26a}
+.qbar [data-act=qdl] .ph-check-circle{color:#7fe0b5}
+.qdlok{color:#1d5f4f;font-size:12px;margin-inline-end:4px}
+.qdlok[hidden]{display:none}
+.qdla{background:linear-gradient(150deg,#4a2a6c,#2a1840)}
+.qtools{grid-template-columns:1fr auto auto}
+@media(max-width:520px){.qtools{grid-template-columns:1fr 1fr}.qtools .qsearch{grid-column:1/-1}}
 </style>
 <link rel="stylesheet" href="fonts/ph.css">
 </head>
@@ -2155,14 +2163,14 @@ function quranList(f){
  const list=QS.filter(c=>(qPlace==='all'||c.revelation_place===qPlace)&&(!nf||norm(c.name_arabic+' '+(c.name_simple||'')+' '+c.id).includes(nf)));
  const L=q.last||(q.ch?{ch:q.ch,ay:q.ay||0}:null),cur=L&&QS[L.ch-1],pct=cur?Math.min(100,Math.round((L.ay||0)/cur.verses_count*100)):0;
  const tot=QS.reduce((a,c)=>a+(+c.verses_count||0),0)||6236;
- const cards=list.map((c,k)=>`<button class="qsr${L&&L.ch===c.id?' cur':''}" data-qch="${c.id}" style="--d:${typing?0:Math.min(k,24)*18}ms"><span class="qstar">${QSTAR}<b>${qd(c.id)}</b></span><span class="qsn"><b>${esc(c.name_arabic)}</b><small dir="auto">${esc(c.name_simple||'')}${c.translated_name&&c.translated_name.name?' · '+esc(c.translated_name.name):''}</small></span><span class="qmeta"><i class="qpl ${c.revelation_place==='makkah'?'mk':'md'}">${c.revelation_place==='makkah'?'مكية':'مدنية'}</i><small>${(q.pos||{})[c.id]>1?`<i class="qbm">وصلت ${qd(q.pos[c.id])}</i>`:''}${qd(c.verses_count)} آية</small></span></button>`).join('');
+ const cards=list.map((c,k)=>`<button class="qsr${L&&L.ch===c.id?' cur':''}" data-qch="${c.id}" style="--d:${typing?0:Math.min(k,24)*18}ms"><span class="qstar">${QSTAR}<b>${qd(c.id)}</b></span><span class="qsn"><b>${esc(c.name_arabic)}</b><small dir="auto">${esc(c.name_simple||'')}${c.translated_name&&c.translated_name.name?' · '+esc(c.translated_name.name):''}</small></span><span class="qmeta"><i class="qpl ${c.revelation_place==='makkah'?'mk':'md'}">${c.revelation_place==='makkah'?'مكية':'مدنية'}</i><small><i class="ph-fill ph-download-simple qdlok" ${qDlHas(c.id)?'':'hidden'}></i>${(q.pos||{})[c.id]>1?`<i class="qbm">وصلت ${qd(q.pos[c.id])}</i>`:''}${qd(c.verses_count)} آية</small></span></button>`).join('');
  if(typing&&$('#qgrid')){$('#qgrid').innerHTML=cards||'<p class="mut" style="text-align:center;padding:30px">لا توجد سورة بهذا الاسم</p>';return}
  v.innerHTML=`<section class="qhero"><div class="qpat"></div>
   <div class="qarch"><small>بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</small><h1>القرآن الكريم</h1>
    <div class="qstat"><span><b>${qd(114)}</b>سورة</span><span><b>${qd(tot)}</b>آية</span><span><b>${qd(30)}</b>جزءاً</span></div></div>
   ${cur?`<button class="qgo" data-qcont="${L.ch}:${L.ay||0}"><span class="qgoi"><i class="ph-fill ph-book-open-text"></i></span><span class="qgot"><small>تابع التلاوة</small><b>سورة ${esc(cur.name_arabic)}</b><em>${L.ay?`وصلت للآية ${qd(L.ay)} من ${qd(cur.verses_count)}`:'من البداية'}</em><i class="qprog"><i style="width:${pct}%"></i></i></span><i class="ph-bold ph-caret-left"></i></button>`:''}
  </section>
- <div class="qtools"><label class="qsearch"><i class="ph-duotone ph-magnifying-glass"></i><input id="qf" type="search" placeholder="ابحث باسم السورة أو رقمها…" value="${esc(f)}" autocomplete="off"></label><button class="qvs" data-act="rfind"><i class="ph-bold ph-text-aa"></i> ابحث في الآيات</button>
+ <div class="qtools"><label class="qsearch"><i class="ph-duotone ph-magnifying-glass"></i><input id="qf" type="search" placeholder="ابحث باسم السورة أو رقمها…" value="${esc(f)}" autocomplete="off"></label><button class="qvs" data-act="rfind"><i class="ph-bold ph-text-aa"></i> ابحث في الآيات</button><button class="qvs qdla" id="qdlall" data-act="qdlall">${qDlAllLabel()}</button>
   <div class="qseg">${[['all','الكل'],['makkah','مكية'],['madinah','مدنية']].map(([k,l])=>`<button class="${qPlace===k?'on':''}" data-qpl="${k}">${l}</button>`).join('')}</div></div>
  <div class="qgrid" id="qgrid">${cards}</div>`;
  const qf=$('#qf');qf.oninput=()=>quranList(qf.value);
@@ -2170,7 +2178,7 @@ function quranList(f){
 async function quranSurah(ch,target){
  const v=$('#qview');const c=QS[ch-1];if(!c||!v)return;document.querySelectorAll('.qresume').forEach(x=>x.remove());if(S.quran.ch!==ch||target==null)S.quran.ay=target||0;S.quran.ch=ch;qPosReady=false;save();
  qLastK='';if(!v.dataset.fl){v.dataset.fl=1;const us=()=>{qUserScroll=Date.now()};v.addEventListener('touchmove',us,{passive:true});v.addEventListener('wheel',us,{passive:true})}
- v.innerHTML=`<div class="qbar"><button data-act="qlist"><i class="ph-bold ph-list-bullets"></i> السور</button><b>سورة ${esc(c.name_arabic)}</b><span style="display:flex;gap:4px"><button data-act="rfind" aria-label="بحث في القرآن"><i class="ph-bold ph-magnifying-glass"></i></button><button data-act="qrec" aria-label="القارئ"><i class="ph-duotone ph-microphone-stage"></i></button><button data-act="qplay" id="qplay" aria-label="استماع"><i class="ph-fill ph-play-circle"></i></button></span></div><div class="qtext"><div class="lstate"><span class="spin">◌</span></div></div>`;
+ v.innerHTML=`<div class="qbar"><button data-act="qlist"><i class="ph-bold ph-list-bullets"></i> السور</button><b>سورة ${esc(c.name_arabic)}</b><span style="display:flex;gap:4px"><button data-act="rfind" aria-label="بحث في القرآن"><i class="ph-bold ph-magnifying-glass"></i></button><button data-act="qdl" data-ch="${ch}" aria-label="تنزيل التلاوة">${qDlHas(ch)?'<i class="ph-fill ph-check-circle"></i>':'<i class="ph-bold ph-download-simple"></i>'}</button><button data-act="qrec" aria-label="القارئ"><i class="ph-duotone ph-microphone-stage"></i></button><button data-act="qplay" id="qplay" aria-label="استماع"><i class="ph-fill ph-play-circle"></i></button></span></div><div class="qtext"><div class="lstate"><span class="spin">◌</span></div></div>`;
  try{const j=await qget(`/quran/verses/uthmani?chapter_number=${ch}`,'q:v:'+ch);const vs=j.verses||[];
   const bism=ch!==1&&ch!==9?'<div class="qbism">بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</div>':'';
   v.querySelector('.qtext').innerHTML=`<div class="qframe"><span class="qfc"></span><span class="qfm">${c.revelation_place==='makkah'?'مكية':'مدنية'}</span><h3>سورة ${esc(c.name_arabic)}</h3><span class="qfm">${qd(c.verses_count)} آية</span><span class="qfc r"></span></div>${bism}<p class="qp">${vs.map(x=>{const n=+x.verse_key.split(':')[1];return `<span class="qa${target===n?' on':''}" data-qa="${n}" data-k="${x.verse_key}">${esc(x.text_uthmani)} <i class="qnum">﴿${qd(n)}﴾</i></span>`}).join(' ')}</p>
@@ -2265,15 +2273,45 @@ async function qLoadVerses(ch,rid){const j=await qget(`/recitations/${rid}/by_ch
  if(!L.length)throw new Error('no verses');if(S.quran.ch!==ch||S.quran.rid!==rid)return;QV=L;QMODE='v';QVi=0;S.quran.cur=ch+':'+rid}
 function qPrep(ch){ch=ch||S.quran.ch;if(!ch)return Promise.resolve();const key=ch+':'+S.quran.rid;if(qPrepP&&qPrepP.key===key)return qPrepP;
  const p=(async()=>{
-  if(isIQ(S.quran.rid)){const R0=QIRAQ.find(x=>x.id===S.quran.rid);if(R0){const au=qAudio(),k=ch+':'+R0.id,url=R0.u+String(ch).padStart(3,'0')+'.mp3';QMODE='ch';QV=null;QAPPROX=true;QTS=null;if(au.dataset.k!==k){au.dataset.k=k;au.dataset.url=url;au.src=url;au.load()}else if(au.readyState>=1)qBuildApprox();S.quran.cur=k;return}S.quran.rid=8;save()}
+  const offl=qDlHas(ch)?await IDB.get(qDlKey(S.quran.rid,ch)).catch(()=>null):null;const offU=offl?URL.createObjectURL(offl):null;
+  if(isIQ(S.quran.rid)){const R0=QIRAQ.find(x=>x.id===S.quran.rid);if(R0){const au=qAudio(),k=ch+':'+R0.id,url=offU||R0.u+String(ch).padStart(3,'0')+'.mp3';QMODE='ch';QV=null;QAPPROX=true;QTS=null;if(au.dataset.k!==k){au.dataset.k=k;au.dataset.url=url;au.src=url;au.load()}else if(au.readyState>=1)qBuildApprox();S.quran.cur=k;return}S.quran.rid=8;save()}
   QAPPROX=false;const rs=await qRecs();if(rs.length&&!rs.some(r=>r.id===S.quran.rid)){S.quran.rid=rs.some(r=>r.id===8)?8:rs[0].id;save()}
   const rid=S.quran.rid,k=ch+':'+rid,au=qAudio();
   const j=await qget(`/chapter_recitations/${rid}/${ch}?segments=true`,`q:cr2:${rid}:${ch}`);const af=j.audio_file||{};
   if(S.quran.ch!==ch||S.quran.rid!==rid)return;
-  const url=(af.audio_url||'').replace('http:','https:');QTS=(af.timestamps||[]).map(t=>({k:t.verse_key,f:+t.timestamp_from,t:+t.timestamp_to}));
+  const url=offU||(af.audio_url||'').replace('http:','https:');QTS=(af.timestamps||[]).map(t=>({k:t.verse_key,f:+t.timestamp_from,t:+t.timestamp_to}));
   if(!url){await qLoadVerses(ch,rid);return}
   QMODE='ch';QV=null;if(au.dataset.k!==k){au.dataset.k=k;au.dataset.url=url;au.src=url;au.load()}S.quran.cur=k})();
  p.key=key;qPrepP=p;p.catch(()=>{if(qPrepP===p)qPrepP=null});return p}
+/* ===== تنزيل التلاوة: ملف السورة يتحفظ بالجهاز (IndexedDB) فيشتغل فوراً وبدون نت ===== */
+let qDlBusy=null,qDlAll=false;
+const qDlKey=(rid,ch)=>`qa:${rid}:${ch}`;
+const qDlHas=(ch,rid=S.quran.rid)=>!!(S.quran.dl&&S.quran.dl[rid+':'+ch]);
+async function qAudioUrl(ch,rid){if(isIQ(rid)){const R0=QIRAQ.find(x=>x.id===rid);return R0?R0.u+String(ch).padStart(3,'0')+'.mp3':''}
+ const j=await qget(`/chapter_recitations/${rid}/${ch}?segments=true`,`q:cr2:${rid}:${ch}`);return ((j.audio_file||{}).audio_url||'').replace('http:','https:')}
+async function qDownload(ch,quiet){const rid=S.quran.rid,k=rid+':'+ch;if(qDlHas(ch,rid))return true;if(qDlBusy)return false;qDlBusy=k;
+ try{try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
+  await qget(`/quran/verses/uthmani?chapter_number=${ch}`,'q:v:'+ch).catch(()=>{});
+  const url=await qAudioUrl(ch,rid);if(!url)throw new Error('na');
+  const btn=()=>document.querySelector(`[data-act=qdl][data-ch="${ch}"]`);
+  const blob=await fetchProg(url,(g,t)=>{const b=btn();if(b)b.innerHTML=`<span class="qdlp">${ar(Math.round(t?g/t*100:0))}٪</span>`;qDlPill(ch,t?g/t*100:0,t?`${fmtSize(g)} من ${fmtSize(t)}`:fmtSize(g))});
+  if(blob.size<20000)throw new Error('bad');
+  await IDB.set(qDlKey(rid,ch),blob);S.quran.dl=S.quran.dl||{};S.quran.dl[k]=blob.size;save();
+  const b=btn();if(b)b.innerHTML='<i class="ph-fill ph-check-circle"></i>';if(!quiet)toast(`حُفظت تلاوة سورة ${(QS[ch-1]||{}).name_arabic||''} بجهازك ✓`);return true}
+ catch(e){if(!quiet)toast(e.message==='na'?'تنزيل هذا القارئ غير متاح — اختر قارئاً آخر':'تعذّر تنزيل التلاوة، حاول مرة ثانية');const b=document.querySelector(`[data-act=qdl][data-ch="${ch}"]`);if(b)b.innerHTML='<i class="ph-bold ph-download-simple"></i>';return false}
+ finally{qDlBusy=null;if(!qDlAll)qDlPillHide()}}
+function qDlPill(ch,pct,label){let p=$('#dlpill');if(!p){p=document.createElement('div');p.id='dlpill';p.className='dlpill';$('#app').appendChild(p)}
+ p.innerHTML=`<i class="ph-bold ph-download-simple"></i><span><b>تلاوة سورة ${esc((QS[ch-1]||{}).name_arabic||'')}${qDlAll?` · ${ar(qDlAll.done)}/${ar(qDlAll.n)}`:''}</b><small>${esc(label)}</small></span><em>${ar(Math.round(pct))}٪</em><i class="bar" style="width:${pct}%"></i>`;p.classList.add('on')}
+function qDlPillHide(){const p=$('#dlpill');if(p)setTimeout(()=>p.classList.remove('on'),800)}
+async function qDownloadAll(){if(qDlAll){qDlAll.stop=1;toast('يتوقف التنزيل بعد السورة الحالية');return}
+ const todo=[];for(let c=1;c<=114;c++)if(!qDlHas(c))todo.push(c);if(!todo.length){toast('كل السور محفوظة بجهازك لهذا القارئ ✓');return}
+ if(!confirm(`تنزيل ${todo.length} سورة بصوت القارئ الحالي؟ الحجم الكلي تقريباً ${isIQ(S.quran.rid)?'٥٠٠–٨٠٠':'٥٠٠–١٥٠٠'} ميگا، يفضّل على واي فاي.`))return;
+ qDlAll={n:todo.length,done:0,stop:0};const b=$('#qdlall');if(b)b.innerHTML='<i class="ph-bold ph-stop-circle"></i> إيقاف التنزيل';
+ for(const c of todo){if(qDlAll.stop)break;await qDownload(c,true);qDlAll.done++;const sb=document.querySelector(`.qsr[data-qch="${c}"] .qdlok`);if(sb)sb.hidden=!qDlHas(c)}
+ const n=qDlAll.done;qDlAll=false;qDlPillHide();toast(`حُفظت ${ar(n)} سورة بجهازك ✓`);const bb=$('#qdlall');if(bb)bb.innerHTML=qDlAllLabel()}
+function qDlAllLabel(){let n=0;for(let c=1;c<=114;c++)if(qDlHas(c))n++;return n>=114?'<i class="ph-fill ph-check-circle"></i> المصحف محفوظ بالجهاز':`<i class="ph-bold ph-cloud-arrow-down"></i> تنزيل كل السور${n?` (${ar(n)}/١١٤)`:''}`}
+async function qDlRemove(ch){const rid=S.quran.rid;await IDB.del(qDlKey(rid,ch)).catch(()=>{});if(S.quran.dl)delete S.quran.dl[rid+':'+ch];save();const au=$('#qaudio');if(au&&au.dataset.k===ch+':'+rid){delete au.dataset.k;qPrepP=null}toast('انحذفت التلاوة المحفوظة لهذي السورة')}
+
 function qReady(){const au=$('#qaudio'),k=S.quran.ch+':'+S.quran.rid;return !!au&&S.quran.cur===k&&((QMODE==='ch'&&(QTS||QAPPROX)&&au.dataset.k===k)||(QMODE==='v'&&QV&&QV.length))}
 function qPlayNow(ay){const au=qAudio(),ch=S.quran.ch;qWantPlay=true;
  if(QMODE==='v'&&QV){let i=ay?QV.findIndex(x=>+x.k.split(':')[1]===ay):QVi;QVi=Math.max(0,i);if(au.getAttribute('src')!==QV[QVi].u)au.src=QV[QVi].u;qMark(QV[QVi].k);au.play().catch(qBlocked);return}
@@ -2637,6 +2675,8 @@ document.addEventListener('click',async ev=>{
  if(a==='njhread'){njGo('hikam:'+njItem()[1]);return}
  if(a==='qlist'){quranList();$('#qview').scrollTop=0;return}
  if(a==='qplay'){quranPlay();return}
+ if(a==='qdl'){const ch=+t.dataset.ch;if(qDlHas(ch)){if(confirm('التلاوة محفوظة بجهازك. تريد تحذفها؟'))qDlRemove(ch).then(()=>{t.innerHTML='<i class="ph-bold ph-download-simple"></i>'})}else qDownload(ch).then(ok=>{if(ok){const au=$('#qaudio');if(!(au&&!au.paused)){qPrepP=null;if(au)delete au.dataset.k;qPrep(ch).catch(()=>{})}}});return}
+ if(a==='qdlall'){qDownloadAll();return}
  if(a==='qrec'){quranPickReciter();return}
  if(a==='rmsave'){const cb=rmCb;rmCb=null;$('#rmodal').classList.remove('on');if(cb)cb($('#rmta').value);return}
  if(a==='rmcancel'){rmCb=null;$('#rmodal').classList.remove('on');$('#rmta').style.display='';$('[data-act=rmsave]').style.display='';const qb=$('#qtaf');if(qb)qb.remove();return}

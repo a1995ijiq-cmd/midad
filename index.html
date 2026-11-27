@@ -1013,6 +1013,22 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 .qtna>i{font-size:40px;color:var(--gold)}
 .qtna p{font-size:var(--fs-sm);line-height:1.8;color:var(--mute);margin:8px 0 12px}
 .qtmsg{color:var(--mute);font-size:var(--fs-sm)}
+
+.qtfoot{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px solid var(--line2)}
+.qtsave{display:inline-flex;align-items:center;gap:5px;min-height:34px;padding:0 12px;border-radius:99px;font-size:var(--fs-xs);font-weight:600;color:var(--plum);background:color-mix(in srgb,var(--gold) 14%,transparent)}
+.qtsave .ph-check-circle{color:#1f8a5b}
+
+/* بحث داخل الكتاب */
+#fbar{position:absolute;left:50%;bottom:calc(76px + env(safe-area-inset-bottom));transform:translate(-50%,16px);opacity:0;pointer-events:none;z-index:30;display:flex;align-items:center;gap:4px;padding:5px;border-radius:99px;background:color-mix(in srgb,var(--surf) 92%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--line2);box-shadow:0 12px 30px -10px rgb(20 10 40/.45);transition:opacity .2s var(--e-out),transform .25s var(--e-out);max-width:calc(100% - 24px)}
+#fbar.on{opacity:1;transform:translate(-50%,0);pointer-events:auto}
+#fbar>button{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;color:var(--plum);background:var(--soft);flex:none;transition:transform .16s var(--e-out)}
+#fbar>button:active{transform:scale(.9)}
+#fbar .fbq{width:auto;display:inline-flex;align-items:center;gap:6px;padding:0 12px;border-radius:99px;background:none;font-size:var(--fs-sm);min-width:0}
+#fbar .fbq b{max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#fbar .fbq span{color:var(--mute);font-size:var(--fs-xs);white-space:nowrap}
+#fbar .fbq i{color:var(--gold)}
+mark.sfind.cur{background:var(--gold);color:#2a1900;box-shadow:0 0 0 3px rgb(199 154 46/.35);border-radius:4px}
+@media(max-width:430px){.rtop [data-act=fs]{display:none}}
 </style>
 <link rel="stylesheet" href="fonts/ph.css">
 </head>
@@ -1037,6 +1053,7 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
     <div class="rtop">
       <button class="ib" data-act="rclose" aria-label="رجوع"><i class="ph-bold ph-arrow-right"></i></button>
       <button class="ib" data-act="rtoc" data-tx aria-label="الفهرس"><i class="ph-duotone ph-list-bullets"></i></button>
+      <button class="ib" data-act="rfind" data-tx aria-label="بحث داخل الكتاب"><i class="ph-duotone ph-magnifying-glass"></i></button>
       <b id="rtitle"></b>
       <a class="ib" id="rext" data-fr target="_blank" rel="noopener" aria-label="فتح في المصدر"><i class="ph-duotone ph-arrow-square-out"></i></a>
       <button class="ib" data-act="hlm" data-tx id="hlb" aria-label="أدوات التعديل والملاحظات"><i class="ph-duotone ph-highlighter-circle"></i></button>
@@ -2109,16 +2126,22 @@ async function quranAyah(n,key){
  loadTafsir(key);
 }
 /* التفاسير: الميزان وروائي أهل البيت (نور الثقلين) نصاً حسب الآية؛ الأمثل والنور ككتب كاملة لعدم وجود مصدر مفتوح حسب الآية */
-const QTAFS=[{id:'mizan',n:'الميزان',full:'الميزان في تفسير القرآن',a:'العلامة الطباطبائي',b:'almizan',ic:'scales'},{id:'amthal',n:'الأمثل',full:'الأمثل في تفسير كتاب الله المنزل',a:'الشيخ ناصر مكارم الشيرازي',ic:'book-open-text',q:'تفسير الأمثل'},{id:'nour',n:'تفسير النور',full:'تفسير النور',a:'الشيخ محسن قرائتي',ic:'sun',q:'تفسير النور قرائتي'},{id:'thaq',n:'روائي أهل البيت (ع)',full:'تفسير نور الثقلين (روايات أهل البيت ع)',a:'الشيخ عبد علي الحويزي',b:'noor',ic:'scroll'}];
+const QTAFS=[{id:'mizan',n:'الميزان',full:'الميزان في تفسير القرآن',a:'العلامة الطباطبائي',b:'almizan',ic:'scales',site:'holyquran.net'},{id:'amthal',n:'الأمثل',full:'الأمثل في تفسير كتاب الله المنزل',a:'الشيخ ناصر مكارم الشيرازي',ic:'book-open-text',q:'تفسير الأمثل',api:(s,a)=>`/api/amthal?s=${s}&a=${a}`,b:'amthal',site:'books.rafed.net'},{id:'nour',n:'تفسير النور',full:'تفسير النور',a:'الشيخ محسن قرائتي',ic:'sun',q:'تفسير النور قرائتي'},{id:'thaq',n:'روائي أهل البيت (ع)',full:'تفسير نور الثقلين (روايات أهل البيت ع)',a:'الشيخ عبد علي الحويزي',b:'noor',ic:'scroll',site:'holyquran.net'}];
+let qtSaving=false;
+async function saveTafSurah(tid,key){if(qtSaving)return;const t=QTAFS.find(z=>z.id===tid);if(!t||!(t.b||t.api))return;const s=+key.split(':')[0],c=(QS[s-1]||{}),n=c.verses_count||0;if(!n)return;qtSaving=true;let done=0,fail=0,ok=0;const btn=()=>document.querySelector('[data-qtsave]');
+ const one=async a=>{const k=`${s}:${a}`,ck=`sht2:${t.b}:${k}`;try{let j=await IDB.get(ck).catch(()=>null);if(!j){j=await getJSON(t.api?t.api(s,a):`/api/shtaf?b=${t.b}&s=${s}&a=${a}`,40000);if(j&&j.ok)await IDB.set(ck,j)}if(j&&j.ok)ok++}catch(e){fail++}done++;const b=btn();if(b)b.innerHTML=`<span class="spin">◌</span> جارٍ الحفظ ${ar(done)} / ${ar(n)}`};
+ const q=[...Array(n)].map((_,i)=>i+1);await Promise.all([0,1,2].map(async()=>{while(q.length)await one(q.shift())}));
+ qtSaving=false;const sv=JSON.parse(localStorage.getItem('qtSaved')||'{}');sv[`${t.id}:${s}`]=1;localStorage.setItem('qtSaved',JSON.stringify(sv));
+ const b=btn();if(b)b.innerHTML=`<i class="ph-fill ph-check-circle"></i> محفوظ بالجهاز`;toast(fail?`حُفظ تفسير ${ar(ok)} آية، وتعذّر ${ar(fail)}`:`حُفظ تفسير سورة ${c.name_arabic||''} — يشتغل بدون نت`)}
 async function loadTafsir(key){const x=$('#qtafx');if(!x)return;const t=QTAFS.find(z=>z.id===S.quran.tid)||QTAFS[0];
  document.querySelectorAll('[data-qt]').forEach(c=>{const on=c.dataset.qt===t.id;c.classList.toggle('on',on);const i=c.querySelector('i');if(i)i.className=(on?'ph-fill ph-':'ph ph-')+(QTAFS.find(z=>z.id===c.dataset.qt)||{}).ic});
  const head=`<div class="qth"><b>${esc(t.full)}</b><small>${esc(t.a)}</small></div>`;
  if(!t.b){x.innerHTML=`${head}<div class="qtna"><i class="ph-duotone ph-books"></i><p>نص «${esc(t.n)}» غير متوفر حسب الآية من مصدر مفتوح يسمح بعرضه هنا. تگدر تفتح الكتاب كاملاً وتقرأ تفسير السورة منه.</p><button class="btn" data-qbook="${esc(t.q||t.full)}"><i class="ph-bold ph-magnifying-glass"></i> ابحث عن الكتاب كاملاً</button></div>`;return}
  x.innerHTML=head+'<span class="spin">◌</span>';const [s,a]=key.split(':'),ck=`sht2:${t.b}:${key}`;
- try{let j=await IDB.get(ck).catch(()=>null);if(!j){j=await getJSON(`/api/shtaf?b=${t.b}&s=${s}&a=${a}`,25000);if(j&&j.ok)IDB.set(ck,j).catch(()=>{})}
+ try{let j=await IDB.get(ck).catch(()=>null);if(!j){j=await getJSON(t.api?t.api(s,a):`/api/shtaf?b=${t.b}&s=${s}&a=${a}`,40000);if(j&&j.ok)IDB.set(ck,j).catch(()=>{})}
   if(!$('#qtafx')||S.quran.tid!==t.id)return;
   if(!j||!j.ok){x.innerHTML=head+'<p class="qtmsg">لا يوجد تفسير لهذه الآية في هذا الكتاب.</p>';return}
-  x.innerHTML=`${head}${j.range?`<div class="qtr"><i class="ph-bold ph-bookmark-simple"></i>${esc(j.range)}</div>`:''}<div class="qtb">${j.paras.map(p=>/^(قوله تعالى|بيان|بحث روائي|بحث فلسفي|بحث علمي|بحث أخلاقي|بحث قرآني|كلام في|في تفسير)/.test(p)&&p.length<80?`<h5>${esc(p)}</h5>`:`<p>${esc(p)}</p>`).join('')}</div><a class="qtsrc" href="${esc(j.src)}" target="_blank" rel="noopener"><i class="ph-bold ph-arrow-square-out"></i> المصدر: holyquran.net</a>`;
+  x.innerHTML=`${head}${j.range?`<div class="qtr"><i class="ph-bold ph-bookmark-simple"></i>${esc(j.range)}</div>`:''}<div class="qtb">${j.paras.map(p=>(/^(قوله تعالى|بيان|بحث روائي|بحث فلسفي|بحث علمي|بحث أخلاقي|بحث قرآني|كلام في|في تفسير|التّفسير|التفسير|الآية|الآيات|الآيتان|بحوث|ملاحظات)/.test(p)||/:$/.test(p))&&p.length<80?`<h5>${esc(p)}</h5>`:`<p>${esc(p)}</p>`).join('')}</div><div class="qtfoot"><a class="qtsrc" href="${esc(j.src)}" target="_blank" rel="noopener"><i class="ph-bold ph-arrow-square-out"></i> المصدر: ${esc(t.site)}${j.vol?` · الجزء ${ar(j.vol)} ص ${ar(j.page)}`:''}</a><button class="qtsave" data-qtsave="${t.id}" data-qk="${key}">${(JSON.parse(localStorage.getItem('qtSaved')||'{}'))[`${t.id}:${s}`]?'<i class="ph-fill ph-check-circle"></i> محفوظ بالجهاز':'<i class="ph-bold ph-download-simple"></i> حفظ تفسير السورة بالجهاز'}</button></div>`;
  }catch(e){x.innerHTML=head+'<p class="qtmsg">تعذّر تحميل التفسير — تأكد من الاتصال وحاول مرة ثانية.</p>'}}
 const QHIDE=/alafasy|afasy|sudais|sudays|العفاسي|السديس/i;
 async function quranReciters(){try{return ((await qget('/resources/recitations?language=ar','q:recs')).recitations||[]).filter(r=>!QHIDE.test((r.reciter_name||'')+' '+(r.translated_name&&r.translated_name.name||'')))}catch(e){return []}}
@@ -2299,7 +2322,7 @@ async function turn(d){
  e.p=n;e.last=Date.now();if(d>0)S.stat.pages=(S.stat.pages||0)+1;save();drawPage(d);if(R.lazy)prefetchTr(n);
 }
 function stopTTS(){try{speechSynthesis.cancel()}catch(e){}$('#tts').classList.remove('on')}
-function closeReader(){S.lastOpen=null;try{save()}catch(e){}setTimeout(()=>{try{if(window.__pendingSW)location.reload()}catch(e){}},400);
+function closeReader(){S.lastOpen=null;{const fb=$('#fbar');if(fb)fb.classList.remove('on')}try{save()}catch(e){}setTimeout(()=>{try{if(window.__pendingSW)location.reload()}catch(e){}},400);
  stopTTS();try{if(R&&R.audio)R.audio.pause();const qa=$('#qaudio');if(qa)qa.pause()}catch(e){}
  $('#rmta').style.display='';$('[data-act=rmsave]').style.display='';{const qb=$('#qtaf');if(qb)qb.remove()}
  const mins=Math.max(1,Math.round((Date.now()-rStart)/60000));
@@ -2313,14 +2336,16 @@ const marksOf=e=>(e&&e.marks||[]).map(mkOf);
 const hasMark=(e,k)=>marksOf(e).some(m=>m.k===k);
 let tocTab='toc';
 function findIn(q){R.findQ=q;const box=$('#rfres');if(!box)return;const nq=norm(q.trim());if(nq.length<2){box.innerHTML='<p class="mut" style="font-size:13px">اكتب حرفين على الأقل. البحث يتجاهل التشكيل والهمزات.</p>';return}
- const res=[];const part=(S.lib[R.id]||{}).part||0;
+ const res=[];R.fres=res;const part=(S.lib[R.id]||{}).part||0;
  (R.pages||[]).forEach((pg,i)=>pg.forEach(b=>{if(!b.t||res.length>=150)return;const raw=String(b.t),n=norm(raw);let at=n.indexOf(nq);while(at>-1&&res.length<150){res.push({p:i+1,raw,at});at=n.indexOf(nq,at+nq.length)}}));
- box.innerHTML=res.length?`<p class="mut" style="font-size:12.5px;margin:0 0 6px">${res.length>=150?'أكثر من ١٥٠':ar(res.length)} نتيجة${R.parts.length>1?' في هذا الجزء':''}</p>`+res.map(r=>{const a=Math.max(0,r.at-40),sn=r.raw.slice(a,r.at+nq.length+60);const rel=r.at-a;return `<button class="fres" data-tj="${r.p}" data-fq="1"><span>${a?'…':''}${esc(sn.slice(0,rel))}<mark>${esc(sn.slice(rel,rel+nq.length))}</mark>${esc(sn.slice(rel+nq.length))}…</span><span class="mut">ص ${ar(r.p)}</span></button>`}).join(''):'<p class="mut">لا توجد نتائج.</p>'}
+ box.innerHTML=res.length?`<p class="mut" style="font-size:12.5px;margin:0 0 6px">${res.length>=150?'أكثر من ١٥٠':ar(res.length)} نتيجة${R.parts.length>1?' في هذا الجزء':''}</p>`+res.map((r,ri)=>{const a=Math.max(0,r.at-40),sn=r.raw.slice(a,r.at+nq.length+60);const rel=r.at-a;return `<button class="fres" data-tj="${r.p}" data-fq="1" data-fi="${ri}"><span>${a?'…':''}${esc(sn.slice(0,rel))}<mark>${esc(sn.slice(rel,rel+nq.length))}</mark>${esc(sn.slice(rel+nq.length))}…</span><span class="mut">ص ${ar(r.p)}</span></button>`}).join(''):'<p class="mut">لا توجد نتائج.</p>';if(R.lazy)box.insertAdjacentHTML('beforeend','<p class="mut" style="font-size:12px;margin-top:8px">هذا الكتاب يُحمَّل صفحة صفحة، فالبحث يشمل الصفحات اللي فتحتها فقط.</p>')}
 /* تمييز كلمة البحث داخل الصفحة بعد الانتقال */
 function markFind(){const q=R&&R.findQ&&norm(R.findQ.trim());const pg=$('#page');if(!q||q.length<2||!pg)return;
  const tw=document.createTreeWalker(pg,NodeFilter.SHOW_TEXT);const hits=[];let n;while(n=tw.nextNode()){const nn=norm(n.data);if(nn.length===n.data.length&&nn.includes(q))hits.push(n)}
  let firstEl=null;hits.forEach(node=>{const nn=norm(node.data);let i=nn.indexOf(q);if(i<0)return;let st=i,en=i+q.length;const D=node.data;while(st>0&&!/\s/.test(D[st-1]))st--;while(en<D.length&&!/[\s.،؛:!?؟]/.test(D[en]))en++;const r=document.createRange();r.setStart(node,st);r.setEnd(node,en);const m=document.createElement('mark');m.className='sfind';try{r.surroundContents(m);firstEl=firstEl||m}catch(e){}});
- if(firstEl)firstEl.scrollIntoView({block:'center'})}
+ const all=pg.querySelectorAll('mark.sfind');const k=R.fordinal||0;const tgt=all[Math.min(k,all.length-1)]||firstEl;all.forEach(x=>x.classList.remove('cur'));if(tgt){tgt.classList.add('cur');tgt.scrollIntoView({block:'center'})}}
+function findBar(){let b=$('#fbar');if(!b){b=document.createElement('div');b.id='fbar';$('#reader').appendChild(b)}const n=(R.fres||[]).length;if(!n){b.classList.remove('on');return}
+ b.innerHTML=`<button data-act="fprev" aria-label="النتيجة السابقة"><i class="ph-bold ph-caret-right"></i></button><button class="fbq" data-act="rfind"><i class="ph-bold ph-magnifying-glass"></i><b>${esc(R.findQ||'')}</b><span>${ar((R.fi||0)+1)} / ${ar(n)}</span></button><button data-act="fnext" aria-label="النتيجة التالية"><i class="ph-bold ph-caret-left"></i></button><button data-act="fclose" aria-label="إغلاق البحث"><i class="ph-bold ph-x"></i></button>`;b.classList.add('on')}
 function pageSnippet(pg){const b=(pg||[]).find(x=>x.t&&x.k!=='n');return b?String(b.t).replace(/\s+/g,' ').slice(0,60):''}
 /* ---------- المساعد الذكي (يعتمد على نص الكتاب الفعلي) ---------- */
 let AI_ST=null,aiScope='chap';
@@ -2386,7 +2411,7 @@ document.addEventListener('click',async ev=>{
  if(d.hclr){if(confirmDel==='hist'){S.hist=[];confirmDel='';save();render()}else{confirmDel='hist';toast('اضغط مرة ثانية لمسح السجل')}return}
  if(d.read){openReader(d.read);return}
  if(d.hj){openReader(d.hj,{part:+d.part,p:+d.p});return}
- if(d.tj){const p=Math.min(+d.tj,R.pages.length);$('#rtocp').classList.remove('on');if(R.lazy&&!(await ensurePage(p)))return;S.lib[R.id].p=p;save();drawPage(1);if(d.fq)setTimeout(markFind,60);if(R.lazy)prefetchTr(p);return}
+ if(d.tj){const p=Math.min(+d.tj,R.pages.length);$('#rtocp').classList.remove('on');if(d.fi!=null&&R.fres){R.fi=+d.fi;findBar()}if(R.lazy&&!(await ensurePage(p)))return;S.lib[R.id].p=p;save();drawPage(1);if(d.fq){R.fordinal=R.fres&&R.fi!=null?R.fres.slice(0,R.fi).filter(x=>x.p===p).length:0;setTimeout(markFind,60)}if(R.lazy)prefetchTr(p);return}
  if(d.tpart){$('#rtocp').classList.remove('on');await loadPart(+d.tpart,1);return}
  if(d.toct){tocTab=d.toct;toc();return}
  if(d.aisc){aiScope=d.aisc;aiPanel($('#aiout')?$('#aiout').innerHTML:'');return}
@@ -2432,6 +2457,7 @@ document.addEventListener('click',async ev=>{
  if(d.qfrom){$('[data-act=rmcancel]')?.click();qPlayFrom(+d.qfrom);return}
  if(d.qa){const au=$('#qaudio');if(au&&!au.paused){qPlayFrom(+d.qa);return}quranAyah(+d.qa,d.k);return}
  if(d.qt){S.quran.tid=d.qt;save();loadTafsir(d.qk);return}
+ if(d.qtsave){saveTafSurah(d.qtsave,d.qk);return}
  if(d.qbook){$('#rmodal').classList.remove('on');closeReader();q=d.qbook;curTitle='';curSec=null;tab='explore';render();searchAll(q);return}
  if(d.qr){S.quran.rid=+d.qr;S.quran.cur=0;save();$('#rmodal').classList.remove('on');$('#rmta').style.display='';$('[data-act=rmsave]').style.display='';const qb=$('#qtaf');if(qb)qb.remove();const au=$('#qaudio');if(au)au.pause();quranPlay();return}
  if(d.acopdf){const id=d.acopdf;if(S.dl[id]){openPDF(id);return}toast('جارٍ تحميل الكتاب PDF…');downloadBook(id).then(()=>{if(S.dl[id]&&R&&R.id===id)openPDF(id)});return}
@@ -2491,6 +2517,9 @@ document.addEventListener('click',async ev=>{
  else if(a==='next')turn(1);else if(a==='prev')turn(-1);
  else if(a==='rset'){$('#rtocp').classList.remove('on');$('#raip').classList.remove('on');$('#rsetp').classList.toggle('on')}
  else if(a==='rai'){if(!R||!R.pages)return;$('#rtocp').classList.remove('on');$('#rsetp').classList.remove('on');const p=$('#raip');p.classList.toggle('on');if(p.classList.contains('on'))aiPanel()}
+ else if(a==='rfind'){if(!R||!R.pages){toast('البحث متاح للكتب النصية');return}tocTab='find';$('#rsetp').classList.remove('on');$('#raip').classList.remove('on');toc();$('#rtocp').classList.add('on');setTimeout(()=>{const i=$('#rfind');if(i)i.focus()},80)}
+ else if(a==='fnext'||a==='fprev'){if(!R||!R.fres||!R.fres.length)return;R.fi=(R.fi+(a==='fnext'?1:-1)+R.fres.length)%R.fres.length;const r=R.fres[R.fi],e=S.lib[R.id];R.fordinal=R.fres.slice(0,R.fi).filter(x=>x.p===r.p).length;findBar();if(e.p!==r.p){if(R.lazy&&!(await ensurePage(r.p)))return;e.p=r.p;save();drawPage(a==='fnext'?1:-1);setTimeout(markFind,60)}else markFind()}
+ else if(a==='fclose'){R.fres=null;R.findQ='';const b=$('#fbar');if(b)b.classList.remove('on');document.querySelectorAll('mark.sfind').forEach(m=>m.replaceWith(...m.childNodes))}
  else if(a==='rtoc'){if(!R||!R.pages)return;$('#rsetp').classList.remove('on');$('#raip').classList.remove('on');toc();$('#rtocp').classList.toggle('on')}
  else if(a==='hlm'){hlMode=!hlMode;$('#reader').classList.toggle('hlm',hlMode);t.classList.toggle('on',hlMode);if(!hlMode)closeAnn();else{$('#reader').classList.remove('imm');toast('اضغط على أي فقرة')}}
  else if(a==='tts'){try{if(speechSynthesis.speaking){stopTTS();return}const u=new SpeechSynthesisUtterance([...$('#page').querySelectorAll('p[data-i]')].map(p=>p.textContent).join(' '));u.lang=R&&R.b.lang==='ar'?'ar-SA':'en-US';u.rate=.95;u.onend=()=>$('#tts').classList.remove('on');speechSynthesis.speak(u);t.classList.add('on')}catch(e){toast('القراءة الصوتية غير متاحة')}}

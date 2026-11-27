@@ -197,7 +197,7 @@ async function rfPage(b, p) {
   const idx = []; { const re = /\{"title":"((?:[^"\\]|\\.)*)","page":(\d+)/g; let m; while ((m = re.exec(d))) { try { idx.push([decEnt(JSON.parse('"' + m[1] + '"')), +m[2]]) } catch (e) { } } }
   let html = ''; { const re = /"(?:content|text|body|html)":"((?:[^"\\]|\\.)*?rfd(?:[^"\\]|\\.)*)"/; const m = d.match(re); if (m) { try { html = JSON.parse('"' + m[1] + '"') } catch (e) { } } }
   if (!html) { const i = d.indexOf('<p class=rfd'); if (i >= 0) html = d.slice(Math.max(0, d.lastIndexOf('"', i) + 1), d.indexOf('"', i + 20)); }
-  const paras = html.replace(/<br\s*\/?>/gi, '\n').split(/<\/p>|<\/h[1-6]>|<\/div>/i).flatMap(x => decEnt(x.replace(/<[^>]+>/g, '')).split(/\n+/)).map(x => x.replace(/[ \t\r]+/g, ' ').trim()).filter(Boolean);
+  const paras = html.replace(/<br\s*\/?>/gi, '\n').split(/<\/p>|<\/h[1-6]>|<\/div>/i).flatMap(x => decEnt(x.replace(/<[^>]+>/g, '')).split(/\n+/)).map(x => x.replace(/[ \t\r]+/g, ' ').replace(/^>\s*/, '').trim()).filter(x => x && !/^<|class=|width=|style=|^["']?\s*>/.test(x));
   const title = ((d.match(/"book":\{"id":\d+,"title":"((?:[^"\\]|\\.)*)"/) || [])[1] || '');
   const part = +((d.match(/"part":(\d+)/) || [])[1] || 0);
   const pagesN = +((d.match(/"page_count":(\d+)/) || d.match(/"pages_count":(\d+)/) || [])[1] || 0);

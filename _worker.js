@@ -178,8 +178,8 @@ async function shTafsir(url) {
     const range = decEnt(((hero.match(/التفسير يعرض[^<]*/) || [])[0] || '').trim());
     const i = h.search(/<div class="tafseer-text[^"]*">/);
     if (i < 0) return new Response(JSON.stringify({ ok: false, src }), { headers: { ...CORS, 'content-type': 'application/json' } });
-    let body = h.slice(i); const end = body.indexOf('</article>'); if (end > 0) body = body.slice(0, end);
-    const paras = body.replace(/<br\s*\/?>/gi, '\n').split(/<\/p>|<\/h[1-6]>|<\/div>/i).flatMap(x => decEnt(x.replace(/<[^>]+>/g, '')).split(/\n+/)).map(x => x.replace(/[ \t]+/g, ' ').trim().replace(/^([٠-٩0-9]{1,5})(?=[^\s٠-٩0-9])/, '$1 ـ ')).filter(x => x.length > 0).slice(0, 600);
+    let body = h.slice(i); { const re = /<(\/?)div\b[^>]*>/gi; let d = 0, m; while ((m = re.exec(body))) { d += m[1] ? -1 : 1; if (d === 0) { body = body.slice(0, m.index); break } } }
+    const paras = body.replace(/<br\s*\/?>/gi, '\n').split(/<\/p>|<\/h[1-6]>|<\/div>|<\/article>/i).flatMap(x => decEnt(x.replace(/<[^>]+>/g, '')).split(/\n+/)).map(x => x.replace(/[ \t]+/g, ' ').trim().replace(/^([٠-٩0-9]{1,5})(?=[^\s٠-٩0-9])/, '$1 ـ ')).filter(x => x.length > 0).slice(0, 600);
     return new Response(JSON.stringify({ ok: paras.length > 0, range, paras, src }), { headers: { ...CORS, 'content-type': 'application/json', 'cache-control': 'public, max-age=604800' } });
   } catch (e) { return err('fetch failed', 502); }
 }

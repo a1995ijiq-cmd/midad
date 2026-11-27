@@ -2114,7 +2114,7 @@ async function loadTafsir(key){const x=$('#qtafx');if(!x)return;const t=QTAFS.fi
  document.querySelectorAll('[data-qt]').forEach(c=>{const on=c.dataset.qt===t.id;c.classList.toggle('on',on);const i=c.querySelector('i');if(i)i.className=(on?'ph-fill ph-':'ph ph-')+(QTAFS.find(z=>z.id===c.dataset.qt)||{}).ic});
  const head=`<div class="qth"><b>${esc(t.full)}</b><small>${esc(t.a)}</small></div>`;
  if(!t.b){x.innerHTML=`${head}<div class="qtna"><i class="ph-duotone ph-books"></i><p>نص «${esc(t.n)}» غير متوفر حسب الآية من مصدر مفتوح يسمح بعرضه هنا. تگدر تفتح الكتاب كاملاً وتقرأ تفسير السورة منه.</p><button class="btn" data-qbook="${esc(t.q||t.full)}"><i class="ph-bold ph-magnifying-glass"></i> ابحث عن الكتاب كاملاً</button></div>`;return}
- x.innerHTML=head+'<span class="spin">◌</span>';const [s,a]=key.split(':'),ck=`sht:${t.b}:${key}`;
+ x.innerHTML=head+'<span class="spin">◌</span>';const [s,a]=key.split(':'),ck=`sht2:${t.b}:${key}`;
  try{let j=await IDB.get(ck).catch(()=>null);if(!j){j=await getJSON(`/api/shtaf?b=${t.b}&s=${s}&a=${a}`,25000);if(j&&j.ok)IDB.set(ck,j).catch(()=>{})}
   if(!$('#qtafx')||S.quran.tid!==t.id)return;
   if(!j||!j.ok){x.innerHTML=head+'<p class="qtmsg">لا يوجد تفسير لهذه الآية في هذا الكتاب.</p>';return}

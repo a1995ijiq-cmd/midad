@@ -186,6 +186,7 @@
 .ph.ph-vibrate:before { content: "\e4d8"; }
 .ph.ph-volleyball:before { content: "\e726"; }
 .ph.ph-warning:before { content: "\e4e0"; }
+.ph.ph-wifi-slash:before { content: "\e4f2"; }
 .ph.ph-wind:before { content: "\e5d2"; }
 .ph.ph-x:before { content: "\e4f6"; }
 .ph.ph-x-circle:before { content: "\e4f8"; }
@@ -377,6 +378,7 @@
 .ph-bold.ph-vibrate:before { content: "\e4d8"; }
 .ph-bold.ph-volleyball:before { content: "\e726"; }
 .ph-bold.ph-warning:before { content: "\e4e0"; }
+.ph-bold.ph-wifi-slash:before { content: "\e4f2"; }
 .ph-bold.ph-wind:before { content: "\e5d2"; }
 .ph-bold.ph-x:before { content: "\e4f6"; }
 .ph-bold.ph-x-circle:before { content: "\e4f8"; }
@@ -568,6 +570,7 @@
 .ph-fill.ph-vibrate:before { content: "\e4d8"; }
 .ph-fill.ph-volleyball:before { content: "\e726"; }
 .ph-fill.ph-warning:before { content: "\e4e0"; }
+.ph-fill.ph-wifi-slash:before { content: "\e4f2"; }
 .ph-fill.ph-wind:before { content: "\e5d2"; }
 .ph-fill.ph-x:before { content: "\e4f6"; }
 .ph-fill.ph-x-circle:before { content: "\e4f8"; }
@@ -945,6 +948,8 @@
 .ph-duotone.ph-volleyball:after { content: "\e727"; margin-left: -1em; }
 .ph-duotone.ph-warning:before { content: "\e4e0"; opacity: 0.2; }
 .ph-duotone.ph-warning:after { content: "\e4e1"; margin-left: -1em; }
+.ph-duotone.ph-wifi-slash:before { content: "\e4f2"; opacity: 0.2; }
+.ph-duotone.ph-wifi-slash:after { content: "\e4f3"; margin-left: -1em; }
 .ph-duotone.ph-wind:before { content: "\e5d2"; opacity: 0.2; }
 .ph-duotone.ph-wind:after { content: "\e5d3"; margin-left: -1em; }
 .ph-duotone.ph-x:before { content: "\e4f6"; opacity: 0.2; }

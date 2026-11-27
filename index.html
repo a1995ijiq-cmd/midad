@@ -1061,6 +1061,12 @@ mark.sfind.cur{background:var(--gold);color:#2a1900;box-shadow:0 0 0 3px rgb(199
 .rfempty b{font-size:var(--fs-lg);color:var(--ink)}
 .rfempty span{font-size:var(--fs-sm);line-height:1.8}
 .rfnote{text-align:center;font-size:var(--fs-xs);color:var(--mute);margin:12px 0}
+
+.qfres .frt{font-family:"Amiri Quran",Amiri,serif;font-size:19px;line-height:2.1;-webkit-line-clamp:4}
+.qa.qflash{animation:qflash 1.8s var(--e-out)}
+@keyframes qflash{0%,40%{background:rgb(199 154 46/.45)}100%{background:transparent}}
+.qvs{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 14px;border-radius:14px;font-size:var(--fs-sm);font-weight:600;color:#fff;background:linear-gradient(150deg,#1d5f4f,#0f3a31);box-shadow:inset 0 1px 0 rgb(255 255 255/.15);white-space:nowrap}.qvs i{color:#e6c26a}
+.qtools{grid-template-columns:1fr auto}.qtools .qseg{grid-column:1/-1}@media(min-width:900px){.qtools{grid-template-columns:1fr auto 280px}.qtools .qseg{grid-column:auto}}
 </style>
 <link rel="stylesheet" href="fonts/ph.css">
 </head>
@@ -2130,7 +2136,7 @@ function quranList(f){
    <div class="qstat"><span><b>${qd(114)}</b>سورة</span><span><b>${qd(tot)}</b>آية</span><span><b>${qd(30)}</b>جزءاً</span></div></div>
   ${cur?`<button class="qgo" data-qch="${q.ch}"><span class="qgoi"><i class="ph-fill ph-book-open-text"></i></span><span class="qgot"><small>تابع التلاوة</small><b>سورة ${esc(cur.name_arabic)}</b><em>${q.ay?`الآية ${qd(q.ay)} من ${qd(cur.verses_count)}`:'من البداية'}</em><i class="qprog"><i style="width:${pct}%"></i></i></span><i class="ph-bold ph-caret-left"></i></button>`:''}
  </section>
- <div class="qtools"><label class="qsearch"><i class="ph-duotone ph-magnifying-glass"></i><input id="qf" type="search" placeholder="ابحث باسم السورة أو رقمها…" value="${esc(f)}" autocomplete="off"></label>
+ <div class="qtools"><label class="qsearch"><i class="ph-duotone ph-magnifying-glass"></i><input id="qf" type="search" placeholder="ابحث باسم السورة أو رقمها…" value="${esc(f)}" autocomplete="off"></label><button class="qvs" data-act="rfind"><i class="ph-bold ph-text-aa"></i> ابحث في الآيات</button>
   <div class="qseg">${[['all','الكل'],['makkah','مكية'],['madinah','مدنية']].map(([k,l])=>`<button class="${qPlace===k?'on':''}" data-qpl="${k}">${l}</button>`).join('')}</div></div>
  <div class="qgrid" id="qgrid">${cards}</div>`;
  const qf=$('#qf');qf.oninput=()=>quranList(qf.value);
@@ -2138,7 +2144,7 @@ function quranList(f){
 async function quranSurah(ch){
  const v=$('#qview');const c=QS[ch-1];if(!c||!v)return;S.quran.ch=ch;save();
  qLastK='';if(!v.dataset.fl){v.dataset.fl=1;const us=()=>{qUserScroll=Date.now()};v.addEventListener('touchmove',us,{passive:true});v.addEventListener('wheel',us,{passive:true})}
- v.innerHTML=`<div class="qbar"><button data-act="qlist"><i class="ph-bold ph-list-bullets"></i> السور</button><b>سورة ${esc(c.name_arabic)}</b><span style="display:flex;gap:4px"><button data-act="qrec" aria-label="القارئ"><i class="ph-duotone ph-microphone-stage"></i></button><button data-act="qplay" id="qplay" aria-label="استماع"><i class="ph-fill ph-play-circle"></i></button></span></div><div class="qtext"><div class="lstate"><span class="spin">◌</span></div></div>`;
+ v.innerHTML=`<div class="qbar"><button data-act="qlist"><i class="ph-bold ph-list-bullets"></i> السور</button><b>سورة ${esc(c.name_arabic)}</b><span style="display:flex;gap:4px"><button data-act="rfind" aria-label="بحث في القرآن"><i class="ph-bold ph-magnifying-glass"></i></button><button data-act="qrec" aria-label="القارئ"><i class="ph-duotone ph-microphone-stage"></i></button><button data-act="qplay" id="qplay" aria-label="استماع"><i class="ph-fill ph-play-circle"></i></button></span></div><div class="qtext"><div class="lstate"><span class="spin">◌</span></div></div>`;
  try{const j=await qget(`/quran/verses/uthmani?chapter_number=${ch}`,'q:v:'+ch);const vs=j.verses||[];
   const bism=ch!==1&&ch!==9?'<div class="qbism">بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</div>':'';
   v.querySelector('.qtext').innerHTML=`<div class="qframe"><span class="qfc"></span><span class="qfm">${c.revelation_place==='makkah'?'مكية':'مدنية'}</span><h3>سورة ${esc(c.name_arabic)}</h3><span class="qfm">${qd(c.verses_count)} آية</span><span class="qfc r"></span></div>${bism}<p class="qp">${vs.map(x=>{const n=+x.verse_key.split(':')[1];return `<span class="qa${S.quran.ay===n?' on':''}" data-qa="${n}" data-k="${x.verse_key}">${esc(x.text_uthmani)} <i class="qnum">﴿${qd(n)}﴾</i></span>`}).join(' ')}</p>
@@ -2368,14 +2374,16 @@ const marksOf=e=>(e&&e.marks||[]).map(mkOf);
 const hasMark=(e,k)=>marksOf(e).some(m=>m.k===k);
 let tocTab='toc';
 /* ===== البحث داخل الكتاب: شاشة كاملة، نتائج مرتبة حسب الفصل ===== */
-function normMap(raw){let n='',map=[];for(let i=0;i<raw.length;i++){const c=raw[i];if(/[ً-ْـ]/.test(c))continue;n+=norm(c);map.push(i)}map.push(raw.length);return {n,map}}
+function normMap(raw){let n='',map=[];for(let i=0;i<raw.length;i++){const c=raw[i];if(/[ً-ٟـٰۖ-ۭ]/.test(c))continue;n+=c==='ٱ'?'ا':norm(c);map.push(i)}map.push(raw.length);return {n,map}}
+/* توسيع التظليل للكلمة كاملة حتى ما تنقطع الحروف العربية المتصلة */
+function wordSpan(D,st,en){const B=/[\s.,،؛:!?؟«»"()\[\]{}﴿﴾\-]/;while(st>0&&!B.test(D[st-1]))st--;while(en<D.length&&!B.test(D[en]))en++;return [st,en]}
 const reEsc=x=>x.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
 function findRe(nq){return (R.fmode||'w')==='w'?new RegExp(`(?:^|[^\\u0621-\\u064A0-9a-z])(?:وال|فال|بال|كال|ولل|لل|ال|و|ف|ب|ل|ك)?(${reEsc(nq)})`,'g'):new RegExp(`(${reEsc(nq)})`,'g')}
 function chapOf(p){const t=R._tocS||(R._tocS=(R.toc||[]).filter(x=>x.page).slice().sort((a,b)=>a.page-b.page));let c='';for(const x of t){if(x.page<=p)c=x.title;else break}return c}
 function findIn(q){R.findQ=q;const box=$('#rfres'),cnt=$('#rfcount');if(!box)return;const nq=norm(q.trim());
  if(nq.length<2){R.fres=[];box.innerHTML=`<div class="rfempty"><i class="ph-duotone ph-text-aa"></i><b>ابحث داخل «${esc(R.b.t)}»</b><span>اكتب كلمة من حرفين أو أكثر. البحث يتجاهل التشكيل والهمزات.</span></div>`;if(cnt)cnt.textContent='';return}
  const res=[];R.fres=res;const re=findRe(nq),MAX=300;
- (R.pages||[]).forEach((pg,i)=>pg.forEach(b=>{if(!b.t||res.length>=MAX)return;const raw=String(b.t),{n,map}=normMap(raw);re.lastIndex=0;let m;while((m=re.exec(n))&&res.length<MAX){const st=m.index+m[0].length-m[1].length;res.push({p:i+1,raw,a:map[st],b:map[st+nq.length]});if(m[0].length===0)re.lastIndex++}}));
+ (R.pages||[]).forEach((pg,i)=>pg.forEach(b=>{if(!b.t||res.length>=MAX)return;const raw=String(b.t),{n,map}=normMap(raw);re.lastIndex=0;let m;while((m=re.exec(n))&&res.length<MAX){const st=m.index+m[0].length-m[1].length;{const [wa,wb]=wordSpan(raw,map[st],map[st+nq.length]);res.push({p:i+1,raw,a:wa,b:wb})}if(m[0].length===0)re.lastIndex++}}));
  if(cnt)cnt.textContent=res.length?`${res.length>=MAX?'أكثر من ٣٠٠':ar(res.length)} نتيجة`:'';
  if(!res.length){box.innerHTML=`<div class="rfempty"><i class="ph-duotone ph-magnifying-glass-minus"></i><b>ما لگينا «${esc(q.trim())}»</b><span>${(R.fmode||'w')==='w'?'جرّب «جزء من كلمة» حتى يشمل الكلمات اللي تحتوي هذي الحروف.':'جرّب كلمة ثانية أو تهجئة مختلفة.'}${R.lazy?'<br>هذا الكتاب يتحمّل صفحة صفحة، فالبحث يشمل الصفحات اللي فتحتها فقط.':''}</span></div>`;return}
  let last='',h='';res.forEach((r,ri)=>{const ch=chapOf(r.p);if(ch&&ch!==last){h+=`<div class="rfch"><i class="ph-fill ph-bookmark-simple"></i>${esc(ch)}</div>`;last=ch}
@@ -2383,19 +2391,41 @@ function findIn(q){R.findQ=q;const box=$('#rfres'),cnt=$('#rfcount');if(!box)ret
   h+=`<button class="fres" data-tj="${r.p}" data-fq="1" data-fi="${ri}"><span class="frp"><small>صفحة</small><b>${ar(r.p)}</b></span><span class="frt">${a?'…':''}${esc(pre)}<mark>${esc(hit)}</mark>${esc(post)}${e<r.raw.length?'…':''}</span></button>`});
  if(R.lazy)h+='<p class="rfnote">هذا الكتاب يتحمّل صفحة صفحة، فالبحث يشمل الصفحات اللي فتحتها فقط.</p>';
  box.innerHTML=h;box.scrollTop=0}
-function openFind(){if(!R||!R.pages){toast('البحث متاح للكتب النصية');return}$('#rtocp').classList.remove('on');$('#rsetp').classList.remove('on');$('#raip').classList.remove('on');
+function openFind(){if(R&&R.quran){openQSearch();return}if(!R||!R.pages){toast('البحث متاح للكتب النصية');return}$('#rtocp').classList.remove('on');$('#rsetp').classList.remove('on');$('#raip').classList.remove('on');
  let v=$('#rfv');if(!v){v=document.createElement('div');v.id='rfv';v.className='rfv';$('#reader').appendChild(v)}
  v.innerHTML=`<div class="rfh"><button class="rfx" data-act="rfvclose" aria-label="رجوع"><i class="ph-bold ph-arrow-right"></i></button><label class="rfin"><i class="ph-bold ph-magnifying-glass"></i><input id="rfind" type="search" placeholder="ابحث داخل الكتاب" value="${esc(R.findQ||'')}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="search"><button class="rfclr" data-act="rfclr" aria-label="مسح" ${R.findQ?'':'hidden'}><i class="ph-fill ph-x-circle"></i></button></label></div>
  <div class="rfopts"><div class="rfseg"><button class="${(R.fmode||'w')==='w'?'on':''}" data-fmode="w">كلمة</button><button class="${R.fmode==='a'?'on':''}" data-fmode="a">جزء من كلمة</button></div><span id="rfcount"></span></div><div id="rfres" class="rfres"></div>`;
  v.classList.add('on');const inp=$('#rfind');let ft;inp.oninput=()=>{const c=$('.rfclr');if(c)c.hidden=!inp.value;clearTimeout(ft);ft=setTimeout(()=>findIn(inp.value),200)};inp.onkeydown=e=>{if(e.key==='Enter'){inp.blur()}};findIn(R.findQ||'');
  const fit=()=>{const vv=window.visualViewport;if(!vv||!v.classList.contains('on'))return;v.style.height=vv.height+'px';v.style.top=vv.offsetTop+'px'};if(window.visualViewport&&!v._vv){v._vv=1;visualViewport.addEventListener('resize',fit);visualViewport.addEventListener('scroll',fit)}fit();
  setTimeout(()=>inp.focus(),50)}
-function closeFind(){const v=$('#rfv');if(v){v.classList.remove('on');v.style.height='';v.style.top=''}const i=$('#rfind');if(i)i.blur()}
+/* البحث في القرآن الكريم: كل الآيات (النص الإملائي) تنحفظ بالجهاز بعد أول تحميل */
+let QALL=null;
+async function qAll(){if(QALL)return QALL;let a=await IDB.get('q:imlaei:v1').catch(()=>null);if(!a){const j=await qget('/quran/verses/imlaei',null);a=(j.verses||[]).map(v=>[v.verse_key,v.text_imlaei]);if(a.length>6000)IDB.set('q:imlaei:v1',a).catch(()=>{})}QALL=a;return a}
+async function qFind(q){const box=$('#rfres'),cnt=$('#rfcount');if(!box)return;R.findQ=q;const nq=normMap(q.trim()).n;
+ if(nq.length<2){box.innerHTML=`<div class="rfempty"><i class="ph-duotone ph-book-open"></i><b>ابحث في القرآن الكريم</b><span>اكتب كلمة من حرفين أو أكثر، مثل «الصبر» أو «رحمة». البحث يتجاهل التشكيل.</span></div>`;if(cnt)cnt.textContent='';return}
+ let all;if(!QALL)box.innerHTML='<div class="rfempty"><span class="spin">◌</span><span>تحميل نص القرآن أول مرة…</span></div>';try{all=await qAll()}catch(e){box.innerHTML='<div class="rfempty"><i class="ph-duotone ph-wifi-slash"></i><b>تعذّر تحميل نص القرآن</b><span>يحتاج اتصال أول مرة فقط، وبعدها يشتغل بدون نت.</span></div>';return}
+ if(($('#rfind')||{}).value!==q)return;
+ const re=findRe(nq),res=[],MAX=300;
+ for(const [k,t] of all){if(res.length>=MAX)break;const {n,map}=normMap(t);re.lastIndex=0;let m,hit=null;while((m=re.exec(n))){const st=m.index+m[0].length-m[1].length;(hit=hit||[]).push(wordSpan(t,map[st],map[st+nq.length]));if(!m[0].length)re.lastIndex++}if(hit)res.push({k,t,hit})}
+ const tot=res.reduce((a,r)=>a+r.hit.length,0);
+ if(cnt)cnt.textContent=res.length?`${res.length>=MAX?'أكثر من ٣٠٠':ar(res.length)} آية · ${ar(tot)} موضع`:'';
+ if(!res.length){box.innerHTML=`<div class="rfempty"><i class="ph-duotone ph-magnifying-glass-minus"></i><b>ما لگينا «${esc(q.trim())}»</b><span>${(R.fmode||'w')==='w'?'جرّب «جزء من كلمة».':'جرّب كلمة ثانية.'}</span></div>`;return}
+ let last=0,h='';res.forEach(r=>{const [c,a]=r.k.split(':').map(Number);if(c!==last){h+=`<div class="rfch"><i class="ph-fill ph-book-open"></i>سورة ${esc((QS&&QS[c-1]||{}).name_arabic||c)}</div>`;last=c}
+  let out='',p=0;r.hit.forEach(([x,y])=>{if(x<p)return;out+=esc(r.t.slice(p,x))+'<mark>'+esc(r.t.slice(x,y))+'</mark>';p=y});out+=esc(r.t.slice(p));
+  h+=`<button class="fres qres" data-qgo="${r.k}"><span class="frp"><small>آية</small><b>${qd(a)}</b></span><span class="frt">${out}</span></button>`});
+ box.innerHTML=h;box.scrollTop=0}
+function openQSearch(){let v=$('#rfv');if(!v){v=document.createElement('div');v.id='rfv';v.className='rfv';$('#reader').appendChild(v)}
+ v.innerHTML=`<div class="rfh"><button class="rfx" data-act="rfvclose" aria-label="رجوع"><i class="ph-bold ph-arrow-right"></i></button><label class="rfin"><i class="ph-bold ph-magnifying-glass"></i><input id="rfind" type="search" placeholder="ابحث في القرآن الكريم" value="${esc(R.findQ||'')}" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="search"><button class="rfclr" data-act="rfclr" aria-label="مسح" ${R.findQ?'':'hidden'}><i class="ph-fill ph-x-circle"></i></button></label></div>
+ <div class="rfopts"><div class="rfseg"><button class="${(R.fmode||'w')==='w'?'on':''}" data-fmode="w">كلمة</button><button class="${R.fmode==='a'?'on':''}" data-fmode="a">جزء من كلمة</button></div><span id="rfcount"></span></div><div id="rfres" class="rfres qfres"></div>`;
+ v.classList.add('on');v.dataset.q=1;const inp=$('#rfind');let ft;inp.oninput=()=>{const c=$('.rfclr');if(c)c.hidden=!inp.value;clearTimeout(ft);ft=setTimeout(()=>qFind(inp.value),220)};inp.onkeydown=e=>{if(e.key==='Enter')inp.blur()};qFind(R.findQ||'');qAll().catch(()=>{});
+ const fit=()=>{const vv=window.visualViewport;if(!vv||!v.classList.contains('on'))return;v.style.height=vv.height+'px';v.style.top=vv.offsetTop+'px'};if(window.visualViewport&&!v._vv){v._vv=1;visualViewport.addEventListener('resize',fit);visualViewport.addEventListener('scroll',fit)}fit();setTimeout(()=>inp.focus(),50)}
+
+function closeFind(){const v=$('#rfv');if(v){delete v.dataset.q;v.classList.remove('on');v.style.height='';v.style.top=''}const i=$('#rfind');if(i)i.blur()}
 /* تمييز كلمة البحث داخل الصفحة بعد الانتقال */
 function markFind(){const q=R&&R.findQ&&norm(R.findQ.trim());const pg=$('#page');if(!q||q.length<2||!pg)return;
  const tw=document.createTreeWalker(pg,NodeFilter.SHOW_TEXT);const nodes=[];let n;while(n=tw.nextNode())nodes.push(n);const re=findRe(q);
  let firstEl=null;nodes.forEach(node=>{const D=node.data,{n:nn,map}=normMap(D);re.lastIndex=0;const ms=[];let m;while((m=re.exec(nn))){const st=m.index+m[0].length-m[1].length;ms.push([map[st],map[st+q.length]]);if(!m[0].length)re.lastIndex++}
-  for(let k=ms.length-1;k>=0;k--){let [st,en]=ms[k];if((R.fmode||'w')==='a'){while(st>0&&!/\s/.test(D[st-1]))st--;while(en<D.length&&!/[\s.،؛:!?؟]/.test(D[en]))en++}const r=document.createRange();r.setStart(node,st);r.setEnd(node,Math.min(en,D.length));const mk=document.createElement('mark');mk.className='sfind';try{r.surroundContents(mk);firstEl=mk}catch(e){}}});
+  for(let k=ms.length-1;k>=0;k--){let [st,en]=wordSpan(D,ms[k][0],ms[k][1]);if(k<ms.length-1&&en>ms[k+1][0])continue;const r=document.createRange();r.setStart(node,st);r.setEnd(node,Math.min(en,D.length));const mk=document.createElement('mark');mk.className='sfind';try{r.surroundContents(mk);firstEl=mk}catch(e){}}});
  const all=pg.querySelectorAll('mark.sfind');const k=R.fordinal||0;const tgt=all[Math.min(k,all.length-1)]||firstEl;all.forEach(x=>x.classList.remove('cur'));if(tgt){tgt.classList.add('cur');tgt.scrollIntoView({block:'center'})}}
 function findBar(){let b=$('#fbar');if(!b){b=document.createElement('div');b.id='fbar';$('#reader').appendChild(b)}const n=(R.fres||[]).length;if(!n){b.classList.remove('on');return}
  b.innerHTML=`<button data-act="fprev" aria-label="النتيجة السابقة"><i class="ph-bold ph-caret-right"></i></button><button class="fbq" data-act="rfind"><i class="ph-bold ph-magnifying-glass"></i><b>${esc(R.findQ||'')}</b><span>${ar((R.fi||0)+1)} / ${ar(n)}</span></button><button data-act="fnext" aria-label="النتيجة التالية"><i class="ph-bold ph-caret-left"></i></button><button data-act="fclose" aria-label="إغلاق البحث"><i class="ph-bold ph-x"></i></button>`;b.classList.add('on')}
@@ -2449,7 +2479,8 @@ document.addEventListener('click',async ev=>{
  if(d.tab){buzz();if(d.tab===tab&&t.closest('.nav')){$('#view').scrollTo({top:0,behavior:'smooth'});$('#nav').classList.remove('mini');return}if(d.lang)fLang=d.lang;go(d.tab,d.focus);return}
  if(d.open){const sk=t.closest('[data-shelf-k]');if(sk){S.secHit[sk.dataset.shelfK]=(S.secHit[sk.dataset.shelfK]||0)+1}openBook(d.open);return}
  if(d.zm){const v=$('#pdfv');if(v&&v._zoom)v._zoom(d.zm);return}
- if(d.fmode){R.fmode=d.fmode;document.querySelectorAll('[data-fmode]').forEach(x=>x.classList.toggle('on',x===t));findIn(($('#rfind')||{}).value||'');return}
+ if(d.fmode){R.fmode=d.fmode;document.querySelectorAll('[data-fmode]').forEach(x=>x.classList.toggle('on',x===t));(($('#rfv')||{}).dataset||{}).q?qFind(($('#rfind')||{}).value||''):findIn(($('#rfind')||{}).value||'');return}
+ if(d.qgo){const [c,a]=d.qgo.split(':').map(Number);closeFind();S.quran.ay=a;save();await quranSurah(c);setTimeout(()=>{const el=document.querySelector(`.qa[data-qa="${a}"]`);if(el){document.querySelectorAll('.qa.on').forEach(x=>x.classList.remove('on'));el.classList.add('on','qflash');el.scrollIntoView({block:'center'});setTimeout(()=>el.classList.remove('qflash'),1800)}},120);return}
  if(d.dq){dqMode=d.dq;dqOff=0;dqPaint();return}
  if(d.fso){fSort=d.fso;document.querySelectorAll('[data-fso]').forEach(x=>x.classList.toggle('on',x.dataset.fso===fSort));drawResults();return}
  if(d.golib){libTab=d.golib;tab='library';render();return}

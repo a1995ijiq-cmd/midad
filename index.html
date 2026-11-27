@@ -624,6 +624,26 @@ html[dir=rtl] .npill{right:auto;left:0}
 .qnb span{flex:1;display:grid}.qnb small{font-size:11px;color:var(--rmute)}.qnb b{font:700 18px "Amiri Quran",Amiri,serif}.qnb i{color:var(--qgold);font-size:18px}.qnb.nx{text-align:end}
 @media (min-width:700px){.qgrid{grid-template-columns:repeat(auto-fill,minmax(300px,1fr));padding-inline:max(16px,calc((100% - 1000px)/2))}.qtools{grid-template-columns:1fr 280px;padding-inline:max(16px,calc((100% - 1000px)/2))}.qtext{max-width:820px;margin:0 auto}.qarch h1{font-size:56px}}
 @media (prefers-reduced-motion:reduce){.qpat,.qsr{animation:none}}
+
+/* أدوات القارئ: تبويبات الفهرس/العلامات/البحث */
+.tabs3{display:flex;gap:4px;padding:4px;margin:0 0 10px;border-radius:14px;background:color-mix(in srgb,var(--rink) 6%,transparent)}
+.tabs3 button{flex:1;display:flex;align-items:center;justify-content:center;gap:4px;height:36px;border-radius:10px;font-size:13px;color:var(--rmute);padding:0!important;border:0!important}
+.tabs3 button.on{background:var(--rbg);color:var(--rink);box-shadow:0 2px 8px rgb(0 0 0/.08)}.tabs3 b{font-size:11px;background:var(--gold);color:#fff;border-radius:99px;padding:0 6px}
+.bmrow{display:flex;align-items:center;gap:4px;border-bottom:1px solid var(--rline)}
+.bmrow>button:first-child{flex:1;display:flex!important;align-items:center;gap:10px;text-align:start;border:0!important}.bmrow>button:first-child>i{color:var(--gold);font-size:20px}
+.bmrow span{display:grid}.bmrow b{font-size:15px}.bmrow small{font-size:12px}
+.fres{align-items:flex-start!important}.fres span:first-child{font-size:14px;line-height:1.7}.fres mark,mark.sfind{background:color-mix(in srgb,var(--gold) 45%,transparent);color:inherit;border-radius:4px;padding:0 2px}
+mark.sfind{animation:sfl 1.6s ease 2}@keyframes sfl{50%{background:color-mix(in srgb,var(--gold) 80%,transparent)}}
+#reader .page{padding-inline:max(var(--rmgx,26px),calc((100% - var(--rmw,760px))/2))}
+
+.chip.fav{color:#c0392b}.chip.fav i{color:#e74c3c}
+.seg.sscroll{display:flex;overflow-x:auto;scrollbar-width:none;scroll-snap-type:x proximity}.seg.sscroll::-webkit-scrollbar{display:none}.seg.sscroll button{flex:0 0 auto;min-width:76px;scroll-snap-align:start;padding-inline:10px}
+.lcard{border:1px solid var(--line);border-radius:18px;background:var(--card);margin-top:10px;overflow:hidden}
+.lhead{display:flex;align-items:center;gap:12px;width:100%;padding:12px;text-align:start}.lhead>span:nth-child(2){flex:1;display:grid}.lhead b{font-size:16px}.lhead>i{transition:transform .3s;color:var(--mute)}.lcard.open .lhead>i{transform:rotate(180deg)}
+.lcov{display:flex;width:64px;height:52px;align-items:center}.lcov .cv{width:34px!important;height:48px!important;margin-inline-start:-16px;box-shadow:0 4px 10px rgb(0 0 0/.18);font-size:6px}.lcov .cv:first-child{margin:0}.lcov .cv b,.lcov .cv i{display:none}.lcov>i{font-size:30px;color:var(--gold)}
+.lbody{padding:0 12px 12px}.lbk{display:flex;align-items:center;gap:4px}.lbk .row{flex:1}.lacts{display:flex;gap:8px;margin-top:8px}
+.sugt{font:600 11px inherit;color:#fff;background:var(--gold);border-radius:99px;padding:2px 8px;vertical-align:middle}
+.askin{width:100%;height:50px;border-radius:14px;border:1px solid var(--line);background:var(--soft);padding:0 14px;font:inherit;font-size:16px;color:var(--ink)}
 </style>
 <script src="https://unpkg.com/@phosphor-icons/web@2.1.1"></script>
 </head>
@@ -672,13 +692,14 @@ html[dir=rtl] .npill{right:auto;left:0}
       <div class="set"><label>استماع للصفحة</label><button class="ib" data-act="tts" id="tts" aria-label="استماع" style="background:var(--soft)"><i class="ph-duotone ph-speaker-high"></i></button></div>
       <div class="set"><label>حجم الخط</label><div class="step"><button data-act="fs-">أ-</button><button data-act="fs+">أ+</button></div></div>
       <div class="set"><label>تباعد الأسطر</label><div class="step"><button data-act="lh-">−</button><button data-act="lh+">+</button></div></div>
+      <div class="set"><label>الهوامش</label><div class="step"><button data-act="mg-">ضيّقة</button><button data-act="mg+">واسعة</button></div></div>
       <div class="set"><label>الخط</label><div class="step" id="fonts"></div></div>
       <div class="set"><label>المظهر</label><div class="thm" id="thm"></div></div>
       <div class="set" style="border:0;gap:8px"><button class="btn alt" style="flex:1" data-act="rdl"><i class="ph-bold ph-download-simple"></i> بدون نت</button><button class="btn" style="flex:1" data-act="rpdf"><i class="ph-bold ph-file-pdf"></i> PDF</button></div>
     </div>
     <div class="pnl toc" id="rtocp"></div>
     <div class="annbar" id="annbar"><div class="cols"><span class="mut" style="font-size:13px">تظليل</span><button data-ac="y" style="background:#f5d76e" aria-label="أصفر"></button><button data-ac="g" style="background:#8fd19e" aria-label="أخضر"></button><button data-ac="b" style="background:#8cc4f0" aria-label="أزرق"></button><button data-ac="p" style="background:#f3a3c4" aria-label="وردي"></button><button class="x" data-aa="close" aria-label="إغلاق"><i class="ph-bold ph-x"></i></button></div>
-     <div class="tools"><button data-aa="note"><i class="ph-duotone ph-note-pencil"></i>ملاحظة</button><button data-aa="edit"><i class="ph-duotone ph-pencil-simple-line"></i>تعديل</button><button data-aa="add"><i class="ph-duotone ph-text-indent"></i>إضافة نص</button><button data-aa="copy"><i class="ph-duotone ph-copy"></i>نسخ</button><button data-aa="clear"><i class="ph-duotone ph-eraser"></i>مسح</button></div></div>
+     <div class="tools"><button data-aa="note"><i class="ph-duotone ph-note-pencil"></i>ملاحظة</button><button data-aa="edit"><i class="ph-duotone ph-pencil-simple-line"></i>تعديل</button><button data-aa="add"><i class="ph-duotone ph-text-indent"></i>إضافة نص</button><button data-aa="copy"><i class="ph-duotone ph-copy"></i>نسخ</button><button data-aa="share"><i class="ph-duotone ph-share-network"></i>مشاركة</button><button data-aa="clear"><i class="ph-duotone ph-eraser"></i>مسح</button></div></div>
     <div class="rmodal" id="rmodal"><div><h6 id="rmt"></h6><textarea id="rmta" dir="auto"></textarea><div class="acts"><button class="btn full" data-act="rmsave"><i class="ph-bold ph-check"></i> حفظ</button><button class="btn alt" data-act="rmcancel">إلغاء</button></div></div></div>
   </section>
   <div class="toast" id="toast" role="status"></div>
@@ -804,7 +825,7 @@ const seed=()=>({lib:{},books:{},hl:[],recent:[],cust:{},stat:{pages:0},
  src:Object.keys(BUILTIN).map(k=>({id:k,on:true,sync:0})),
  set:{fs:20,lh:2,font:'Amiri',theme:'sepia',arFirst:true,goal:20,yearGoal:24},days:{}});
 let S;try{S=JSON.parse(localStorage.getItem('midad4'))||seed()}catch(e){S=seed()}
-if(!S.empty)S.empty={};
+if(!S.empty)S.empty={};if(!S.fav)S.fav={};if(!S.lists)S.lists=[];if(!S.hist)S.hist=[];if(!S.secHit)S.secHit={};
 if(!S.src.some(s=>s.id==='libiq'))S.src.splice(0,0,{id:'libiq',on:true,sync:0});
 ['gb','sw','lv','tr','aco'].forEach(k=>{if(!S.src.some(s=>s.id===k))S.src.push({id:k,on:true,sync:0})});
 const save=()=>{try{localStorage.setItem('midad4',JSON.stringify(S))}catch(e){try{S.cust={};localStorage.setItem('midad4',JSON.stringify(S))}catch(_){}}};
@@ -1116,6 +1137,12 @@ function nahj(){
  <p class="mut njnote">النص الإلكتروني لنهج البلاغة: نص الشريف الرضي من مشروع OpenITI (رخصة CC BY-NC-SA 4.0) مأخوذ عن طبعة الشيخ محمد عبده بعد حذف شرحه. الأوصاف أعلاه تعريف موجز بكل كتاب، وتوفّر نسخ الشروح يعتمد على المصادر المفتوحة.</p>`;
 }
 
+/* أقسام الرئيسية: الأقسام اللي يفتح منها المستخدم كتباً أكثر تطلع أولاً كـ«مقترح لك» */
+function homeSecs(){const hit=S.secHit||{};const top=Object.entries(hit).filter(([k,n])=>n>=2&&SECTIONS.some(x=>x.k===k)).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([k])=>k);
+ return [...top.map(k=>({...SECTIONS.find(x=>x.k===k),sug:1})),...SECTIONS.filter(x=>!top.includes(x.k))]}
+function localRail(kind){const ids=kind==='want'?Object.entries(S.lib).filter(([id,e])=>e.s==='want'&&S.books[id]).sort((a,b)=>(b[1].last||0)-(a[1].last||0)).map(([id])=>id):Object.entries(S.fav).filter(([id])=>S.books[id]).sort((a,b)=>b[1]-a[1]).map(([id])=>id);
+ if(!ids.length)return '';const T=kind==='want'?['bookmark-simple','قائمة القراءة','want']:['heart','المفضلة','fav'];
+ return `<section><h2><span><i class="ph-duotone ph-${T[0]}" style="color:var(--gold)"></i> ${T[1]} <small class="mut" style="font:500 13px inherit">${ar(ids.length)}</small></span><button data-golib="${T[2]}">عرض الكل</button></h2><div class="rail">${ids.slice(0,12).map(id=>card(S.books[id])).join('')}</div></section>`}
 function home(){
  const reading=Object.entries(S.lib).filter(([id,e])=>e.s==='reading'&&S.books[id]).sort((a,b)=>(b[1].last||0)-(a[1].last||0)).map(([id])=>S.books[id]);
  const m=S.days[today()]||0,g=S.set.goal,fr=Math.min(1,m/g),C=2*Math.PI*29,h=new Date().getHours();
@@ -1128,10 +1155,11 @@ function home(){
  <button class="sbar" data-tab="explore" data-focus="1"><i class="ph-duotone ph-magnifying-glass"></i>ابحث في ${ar(enabled().length)} مصادر…</button>
  <div class="feat" id="feat">${hero}</div>
  ${n>1?`<div class="dots">${[...Array(Math.min(n,3))].map((_,i)=>`<i class="${i?'':'on'}"></i>`).join('')}</div>`:''}
+ ${localRail('want')}${localRail('fav')}
  <div class="duo"><div class="goal"><svg viewBox="0 0 70 70"><circle cx="35" cy="35" r="29" fill="none" stroke="var(--line)" stroke-width="7"/><circle class="ring" cx="35" cy="35" r="29" fill="none" stroke="var(--gold)" stroke-width="7" stroke-linecap="round" stroke-dasharray="${C*fr} ${C}" transform="rotate(-90 35 35)"/><text x="35" y="41" text-anchor="middle" font-size="17" font-weight="700" fill="currentColor">${ar(m)}</text></svg><b style="font-size:14px">من ${ar(g)} دقيقة</b><span class="mut" style="font-size:12px"><i class="ph-fill ph-fire fire"></i> ${ar(streak())} أيام متتالية</span></div>
  <div class="quote"><i class="ph-fill ph-quotes"></i><span class="mut" style="font-size:12px">بيت اليوم</span><p id="qv">${QUO[qi][0]}<br>${QUO[qi][1]}</p><span class="mut" style="font-size:12px" id="qa">— ${QUO[qi][2]}</span><div class="qact"><button data-act="nextq" aria-label="بيت آخر"><i class="ph-bold ph-arrows-clockwise"></i></button><button data-act="copyq" aria-label="نسخ البيت"><i class="ph-bold ph-copy"></i></button></div></div></div>
  ${[...new Set(SECTIONS.map(x=>x.g))].map(g=>`<h2>${g==='عام'?'الأقسام':g}</h2><div class="cats">${SECTIONS.filter(c=>c.g===g).map(c=>`<button class="cat" data-sec="${c.k}"><em style="background:${c.c}"><i class="ph-duotone ph-${c.ic}"></i></em><span>${c.t}</span></button>`).join('')}</div>`).join('')}
- ${SECTIONS.map(sec=>`<section data-shelf-k="${sec.k}"><h2><span><i class="ph-duotone ph-${sec.ic}" style="color:${sec.c}"></i> ${sec.t}</span><button data-sec="${sec.k}">عرض الكل</button></h2><p class="mut" style="margin:-8px 0 10px;font-size:13px">${sec.d}</p><div id="sh-${sec.k}">${skel(4)}</div></section>`).join('')}
+ ${homeSecs().map(sec=>`<section data-shelf-k="${sec.k}"><h2><span><i class="ph-duotone ph-${sec.ic}" style="color:${sec.c}"></i> ${sec.sug?'<small class="sugt">مقترح لك</small> ':''}${sec.t}</span><button data-sec="${sec.k}">عرض الكل</button></h2><p class="mut" style="margin:-8px 0 10px;font-size:13px">${sec.d}</p><div id="sh-${sec.k}">${skel(4)}</div></section>`).join('')}
  <p class="mut" style="text-align:center;font-size:12px;margin-top:24px">كل الكتب من مصادر مرخّصة أو ملكية عامة</p>`;
 }
 function explore(){
@@ -1146,13 +1174,18 @@ function explore(){
 }
 function library(){
  const ents=Object.entries(S.lib).filter(([id])=>S.books[id]);
- const lab={reading:'أقرأ الآن',done:'قرأتها',want:'أريدها',hl:'ملاحظاتي',dl:'التحميلات'};
+ const lab={reading:'أقرأ الآن',want:'أريدها',done:'قرأتها',fav:'المفضلة',lists:'قوائمي',hl:'ملاحظاتي',hist:'السجل',dl:'التحميلات'};
  const annList=Object.entries(ANN()).flatMap(([id,m])=>Object.entries(m).map(([k,a])=>({id,k,a}))).filter(x=>S.books[x.id]).sort((x,y)=>(y.a.at||0)-(x.a.at||0));
  const dlList=Object.entries(S.dl).filter(([id])=>S.books[id]).sort((x,y)=>(y[1].at||0)-(x[1].at||0));
- const cnt=k=>k==='hl'?annList.length:k==='dl'?dlList.length:ents.filter(([,e])=>e.s===k).length;
+ const favList=Object.entries(S.fav).filter(([id])=>S.books[id]).sort((a,b)=>b[1]-a[1]).map(([id])=>id),histList=S.hist.filter(h=>S.books[h.id]);
+ const cnt=k=>k==='hl'?annList.length:k==='dl'?dlList.length:k==='fav'?favList.length:k==='lists'?S.lists.length:k==='hist'?histList.length:ents.filter(([,e])=>e.s===k).length;
+ const brow=(id,extra)=>{const b=S.books[id];return `<button class="row" data-open="${esc(id)}">${cover(b)}<div><h4>${esc(b.t)}</h4><div class="mut">${esc(b.a||'')}</div>${sbadge(b)}${extra||''}</div><span class="mut">${S.lib[id]&&S.lib[id].s==='reading'&&S.lib[id].pages?ar(pctOf(id))+'٪':''}</span></button>`};
  let body;
  const CL={y:'#f5d76e',g:'#8fd19e',b:'#8cc4f0',p:'#f3a3c4'};
- if(libTab==='hl')body=annList.length?annList.map(({id,k,a})=>{const b=S.books[id];const [pt,pp]=k.split(':');return `<button class="row" style="grid-template-columns:1fr" data-annj="${esc(id)}|${pt}|${pp}"><div><p style="margin:0;font:16px/1.8 Amiri;border-radius:8px;padding:6px 10px;background:${a.c?`color-mix(in srgb,${CL[a.c]} 45%,transparent)`:'var(--soft)'}">${esc(a.s||'')}</p>${a.note?`<p style="margin:6px 0 0;font-size:14px"><i class="ph-fill ph-note" style="color:var(--gold)"></i> ${esc(a.note)}</p>`:''}${a.add?`<p style="margin:6px 0 0;font-size:14px;color:var(--plum)">✎ ${esc(a.add.slice(0,160))}</p>`:''}<div class="mut" style="margin-top:6px">${esc(b.t)} · صفحة ${ar(pp)}${a.text!=null?' · نص معدّل':''}</div></div></button>`}).join(''):`<div class="empty"><i class="ph-duotone ph-note-pencil"></i><b>لا توجد ملاحظات</b>افتح كتاباً واضغط زر القلم، وبعدها اضغط على أي فقرة لتظليلها أو كتابة ملاحظة أو تعديلها</div>`;
+ if(libTab==='fav')body=favList.length?favList.map(id=>brow(id)).join(''):`<div class="empty"><i class="ph-duotone ph-heart"></i><b>لا توجد كتب مفضلة</b>اضغط ♥ «المفضلة» بصفحة أي كتاب</div>`;
+ else if(libTab==='lists')body=`<button class="addsrc" data-lnew="-" style="margin-top:0"><i><i class="ph-bold ph-plus"></i></i><span><b>قائمة قراءة جديدة</b><br><span class="mut">رتّب كتبك بقوائم تسمّيها بنفسك</span></span></button>`+(S.lists.length?S.lists.map(L=>{const bs=L.books.filter(x=>S.books[x]);const open=libList===L.id;return `<div class="lcard${open?' open':''}"><button class="lhead" data-lopen="${L.id}"><span class="lcov">${bs.slice(0,3).map(x=>cover(S.books[x])).join('')||'<i class="ph-duotone ph-list-bullets"></i>'}</span><span><b>${esc(L.n)}</b><small class="mut">${ar(bs.length)} كتاب · ${ago(L.at)}</small></span><i class="ph-bold ph-caret-down"></i></button>${open?`<div class="lbody">${bs.map(x=>`<div class="lbk">${brow(x)}<button class="ib" data-lrm="${L.id}|${esc(x)}" aria-label="إزالة"><i class="ph-bold ph-x"></i></button></div>`).join('')||'<p class="mut">القائمة فارغة. افتح أي كتاب واضغط «أضف لقائمة».</p>'}<div class="lacts"><button class="chip" data-lren="${L.id}"><i class="ph-bold ph-pencil-simple"></i> إعادة تسمية</button><button class="chip" data-ldel="${L.id}" style="color:var(--bad)"><i class="ph-bold ph-trash"></i> حذف</button></div></div>`:''}</div>`}).join(''):'');
+ else if(libTab==='hist')body=histList.length?histList.slice(0,80).map(h=>brow(h.id,`<div class="mut" style="font-size:12px"><i class="ph-duotone ph-clock-counter-clockwise"></i> ${ago(h.at)}</div>`)).join('')+`<button class="chip" data-hclr="1" style="margin:14px auto;display:flex"><i class="ph-bold ph-trash"></i> مسح السجل</button>`:`<div class="empty"><i class="ph-duotone ph-clock-counter-clockwise"></i><b>السجل فارغ</b>الكتب اللي تفتحها تظهر هنا</div>`;
+ else if(libTab==='hl')body=annList.length?annList.map(({id,k,a})=>{const b=S.books[id];const [pt,pp]=k.split(':');return `<button class="row" style="grid-template-columns:1fr" data-annj="${esc(id)}|${pt}|${pp}"><div><p style="margin:0;font:16px/1.8 Amiri;border-radius:8px;padding:6px 10px;background:${a.c?`color-mix(in srgb,${CL[a.c]} 45%,transparent)`:'var(--soft)'}">${esc(a.s||'')}</p>${a.note?`<p style="margin:6px 0 0;font-size:14px"><i class="ph-fill ph-note" style="color:var(--gold)"></i> ${esc(a.note)}</p>`:''}${a.add?`<p style="margin:6px 0 0;font-size:14px;color:var(--plum)">✎ ${esc(a.add.slice(0,160))}</p>`:''}<div class="mut" style="margin-top:6px">${esc(b.t)} · صفحة ${ar(pp)}${a.text!=null?' · نص معدّل':''}</div></div></button>`}).join(''):`<div class="empty"><i class="ph-duotone ph-note-pencil"></i><b>لا توجد ملاحظات</b>افتح كتاباً واضغط زر القلم، وبعدها اضغط على أي فقرة لتظليلها أو كتابة ملاحظة أو تعديلها</div>`;
  else if(libTab==='dl')body=dlList.length?dlList.map(([id,d])=>{const b=S.books[id];const hasPdf=d.kind==='pdf'||d.pdf;return `<div class="row" style="grid-template-columns:62px 1fr">${cover(b)}<div><h4>${esc(b.t)}</h4><div class="mut">${d.kind==='pages'?`${ar(d.n)} صفحة أصلية · ${fmtSize(d.size||0)}`:d.kind==='pdf'?'PDF من المصدر · '+fmtSize(d.size||0):'نص كامل بدون نت'+(d.pdf?' · PDF '+fmtSize(d.pdfSize||0):'')}</div>
   <div class="dlrow">${d.kind==='pages'?`<button class="btn" data-pgo="${esc(id)}"><i class="ph-fill ph-book-open-text"></i> اقرأ</button><button class="btn alt" data-${d.pdf?'pdfs':'pgpdf'}="${esc(id)}"><i class="ph-bold ph-file-pdf"></i> حفظ PDF</button>`:''}${d.kind==='text'?`<button class="btn" data-read="${esc(id)}"><i class="ph-fill ph-book-open-text"></i> اقرأ</button>`:''}${hasPdf&&d.kind!=='pages'?`<button class="btn ${d.kind==='text'?'alt':''}" data-pdfo="${esc(id)}"><i class="ph-bold ph-file-pdf"></i> فتح PDF</button><button class="btn alt" data-pdfs="${esc(id)}"><i class="ph-bold ph-share-network"></i> حفظ/مشاركة</button>`:''}<button class="btn alt" data-dlx="${esc(id)}" aria-label="حذف"><i class="ph-bold ph-trash"></i></button></div></div></div>`}).join(''):`<div class="empty"><i class="ph-duotone ph-download-simple"></i><b>لا توجد تحميلات</b>من صفحة أي كتاب اضغط «تحميل» حتى تقرأه بدون إنترنت أو تحفظه PDF</div>`;
  else{const list=ents.filter(([,e])=>e.s===libTab).sort((a,b)=>(b[1].last||0)-(a[1].last||0));
@@ -1162,7 +1195,7 @@ function library(){
  const done=ents.filter(([,e])=>e.s==='done').length;
  return `<h1>مكتبتي</h1>
  <div class="stats"><div class="stat"><i class="ph-duotone ph-seal-check"></i><b data-count="${done}">٠</b><span>كتب أنهيتها</span></div><div class="stat"><i class="ph-duotone ph-files"></i><b data-count="${S.stat.pages||0}">٠</b><span>صفحة مقروءة</span></div><div class="stat"><i class="ph-duotone ph-fire"></i><b data-count="${streak()}">٠</b><span>أيام متتالية</span></div></div>
- <div class="seg s5">${Object.keys(lab).map(k=>`<button class="${libTab===k?'on':''}" data-lt="${k}">${lab[k]}<br><small>${ar(cnt(k))}</small></button>`).join('')}</div>${body}`;
+ <div class="seg s5 sscroll">${Object.keys(lab).map(k=>`<button class="${libTab===k?'on':''}" data-lt="${k}">${lab[k]}<br><small>${ar(cnt(k))}</small></button>`).join('')}</div>${body}`;
 }
 function sources(){
  return `<h1>المصادر</h1><p class="mut" style="margin:6px 0 0">مداد يبحث في كل المصادر المفعّلة بنفس الوقت. أضف مكتبة رقمية برابطها، وإذا كانت تسمح بالاتصال المباشر تُجلب كتبها فوراً.</p>
@@ -1215,6 +1248,7 @@ function render(){
  if(lastTab!==tab){const v=$('#view');v.classList.remove('vin');void v.offsetWidth;v.classList.add('vin');lastTab=tab}
  if(tab==='home')observeShelves();
  if(tab==='nahj'){const sc=SECTIONS.find(x=>x.k==='nahj');if(sc)loadShelf(sc)}
+ {const so=document.querySelector('.sscroll .on');if(so){const p=so.parentElement;p.scrollLeft=so.offsetLeft-(p.clientWidth-so.offsetWidth)/2}}
  if(tab==='explore'&&(q||curTitle)){if(results.length||Object.keys(rstat).length)drawResults();else if(q)searchAll(q)}
  const qi=$('#q');if(qi){qi.oninput=()=>{q=qi.value;curTitle='';clearTimeout(qt);if(!q.trim()){render();return}if(SCRIBD_RE.test(q)){const u=q.trim();q='';qi.value='';openScribd(u);return}qt=setTimeout(()=>searchAll(q.trim()),500)};qi.onkeydown=e=>{if(e.key==='Enter'&&q.trim()){clearTimeout(qt);S.recent=[q.trim(),...S.recent.filter(x=>x!==q.trim())].slice(0,6);save();searchAll(q.trim());qi.blur()}}}
  const gi=$('#goal');if(gi)gi.oninput=()=>{S.set.goal=+gi.value;$('#gv').textContent=ar(gi.value)+' دقيقة';save()};
@@ -1237,7 +1271,7 @@ const closeSheet=()=>{$('#sheet').classList.remove('on');$('#scrim').classList.r
 
 /* ---------- صفحة الكتاب ---------- */
 function openBook(id,keep){
- const b=getB(id);if(!b)return;const e=S.lib[id],s=srcOf(b.src);
+ const b=getB(id);if(!b)return;if(curSec&&!keep){S.secHit[curSec.k]=(S.secHit[curSec.k]||0)+1}const e=S.lib[id],s=srcOf(b.src);
  const sb=(st,l)=>`<button class="chip ${e&&e.s===st?'on':''}" data-shelf="${st}" data-id="${esc(id)}">${l}</button>`;
  const sc=$('#sheet').scrollTop;
  const how=b.kind==='tr'?'نص كامل داخل قارئ مداد، مع فهرس الأبواب':b.kind==='gb'?'قارئ كتب Google داخل التطبيق':b.kind==='sw'?'قصة مصوّرة بقارئ StoryWeaver':b.kind==='audio'?'كتاب صوتي بمشغّل مداد':b.kind==='libiq'?'قارئ المكتبة الرقمية العراقية الرسمي':b.kind==='wiki'?'نص كامل داخل قارئ مداد':b.kind==='gut'?'نص كامل، أو صفحة Gutenberg':b.kind==='ia'?'قارئ أرشيف الإنترنت داخل التطبيق':'من المصدر';
@@ -1246,12 +1280,12 @@ function openBook(id,keep){
  ${b.d?`<p style="margin:0 0 14px">${esc(b.d)}</p>`:''}
  <p class="mut" style="margin:0 0 14px">طريقة القراءة: ${how}</p>
  <div class="acts"><button class="btn full" data-read="${esc(id)}">${e&&e.s==='reading'?'تابع القراءة':e&&e.s==='done'?'اقرأ مرة أخرى':'ابدأ القراءة'}</button><button class="btn alt" data-act="close" aria-label="إغلاق"><i class="ph-bold ph-x"></i></button></div>
- <div class="shelf">${sb('want','أريد قراءتها')}${sb('reading','أقرأ الآن')}${sb('done','قرأتها')}</div>
+ <div class="shelf">${sb('want','أريد قراءتها')}${sb('reading','أقرأ الآن')}${sb('done','قرأتها')}<button class="chip ${S.fav[id]?'on fav':''}" data-fav="${esc(id)}"><i class="ph-${S.fav[id]?'fill':'bold'} ph-heart"></i> ${S.fav[id]?'بالمفضلة':'المفضلة'}</button><button class="chip" data-tolist="${esc(id)}"><i class="ph-bold ph-list-plus"></i> ${(()=>{const n=S.lists.filter(l=>l.books.includes(id)).length;return n?`بـ${ar(n)} قائمة`:'أضف لقائمة'})()}</button></div>
  ${(()=>{const d=S.dl[id],txt=b.kind==='wiki'||(b.kind==='gut'&&b.txt),canPdf=(b.kind==='gb'&&b.pdf)||b.kind==='ia'||b.kind==='aco'||(b.kind==='link'&&/pdf/i.test((b.ltype||'')+(b.link||'')));if(!txt&&!canPdf)return b.kind==='libiq'?'<p class="mut" style="font-size:13px;margin:12px 0 0">التحميل غير متاح لكتب هذا المصدر، تُقرأ بقارئه الرسمي.</p>':'';
   return `<div class="dlrow">${busy[id]?`<span class="mut" style="flex:1"><span style="display:flex;justify-content:space-between"><span id="dlt-${cssId(id)}">${esc((dlProg[id]||{}).label||'جارٍ التحميل…')}</span><b>${ar(Math.round((dlProg[id]||{}).pct||0))}٪</b></span><div class="prog"><b id="dlp-${cssId(id)}" style="width:${(dlProg[id]||{}).pct||3}%"></b></div></span>`:
   d?`${d.kind==='pages'?`<button class="btn" data-pgo="${esc(id)}"><i class="ph-fill ph-book-open-text"></i> اقرأ بدون نت</button><button class="btn alt" data-${d.pdf?'pdfs':'pgpdf'}="${esc(id)}"><i class="ph-bold ph-file-pdf"></i> حفظ PDF</button>`:''}${d.kind==='text'?`<span class="tag" style="align-self:center"><i class="ph-fill ph-check-circle"></i> محفوظ بدون نت</span>`:''}${(d.kind==='pdf'||d.pdf)&&d.kind!=='pages'?`<button class="btn" data-pdfo="${esc(id)}"><i class="ph-bold ph-file-pdf"></i> فتح PDF</button><button class="btn alt" data-pdfs="${esc(id)}"><i class="ph-bold ph-share-network"></i> حفظ/مشاركة</button>`:''}${txt?`<button class="btn alt" data-pdfx="${esc(id)}"><i class="ph-bold ph-file-pdf"></i> ${d.pdf?'تحديث PDF':'إنشاء PDF بملاحظاتي'}</button>`:''}<button class="btn alt" data-dlx="${esc(id)}" aria-label="حذف التحميل"><i class="ph-bold ph-trash"></i></button>`:
   `<button class="btn alt" data-dl="${esc(id)}"><i class="ph-bold ph-download-simple"></i> ${txt||b.kind==='ia'?'تحميل للقراءة بدون نت':'تحميل PDF للمكتبة'}</button>${txt?`<button class="btn alt" data-pdfx="${esc(id)}"><i class="ph-bold ph-file-pdf"></i> PDF</button>`:''}`}</div>`})()}
- ${e&&e.marks&&e.marks.length?`<h2 style="font-size:18px">العلامات</h2><div class="shelf">${e.marks.map(m=>{const [pt,p]=m.split(':');return `<button class="chip" data-hj="${esc(id)}" data-part="${pt}" data-p="${p}"><i class="ph-fill ph-bookmark-simple"></i> ${+pt?`ج${ar(+pt+1)} · `:''}ص ${ar(p)}</button>`}).join('')}</div>`:''}
+ ${e&&e.marks&&e.marks.length?`<h2 style="font-size:18px">العلامات</h2><div class="shelf">${marksOf(e).map(m=>{const [pt,p]=m.k.split(':');return `<button class="chip" data-hj="${esc(id)}" data-part="${pt}" data-p="${p}"><i class="ph-fill ph-bookmark-simple"></i> ${m.n?esc(m.n.slice(0,28))+' · ':''}${+pt?`ج${ar(+pt+1)} · `:''}ص ${ar(p)}</button>`}).join('')}</div>`:''}
  ${b.a?`<button class="ext" data-rq2="${esc(b.a)}"><i class="ph-duotone ph-user-list"></i> المزيد من ${esc(b.a)}</button><br>`:''}
  <a class="ext" href="${esc(extUrl(b))}" target="_blank" rel="noopener"><i class="ph-duotone ph-arrow-square-out"></i> فتح في ${esc(s?s.n:'المصدر')}</a>
  <p class="mut" style="font-size:12px;margin-top:10px">المصدر: ${esc(s?s.n:'')} · ${esc(s?s.lic||'':'')}</p>`);
@@ -1727,8 +1761,16 @@ function markEmpty(id){
  lstate(`<i class="ph-duotone ph-book-open" style="font-size:48px;color:var(--gold)"></i><b>هذا الكتاب فارغ بالمصدر</b><span>ما بيه نص أو بيه صفحة وحدة بس، فشلناه من النتائج حتى ما يطلعلك مرة ثانية.</span><button class="btn" data-act="rclose">رجوع</button>`);
 }
 function lstate(html){$('#page').innerHTML=`<div class="lstate">${html}</div>`}
+let libList='',confirmDel='',askCb=null;
+/* نافذة إدخال نص تعمل في أي مكان (خارج القارئ) */
+function askText(title,val,cb){if($('#reader.on')){rmodal(title,val,cb);return}askCb=cb;sheetOn(`<h3 style="margin:0 0 12px">${esc(title)}</h3><input id="askv" class="askin" dir="auto" value="${esc(val||'')}" maxlength="80"><div class="acts" style="margin-top:14px"><button class="btn full" data-asksave="1"><i class="ph-bold ph-check"></i> حفظ</button><button class="btn alt" data-act="close">إلغاء</button></div>`);setTimeout(()=>{const i=$('#askv');if(i){i.focus();i.onkeydown=e=>{if(e.key==='Enter')$('[data-asksave]').click()}}},120)}
+function listPicker(id){const b=getB(id);if(!b)return;
+ sheetOn(`<h3 style="margin:0 0 4px">أضف «${esc(b.t.slice(0,40))}» إلى قائمة</h3><p class="mut" style="margin:0 0 12px;font-size:13px">قوائم قراءة تنشئها بنفسك، مثل: «للصيف» أو «كتب الفقه»</p>
+ ${S.lists.map(L=>`<button class="row lrow" data-lpick="${L.id}|${esc(id)}" style="grid-template-columns:40px 1fr auto"><i class="ph-${L.books.includes(id)?'fill':'duotone'} ph-${L.books.includes(id)?'check-circle':'list-bullets'}" style="font-size:26px;color:var(--gold)"></i><div><h4 style="margin:0">${esc(L.n)}</h4><div class="mut">${ar(L.books.length)} كتاب</div></div></button>`).join('')||'<p class="mut">لا توجد قوائم بعد.</p>'}
+ <div class="acts" style="margin-top:12px"><button class="btn full" data-lnew="${esc(id)}"><i class="ph-bold ph-plus"></i> قائمة جديدة</button><button class="btn alt" data-open="${esc(id)}">رجوع</button></div>`)}
+function logHist(id){S.hist=S.hist.filter(h=>h.id!==id);S.hist.unshift({id,at:Date.now()});if(S.hist.length>150)S.hist.length=150;save()}
 async function openReader(id,jump){
- const b=getB(id);if(!b)return;
+ const b=getB(id);if(!b)return;logHist(id);
  if(S.dl[id]&&S.dl[id].kind==='pages'&&!jump){openPages(id);return}
  if(S.dl[id]&&S.dl[id].kind==='pdf'&&b.kind==='ia'&&!S.dl[id].vols&&S.dl[id].size<1200000){await removeDownload(id);toast('التنزيل السابق كان ناقصاً (الغلاف فقط) — نزّله من جديد')}
  if(S.dl[id]&&S.dl[id].kind==='pdf'&&!jump){openPDF(id);return}
@@ -1792,6 +1834,7 @@ function openFrame(b){
 }
 function applyR(){
  const r=$('#reader'),s=S.set;r.dataset.t=s.theme;
+ const MG=[[12,900],[20,800],[28,760],[40,680],[56,600]],mg=MG[Math.max(0,Math.min(4,s.mg??2))];r.style.setProperty('--rmgx',mg[0]+'px');r.style.setProperty('--rmw',mg[1]+'px');
  r.style.setProperty('--rs',s.fs+'px');r.style.setProperty('--rl',s.lh);r.style.setProperty('--rf',`"${s.font}",serif`);
  $('#fonts').innerHTML=FONTS.map(f=>`<button style="font-family:'${f[0]}';${s.font===f[0]?'background:var(--plumbg);color:#fff':''}" data-font="${f[0]}">${f[1]}</button>`).join('');
  $('#thm').innerHTML=thm();
@@ -1810,7 +1853,7 @@ function drawPage(dir){
  const parts=R.parts.length;e.pct=(part+p/R.pages.length)/parts*100;save();
  $('#rpg').textContent=`صفحة ${ar(p)} من ${ar(R.pages.length)}${parts>1?` · الجزء ${ar(part+1)} من ${ar(parts)}`:''}`;
  $('#rleft').textContent=`${ar(Math.round(e.pct))}٪`;$('#rib').style.width=e.pct+'%';
- $('#rmark').classList.toggle('on',(e.marks||[]).includes(part+':'+p));
+ $('#rmark').classList.toggle('on',hasMark(e,part+':'+p));
 }
 async function ensurePage(p){if(!R||!R.lazy||R.pages[p-1])return true;
  try{R.pages[p-1]=await trPage(R.b.ref,p);return true}catch(err){const e=S.lib[R.id];if(p>1){R.pages.length=p-1;e.trTotal=p-1;e.pages=p-1;save()}return false}}
@@ -1832,8 +1875,26 @@ function closeReader(){setTimeout(()=>{try{if(window.__pendingSW)location.reload
  hlMode=false;closeAnn();$('#rmodal').classList.remove('on');$('#reader').classList.remove('hlm','imm','idle');$('#hlb').classList.remove('on');if(pdfIO){pdfIO.disconnect();pdfIO=null}try{if(document.fullscreenElement)document.exitFullscreen()}catch(e){}
  $('#reader').classList.remove('on');$('#frame').innerHTML='';document.querySelectorAll('.pnl').forEach(x=>x.classList.remove('on'));R=null;render();
 }
+/* العلامات: متوافقة مع الصيغة القديمة (نص "جزء:صفحة") والجديدة {k,n,at} */
+const mkOf=m=>typeof m==='string'?{k:m,n:'',at:0}:m;
+const marksOf=e=>(e&&e.marks||[]).map(mkOf);
+const hasMark=(e,k)=>marksOf(e).some(m=>m.k===k);
+let tocTab='toc';
+function findIn(q){R.findQ=q;const box=$('#rfres');if(!box)return;const nq=norm(q.trim());if(nq.length<2){box.innerHTML='<p class="mut" style="font-size:13px">اكتب حرفين على الأقل. البحث يتجاهل التشكيل والهمزات.</p>';return}
+ const res=[];const part=(S.lib[R.id]||{}).part||0;
+ (R.pages||[]).forEach((pg,i)=>pg.forEach(b=>{if(!b.t||res.length>=150)return;const raw=String(b.t),n=norm(raw);let at=n.indexOf(nq);while(at>-1&&res.length<150){res.push({p:i+1,raw,at});at=n.indexOf(nq,at+nq.length)}}));
+ box.innerHTML=res.length?`<p class="mut" style="font-size:12.5px;margin:0 0 6px">${res.length>=150?'أكثر من ١٥٠':ar(res.length)} نتيجة${R.parts.length>1?' في هذا الجزء':''}</p>`+res.map(r=>{const a=Math.max(0,r.at-40),sn=r.raw.slice(a,r.at+nq.length+60);const rel=r.at-a;return `<button class="fres" data-tj="${r.p}" data-fq="1"><span>${a?'…':''}${esc(sn.slice(0,rel))}<mark>${esc(sn.slice(rel,rel+nq.length))}</mark>${esc(sn.slice(rel+nq.length))}…</span><span class="mut">ص ${ar(r.p)}</span></button>`}).join(''):'<p class="mut">لا توجد نتائج.</p>'}
+/* تمييز كلمة البحث داخل الصفحة بعد الانتقال */
+function markFind(){const q=R&&R.findQ&&norm(R.findQ.trim());const pg=$('#page');if(!q||q.length<2||!pg)return;
+ const tw=document.createTreeWalker(pg,NodeFilter.SHOW_TEXT);const hits=[];let n;while(n=tw.nextNode()){const nn=norm(n.data);if(nn.length===n.data.length&&nn.includes(q))hits.push(n)}
+ let firstEl=null;hits.forEach(node=>{const nn=norm(node.data);let i=nn.indexOf(q);if(i<0)return;let st=i,en=i+q.length;const D=node.data;while(st>0&&!/\s/.test(D[st-1]))st--;while(en<D.length&&!/[\s.،؛:!?؟]/.test(D[en]))en++;const r=document.createRange();r.setStart(node,st);r.setEnd(node,en);const m=document.createElement('mark');m.className='sfind';try{r.surroundContents(m);firstEl=firstEl||m}catch(e){}});
+ if(firstEl)firstEl.scrollIntoView({block:'center'})}
+function pageSnippet(pg){const b=(pg||[]).find(x=>x.t&&x.k!=='n');return b?String(b.t).replace(/\s+/g,' ').slice(0,60):''}
 function toc(){
- const e=S.lib[R.id];let h='<h6>الفهرس</h6>';
+ const e=S.lib[R.id];const ms=marksOf(e);
+ let h=`<div class="tabs3"><button class="${tocTab==='toc'?'on':''}" data-toct="toc"><i class="ph-duotone ph-list-bullets"></i> الفهرس</button><button class="${tocTab==='bm'?'on':''}" data-toct="bm"><i class="ph-duotone ph-bookmarks-simple"></i> العلامات${ms.length?` <b>${ar(ms.length)}</b>`:''}</button><button class="${tocTab==='find'?'on':''}" data-toct="find"><i class="ph-duotone ph-magnifying-glass"></i> بحث</button></div>`;
+ if(tocTab==='bm'){h+=ms.length?ms.map((m,i)=>{const [pt,p]=m.k.split(':');return `<div class="bmrow"><button data-bmj="${m.k}"><i class="ph-fill ph-bookmark-simple"></i><span><b>${esc(m.n||'علامة بدون اسم')}</b><small class="mut">${+pt?`الجزء ${ar(+pt+1)} · `:''}صفحة ${ar(p)}${m.at?' · '+ago(m.at):''}</small></span></button><button class="ib" data-bmren="${i}" aria-label="إعادة تسمية"><i class="ph-duotone ph-pencil-simple"></i></button><button class="ib" data-bmdel="${i}" aria-label="حذف"><i class="ph-duotone ph-trash"></i></button></div>`}).join(''):'<div class="empty" style="padding:24px 8px"><i class="ph-duotone ph-bookmark-simple"></i><b>لا توجد علامات</b>اضغط زر العلامة بالأعلى لحفظ الصفحة الحالية باسم تختاره</div>';$('#rtocp').innerHTML=h;return}
+ if(tocTab==='find'){h+=`<label class="sbar" style="margin:6px 0 10px"><i class="ph-duotone ph-magnifying-glass"></i><input id="rfind" type="search" placeholder="ابحث داخل الكتاب…" value="${esc(R.findQ||'')}" autocomplete="off"></label><div id="rfres"></div>`;$('#rtocp').innerHTML=h;const inp=$('#rfind');let ft;inp.oninput=()=>{clearTimeout(ft);ft=setTimeout(()=>findIn(inp.value),220)};if(R.findQ)findIn(R.findQ);setTimeout(()=>inp.focus(),60);return}
  if(R.toc&&R.toc.length)h+=R.toc.map(t=>`<button class="${e.p===+t.page?'cur':''}${t.level===1&&R.b.kind==='nahj'?' tocsec':''}" data-tj="${t.page}" style="${t.level>1?'padding-inline-start:18px;font-size:14px':''}"><span>${esc(t.title)}</span><span class="mut">ص ${ar(t.page)}</span></button>`).join('');
  else if(R.parts.length>1)h+=R.parts.map((pt,i)=>`<button class="${(e.part||0)===i?'cur':''}" data-tpart="${i}"><span>${esc(pt.t)}</span><span class="mut">${ar(i+1)}</span></button>`).join('');
  else{const hs=[];(R.pages||[]).forEach((pg,i)=>pg.forEach(b=>{if(b.k==='h')hs.push([b.t,i+1])}));h+=hs.length?hs.map(([t,p])=>`<button class="${e.p===p?'cur':''}" data-tj="${p}"><span>${esc(t)}</span><span class="mut">ص ${ar(p)}</span></button>`).join(''):'<p class="mut">لا يوجد فهرس لهذا الكتاب. استخدم شريط التقدم بالأسفل.</p>'}
@@ -1844,11 +1905,26 @@ function toc(){
 document.addEventListener('click',async ev=>{
  const t=ev.target.closest('button,[data-act],[data-qa]');if(!t)return;const d=t.dataset;
  if(d.tab){buzz();if(d.tab===tab&&t.closest('.nav')){$('#view').scrollTo({top:0,behavior:'smooth'});$('#nav').classList.remove('mini');return}if(d.lang)fLang=d.lang;go(d.tab,d.focus);return}
- if(d.open){openBook(d.open);return}
+ if(d.open){const sk=t.closest('[data-shelf-k]');if(sk){S.secHit[sk.dataset.shelfK]=(S.secHit[sk.dataset.shelfK]||0)+1}openBook(d.open);return}
+ if(d.golib){libTab=d.golib;tab='library';render();return}
+ if(d.fav){const id=d.fav;const b=getB(id);if(b)remember(b);if(S.fav[id]){delete S.fav[id];toast('أُزيل من المفضلة')}else{S.fav[id]=Date.now();toast('أُضيف للمفضلة ♥')}save();openBook(id,1);if(tab==='library')render();return}
+ if(d.tolist){listPicker(d.tolist);return}
+ if(d.lpick){const [lid,id]=d.lpick.split('|');const L=S.lists.find(l=>l.id===lid);if(L){const b=getB(id);if(b)remember(b);const i=L.books.indexOf(id);if(i>-1){L.books.splice(i,1);toast('أُزيل من «'+L.n+'»')}else{L.books.unshift(id);toast('أُضيف إلى «'+L.n+'»')}save();listPicker(id)}return}
+ if(d.asksave){const cb=askCb;askCb=null;const v=($('#askv')||{}).value||'';closeSheet();if(cb)cb(v);return}
+ if(d.lnew){const id=d.lnew;askText('اسم القائمة الجديدة','',v=>{v=v.trim().slice(0,60);if(!v)return;const L={id:'l'+Date.now().toString(36),n:v,books:id&&id!=='-'?[id]:[],at:Date.now()};S.lists.unshift(L);save();toast('أُنشئت القائمة «'+v+'»');if(id&&id!=='-')openBook(id,1);else render()});return}
+ if(d.lopen){libList=libList===d.lopen?'':d.lopen;render();return}
+ if(d.ldel){const L=S.lists.find(l=>l.id===d.ldel);if(L&&confirmDel===L.id){S.lists=S.lists.filter(l=>l.id!==L.id);confirmDel='';save();toast('حُذفت القائمة');render()}else{confirmDel=d.ldel;toast('اضغط «حذف» مرة ثانية للتأكيد')}return}
+ if(d.lren){const L=S.lists.find(l=>l.id===d.lren);if(L)askText('اسم القائمة',L.n,v=>{v=v.trim().slice(0,60);if(v){L.n=v;save();render()}});return}
+ if(d.lrm){const [lid,id]=d.lrm.split('|');const L=S.lists.find(l=>l.id===lid);if(L){L.books=L.books.filter(x=>x!==id);save();render()}return}
+ if(d.hclr){if(confirmDel==='hist'){S.hist=[];confirmDel='';save();render()}else{confirmDel='hist';toast('اضغط مرة ثانية لمسح السجل')}return}
  if(d.read){openReader(d.read);return}
  if(d.hj){openReader(d.hj,{part:+d.part,p:+d.p});return}
- if(d.tj){const p=Math.min(+d.tj,R.pages.length);$('#rtocp').classList.remove('on');if(R.lazy&&!(await ensurePage(p)))return;S.lib[R.id].p=p;save();drawPage(1);if(R.lazy)prefetchTr(p);return}
+ if(d.tj){const p=Math.min(+d.tj,R.pages.length);$('#rtocp').classList.remove('on');if(R.lazy&&!(await ensurePage(p)))return;S.lib[R.id].p=p;save();drawPage(1);if(d.fq)setTimeout(markFind,60);if(R.lazy)prefetchTr(p);return}
  if(d.tpart){$('#rtocp').classList.remove('on');await loadPart(+d.tpart,1);return}
+ if(d.toct){tocTab=d.toct;toc();return}
+ if(d.bmj){const [pt,p]=d.bmj.split(':');const e=S.lib[R.id];$('#rtocp').classList.remove('on');if(+pt!==(e.part||0)&&R.parts.length>1){e.part=+pt;e.p=+p;save();openReader(R.id);}else{e.p=+p;save();drawPage(0)}return}
+ if(d.bmdel){const e=S.lib[R.id];const ms=marksOf(e);ms.splice(+d.bmdel,1);e.marks=ms;save();toc();drawPage(0);return}
+ if(d.bmren){const e=S.lib[R.id];const ms=marksOf(e);const m=ms[+d.bmren];rmodal('اسم العلامة',m.n,v=>{m.n=v.trim().slice(0,80);e.marks=ms;save();toc()});return}
  if(d.sec==='nahj'&&tab==='home'){openNahj();return}
  if(d.njf){njF=d.njf;njOpen='';const y=$('#view').scrollTop;render();$('#view').scrollTop=y;return}
  if(d.njo){const c=t.closest('.njc');const was=c.classList.contains('open');document.querySelectorAll('.njc.open').forEach(x=>{x.classList.remove('open');x.querySelector('.njh').setAttribute('aria-expanded','false')});if(!was){c.classList.add('open');t.setAttribute('aria-expanded','true')||0;njOpen=d.njo;setTimeout(()=>c.scrollIntoView({behavior:'smooth',block:'nearest'}),280)}else njOpen='';buzz();return}
@@ -1874,7 +1950,9 @@ document.addEventListener('click',async ev=>{
   if(d.aa==='note')rmodal('ملاحظة على الفقرة',a0.note,v=>annSet(i,{note:v.trim()}));
   else if(d.aa==='edit')rmodal('تعديل نص الفقرة',a0.text!=null?a0.text:blk.t,v=>annSet(i,{text:v.trim()?v:null}));
   else if(d.aa==='add')rmodal('أضف نصاً بعد هذه الفقرة',a0.add,v=>annSet(i,{add:v.trim()}));
-  else if(d.aa==='copy'){try{navigator.clipboard.writeText((a0.text!=null?a0.text:blk.t).replace(/\t/g,' ')).then(()=>toast('نُسخ النص'))}catch(e){}}
+  else if(d.aa==='copy'||d.aa==='share'){const txt=(a0.text!=null?a0.text:blk.t).replace(/\t/g,' ').trim();const b=R.b||{};const e=S.lib[R.id]||{};
+   const cite=`«${txt}»\n— ${b.t||''}${b.a?'، '+b.a:''} (صفحة ${ar(e.p||1)})${srcOf(b.src)?'\nالمصدر: '+srcOf(b.src).n:''}${extUrl(b)?'\n'+extUrl(b):''}\nعبر تطبيق مداد`;
+   if(d.aa==='share'&&navigator.share){navigator.share({title:b.t||'مداد',text:cite}).catch(()=>{})}else{try{navigator.clipboard.writeText(cite).then(()=>toast(d.aa==='share'?'نُسخ الاقتباس مع معلومات الكتاب — الصقه أينما تريد':'نُسخ النص مع اسم الكتاب والمصدر'))}catch(e){}}}
   else if(d.aa==='clear'){const m=ANN()[R.id]||{};delete m[akey(i)];save();drawPage(0);closeAnn();toast('مُسحت التعديلات على الفقرة')}
   return}
  if(d.ach!=null&&R&&R.audplay){R.audplay(+d.ach,0,true);return}
@@ -1938,8 +2016,11 @@ document.addEventListener('click',async ev=>{
  else if(a==='rtoc'){if(!R||!R.pages)return;$('#rsetp').classList.remove('on');toc();$('#rtocp').classList.toggle('on')}
  else if(a==='hlm'){hlMode=!hlMode;$('#reader').classList.toggle('hlm',hlMode);t.classList.toggle('on',hlMode);if(!hlMode)closeAnn();else{$('#reader').classList.remove('imm');toast('اضغط على أي فقرة')}}
  else if(a==='tts'){try{if(speechSynthesis.speaking){stopTTS();return}const u=new SpeechSynthesisUtterance([...$('#page').querySelectorAll('p[data-i]')].map(p=>p.textContent).join(' '));u.lang=R&&R.b.lang==='ar'?'ar-SA':'en-US';u.rate=.95;u.onend=()=>$('#tts').classList.remove('on');speechSynthesis.speak(u);t.classList.add('on')}catch(e){toast('القراءة الصوتية غير متاحة')}}
- else if(a==='rmark'){if(!R||!R.pages)return;const e=S.lib[R.id];e.marks=e.marks||[];const k=(e.part||0)+':'+e.p,i=e.marks.indexOf(k);if(i>-1){e.marks.splice(i,1);toast('أُزيلت العلامة')}else{e.marks.push(k);toast('أُضيفت علامة')}save();drawPage(0)}
+ else if(a==='rmark'){if(!R||!R.pages)return;const e=S.lib[R.id];const ms=marksOf(e);const k=(e.part||0)+':'+e.p,i=ms.findIndex(m=>m.k===k);
+  if(i>-1){ms.splice(i,1);e.marks=ms;save();drawPage(0);toast('أُزيلت العلامة')}
+  else rmodal('سمِّ العلامة (اختياري)',pageSnippet(R.pages[e.p-1]),v=>{ms.push({k,n:v.trim().slice(0,80),at:Date.now()});e.marks=ms;save();drawPage(0);toast('حُفظت العلامة ✓')})}
  else if(a==='fs+'||a==='fs-'){S.set.fs=Math.min(30,Math.max(14,S.set.fs+(a==='fs+'?2:-2)));save();applyR()}
+ else if(a==='mg+'||a==='mg-'){S.set.mg=Math.max(0,Math.min(4,(S.set.mg??2)+(a==='mg+'?1:-1)));save();applyR();toast(['هوامش ضيّقة جداً','هوامش ضيّقة','هوامش متوسطة','هوامش واسعة','هوامش واسعة جداً'][S.set.mg])}
  else if(a==='lh+'||a==='lh-'){S.set.lh=Math.min(2.6,Math.max(1.5,+(S.set.lh+(a==='lh+'?.2:-.2)).toFixed(1)));save();applyR()}
  else if(a==='arFirst'){S.set.arFirst=!S.set.arFirst;save();render();toast(S.set.arFirst?'العربية أولاً: مفعّل':'العربية أولاً: متوقف')}
  else if(a==='reset'){const c=S.cust,src=S.src;S=seed();S.src=src;S.cust=c;save();render();toast('تم المسح')}

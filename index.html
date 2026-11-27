@@ -348,7 +348,7 @@ html,body{height:100%;overscroll-behavior:none}
 .page .pw{max-width:40em;margin:0 auto}
 .page .rh{display:flex;justify-content:space-between;gap:12px;font:12px "eKalem","IBM Plex Sans Arabic";color:var(--rmute);border-bottom:1px solid var(--rline);padding-bottom:8px;margin-bottom:18px}
 .page .rh span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.page .rf{text-align:center;font:13px "eKalem","IBM Plex Sans Arabic";color:var(--rmute);margin-top:22px;letter-spacing:.05em}
+.page .rf{text-align:center;font:13px "eKalem","IBM Plex Sans Arabic";color:var(--rmute);margin-top:22px}
 .page .rf::before,.page .rf::after{content:"—";margin:0 8px;opacity:.5}
 .page p{hyphens:auto;position:relative}
 .page p.c-y{background:color-mix(in srgb,#f5d76e 55%,transparent);box-shadow:0 0 0 4px color-mix(in srgb,#f5d76e 55%,transparent)}
@@ -500,7 +500,7 @@ html[dir=rtl] .npill{right:auto;left:0}
 .njhero{position:relative;overflow:hidden;border-radius:26px;padding:26px 20px 20px;color:#f6efe0;text-align:center;background:radial-gradient(120% 90% at 50% 0%,#17707a 0%,#0b3c42 55%,#062226 100%);box-shadow:0 18px 40px rgb(6 34 38/.35);isolation:isolate}
 .njorn{position:absolute;inset:0;z-index:-1;opacity:.16;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='64' height='64'%3E%3Cg fill='none' stroke='%23e9c46a' stroke-width='1.2'%3E%3Cpath d='M32 4l8 20 20 8-20 8-8 20-8-20-20-8 20-8z'/%3E%3Ccircle cx='32' cy='32' r='6'/%3E%3C/g%3E%3C/svg%3E");animation:njdrift 40s linear infinite}
 @keyframes njdrift{to{background-position:64px 128px}}
-.njhero small{font-size:12.5px;letter-spacing:.3px;color:#e9c46a}
+.njhero small{font-size:12.5px;color:#e9c46a}
 .njhero h1{font:700 46px/1.25 eKalem,Amiri;margin:6px 0 4px;color:#fff;text-shadow:0 4px 18px rgb(0 0 0/.35)}
 .njhero p{font-size:14px;line-height:1.8;opacity:.9;margin:0 auto;max-width:460px}
 .njstats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:18px 0 16px}
@@ -537,7 +537,7 @@ html[dir=rtl] .npill{right:auto;left:0}
 .njbab{display:flex;flex-direction:column;align-items:center;gap:6px;margin:1.4em 0 1.1em;text-align:center}
 .njbab h3{font:700 1.6em/1.4 eKalem,Amiri;color:var(--gold);margin:0}.njbab small{font-size:.78em;opacity:.7;line-height:1.7;max-width:34em}
 .njbab i{display:block;width:120px;height:14px;background:radial-gradient(circle,var(--gold) 2.5px,transparent 3px) center/14px 14px repeat-x;opacity:.55}
-.njn{margin:1.5em 0 .7em;text-align:center}.njn span{display:inline-block;font:700 .78em/1 inherit;letter-spacing:.3px;padding:6px 14px;border-radius:99px;border:1px solid color-mix(in srgb,var(--gold) 60%,transparent);color:var(--gold);background:color-mix(in srgb,var(--gold) 9%,transparent)}
+.njn{margin:1.5em 0 .7em;text-align:center}.njn span{display:inline-block;font:700 .78em/1 inherit;padding:6px 14px;border-radius:99px;border:1px solid color-mix(in srgb,var(--gold) 60%,transparent);color:var(--gold);background:color-mix(in srgb,var(--gold) 9%,transparent)}
 .njn h4{font:700 1.08em/1.7 eKalem,Amiri;margin:.55em 0 0;color:inherit;opacity:.92}
 .njs{font:700 1em eKalem,Amiri;color:var(--gold);margin:1em 0 .4em;text-align:center;opacity:.9}
 .toc .tocsec{font-weight:700;color:var(--gold);border-top:1px solid var(--rline);margin-top:6px}
@@ -571,9 +571,9 @@ html[dir=rtl] .npill{right:auto;left:0}
 }
 @media (min-width:1100px){
  .grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
- .qcard{display:inline-flex;width:calc(50% - 6px);vertical-align:top}
- .qcard+.njcard{margin-inline-start:12px}
- .qcard,.njcard{margin-top:16px!important;min-height:76px}
+ .qcard{display:inline-flex;width:calc(33.333% - 8px);vertical-align:top}
+ .qcard+.qcard{margin-inline-start:12px}
+ .qcard{margin-top:16px!important;min-height:76px}
 }
 .qfrom{margin:0 0 12px;display:flex;align-items:center;justify-content:center;gap:8px}
 
@@ -1102,6 +1102,90 @@ mark.sfind.cur{background:var(--gold);color:#2a1900;box-shadow:0 0 0 3px rgb(199
 .qdla{background:linear-gradient(150deg,#4a2a6c,#2a1840)}
 .qtools{grid-template-columns:1fr auto auto}
 @media(max-width:520px){.qtools{grid-template-columns:1fr 1fr}.qtools .qsearch{grid-column:1/-1}}
+
+/* ===== مفاتيح الجنان: هوية عقيقية ذهبية ===== */
+.mfcard{background:linear-gradient(135deg,#6e2438,#2e0c17);margin-top:10px;box-shadow:0 12px 28px rgb(46 12 23/.3)}
+.mfhero,.mfphd{--mg1:#7a2840;--mg2:#3a0f1d;--mg3:#1f0710;--mgold:#e9c46a;position:relative;overflow:hidden;border-radius:26px;padding:24px 20px 20px;color:#f8eee4;text-align:center;background:radial-gradient(120% 90% at 50% 0%,var(--mg1) 0%,var(--mg2) 58%,var(--mg3) 100%);box-shadow:0 18px 40px -8px rgb(58 15 29/.45),inset 0 1px 0 rgb(255 255 255/.12);isolation:isolate}
+.mforn{position:absolute;inset:0;z-index:-1;opacity:.14;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72'%3E%3Cg fill='none' stroke='%23e9c46a' stroke-width='1.1'%3E%3Cpath d='M36 6l9 21 21 9-21 9-9 21-9-21-21-9 21-9z'/%3E%3Cpath d='M36 18l5 13 13 5-13 5-5 13-5-13-13-5 13-5z'/%3E%3Ccircle cx='36' cy='36' r='3'/%3E%3C/g%3E%3C/svg%3E");animation:njdrift 50s linear infinite}
+.mfhero::after,.mfphd::after{content:"";position:absolute;inset:auto 0 0;height:1px;background:linear-gradient(90deg,transparent,rgb(233 196 106/.6),transparent)}
+.mfkey{width:58px;height:58px;margin:0 auto 8px;border-radius:50%;display:grid;place-items:center;font-size:28px;color:#3a0f1d;background:var(--goldg);box-shadow:0 0 0 6px rgb(233 196 106/.12),0 0 0 12px rgb(233 196 106/.06),0 10px 24px -6px rgb(0 0 0/.5)}
+.mfhero small,.mfphd small{display:block;font-size:12.5px;color:var(--mgold)}
+.mfhero h1{font:700 48px/1.25 eKalem,Amiri;margin:4px 0 6px;color:#fff;text-shadow:0 4px 18px rgb(0 0 0/.4)}
+.mfhero p{font-size:14px;line-height:1.8;opacity:.9;margin:0 auto;max-width:460px}
+.mfstats button{border-color:rgb(233 196 106/.28)!important}
+.mfhero .btn{background:var(--goldg);color:#2a1100;min-width:0}.mfhero .btn.alt{background:rgb(255 255 255/.1);color:#fff;box-shadow:inset 0 0 0 1px rgb(255 255 255/.14);flex:0 0 auto;padding-inline:16px}
+.mfct{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.mfphd{padding:22px 20px 18px;margin-bottom:4px}.mfphd h1{font:700 28px/1.45 eKalem,Amiri;margin:6px 0 10px;color:#fff;text-wrap:balance}
+.mfpst{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}.mfpst span{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;padding:5px 12px;border-radius:99px;background:rgb(255 255 255/.08);border:1px solid rgb(233 196 106/.22)}.mfpst i{color:var(--mgold)}
+.mfsrch{position:relative;display:flex;align-items:center;gap:10px;margin-top:16px;min-height:54px;padding:0 16px;border-radius:18px;background:var(--surf,var(--card));border:1px solid var(--line2,var(--line));box-shadow:var(--sh1)}
+.mfsrch>i{font-size:22px;color:var(--gold)}.mfsrch input{flex:1;min-width:0;border:0;outline:0;background:none;font:500 16px/1.2 inherit;color:var(--ink)}.mfsrch input::-webkit-search-cancel-button{display:none}
+.mfsrch button[hidden]{display:none}.mfsrch button{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;background:var(--soft);color:var(--mute)}
+.mfsrch:focus-within{border-color:color-mix(in srgb,var(--gold) 55%,transparent);box-shadow:0 0 0 4px color-mix(in srgb,var(--gold) 14%,transparent)}
+.mftoday{margin-top:16px;padding:14px;border-radius:22px;background:var(--surf,var(--card));border:1px solid var(--line2,var(--line));box-shadow:var(--sh1)}
+.mftoday header{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:0 2px 10px}.mftoday header span{display:inline-flex;align-items:center;gap:6px;font:700 18px eKalem,Amiri;color:var(--plum)}.mftoday header span i{color:var(--gold);font-size:20px}.mftoday header small{color:var(--mute);font-size:12.5px}
+.mftiles{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.mftiles button{display:flex;align-items:center;gap:10px;padding:10px;border-radius:16px;text-align:start;background:var(--soft);transition:transform .16s var(--e-out,ease)}
+.mftiles button:active,.mffam button:active,.mfrow:active,.mfpc:active,.mfhits button:active{transform:scale(.97)}
+.mftiles button.wide{grid-column:1/-1;background:linear-gradient(135deg,#6e2438,#3a0f1d);color:#fff}.mftiles button.wide small{color:#e9c46a}.mftiles button.wide em{background:rgb(255 255 255/.12);color:#e9c46a}.mftiles button.wide>i{margin-inline-start:auto;opacity:.7}
+.mftiles span{min-width:0}.mftiles small{display:block;font-size:11.5px;color:var(--mute)}.mftiles b{display:block;font-size:14px;line-height:1.4;font-weight:600}
+.mftiles em,.mfrow em,.mffam em{flex:none;width:40px;height:40px;border-radius:13px;display:grid;place-items:center;font-size:21px}
+.mfk-dua,.mfk-taq{--k:#b8862a}.mfk-ziy{--k:#1f7a5a}.mfk-mun{--k:#7a4bb0}.mfk-sal,.mfk-amal{--k:#2a6fa8}.mfk-sura{--k:#0f6b62}.mfk-txt{--k:#8a6f60}
+em[class*=mfk-],.mffam [class*=mfk-] em,.mffam button em{color:var(--k);background:color-mix(in srgb,var(--k) 13%,transparent)}
+.mffam{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.mffam button{position:relative;display:flex;align-items:center;gap:10px;padding:10px 12px;min-height:66px;border-radius:20px;text-align:start;background:var(--surf,var(--card));border:1px solid var(--line2,var(--line));box-shadow:var(--sh1);overflow:hidden;animation:mfin .45s var(--e-out,ease) both;animation-delay:var(--d);transition:transform .16s var(--e-out,ease)}
+.mffam button::after{content:"";position:absolute;inset:auto -20px -30px auto;width:90px;height:90px;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--k) 16%,transparent),transparent 70%);pointer-events:none}
+.mffam b{flex:1;min-width:0;font:700 16px/1.45 eKalem,Amiri;color:var(--ink)}.mffam small{display:none}
+@keyframes mfin{from{opacity:0;transform:translateY(8px)}}
+.mfseg{grid-template-columns:1fr 1fr!important}
+.mfparts{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+.mfpc{display:flex;align-items:center;gap:14px;padding:14px;border-radius:20px;text-align:start;background:var(--surf,var(--card));border:1px solid var(--line2,var(--line));box-shadow:var(--sh1);animation:mfin .45s var(--e-out,ease) both;animation-delay:var(--d);transition:transform .16s var(--e-out,ease)}
+.mfpc>span:nth-child(2){flex:1;min-width:0}.mfpc small{display:block;font-size:12px;color:var(--gold);font-weight:600}.mfpc b{display:block;font:700 17px/1.5 eKalem,Amiri;color:var(--ink);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.mfpc>span>i{display:block;font-style:normal;font-size:12px;color:var(--mute);margin-top:2px}.mfpc>i{color:var(--mute)}
+.mfnum{flex:none;width:46px;height:46px;display:grid;place-items:center;font:700 20px eKalem,Amiri;color:#f3dc9a;background:linear-gradient(145deg,#6e2438,#2e0c17);border-radius:14px;transform:rotate(45deg);box-shadow:0 6px 14px -4px rgb(46 12 23/.5),inset 0 0 0 1.5px rgb(233 196 106/.45)}
+.mfnum{width:40px;height:40px;margin:3px}.mfnum em{font-style:normal;transform:rotate(-45deg)}
+.mfdl{display:flex;align-items:center;gap:12px;width:100%;margin-top:18px;padding:14px 16px;border-radius:18px;text-align:start;background:color-mix(in srgb,var(--gold) 9%,var(--card));border:1px dashed color-mix(in srgb,var(--gold) 45%,transparent)}
+.mfdl>i{font-size:30px;color:var(--gold)}.mfdl b{display:block;font-size:15px}.mfdl small{font-size:12px;color:var(--mute)}.mfdl[disabled]{border-style:solid;opacity:1}.mfdl[disabled]>i{color:var(--ok)}.mfdl.busy>i{animation:pulse 1s ease-in-out infinite}
+.mfjump{position:sticky;top:0;z-index:2;background:var(--bg);margin-inline:-4px;padding-inline:4px}
+.mfch{margin-top:18px;scroll-margin-top:60px}.mfch header{display:flex;flex-direction:column;gap:2px;margin:0 4px 10px;padding-inline-start:12px;border-inline-start:3px solid var(--gold)}
+.mfcl{font-size:12px;font-weight:700;color:var(--gold)}.mfch h3{margin:0;font:700 18px/1.55 eKalem,Amiri;color:var(--plum);text-wrap:pretty}
+.mfitems{border-radius:20px;background:var(--surf,var(--card));border:1px solid var(--line2,var(--line));box-shadow:var(--sh1);overflow:hidden}
+.mfrow{display:flex;align-items:center;gap:12px;width:100%;padding:11px 14px;text-align:start;transition:transform .16s var(--e-out,ease),background .2s}
+.mfrow+.mfrow{border-top:1px solid var(--line)}.mfrow>span{flex:1;min-width:0}.mfrow b{display:block;font-size:15px;font-weight:600;line-height:1.5;color:var(--ink)}.mfrow small{font-size:11.5px;color:var(--mute)}.mfrow>i{color:var(--mute);font-size:14px}.mfrow .mfbm{color:var(--gold);font-size:16px}
+@media (hover:hover){.mfrow:hover{background:var(--soft)}}
+.mfrh{margin:18px 4px 8px;font-size:14px;color:var(--mute);font-weight:600}
+.mfempty{padding:24px 12px;text-align:center;color:var(--mute);font-size:14px}
+.mfcount{margin:0 4px 8px;font-size:12.5px}
+.mfhits{display:flex;flex-direction:column;gap:8px}
+.mfhits button{display:block;width:100%;text-align:start;padding:12px 14px;border-radius:16px;background:var(--surf,var(--card));border:1px solid var(--line2,var(--line));transition:transform .16s var(--e-out,ease)}
+.mfhits small{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--gold);font-weight:600}.mfhits p{margin:4px 0 0;font-size:14px;line-height:1.9;color:var(--ink)}.mfhits p.d{font:400 17px/2 Amiri,serif}
+.mfhits mark,.mfart mark{background:color-mix(in srgb,var(--gold) 32%,transparent);color:inherit;border-radius:4px;padding:0 2px}
+@media (min-width:700px){.mffam{grid-template-columns:repeat(4,1fr)}.mfparts{display:grid;grid-template-columns:1fr 1fr}}
+/* القارئ */
+.mfv{position:absolute;inset:0;overflow-y:auto;background:var(--rbg);color:var(--rink);padding-bottom:70px;scroll-behavior:auto}
+.mfbar{position:sticky;top:0;z-index:3;display:flex;align-items:center;gap:6px;padding:8px 12px;background:color-mix(in srgb,var(--rbg) 88%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--rline)}
+.mfbar button{display:inline-flex;align-items:center;gap:3px;height:36px;padding:0 10px;border-radius:11px;color:var(--rink);background:color-mix(in srgb,var(--rink) 6%,transparent);font-size:13px;transition:transform .16s var(--e-out,ease)}
+.mfbar button:active{transform:scale(.95)}.mfbar button i{font-size:18px}.mfbar button small{font-size:15px;font-weight:700;margin-inline-start:-2px}.mfbar .sp{flex:1}.mfbar button.on{color:var(--gold)}
+.mfprog{position:sticky;top:52px;z-index:3;height:2px}.mfprog b{display:block;height:100%;background:linear-gradient(90deg,var(--gold),#e9c46a);transform-origin:right;transform:scaleX(0);transition:transform .1s linear}
+.mfwrap{max-width:760px;margin:0 auto;padding:0 20px}
+.mfhead{text-align:center;padding:26px 0 6px}
+.mfchip{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:99px;font-size:12.5px;font-weight:600;color:var(--k);background:color-mix(in srgb,var(--k) 14%,transparent)}
+.mfhead h1{font:700 calc(var(--mfs) + 9px)/1.45 eKalem,Amiri;margin:10px 0 6px;color:var(--rink);text-wrap:balance}
+.mfhead p{margin:0;font-size:13px;color:var(--rmute)}
+.mfsep{display:flex;align-items:center;justify-content:center;gap:10px;margin:16px auto 6px;color:var(--gold);max-width:260px}.mfsep i:not([class]){flex:1;height:1px;background:linear-gradient(90deg,transparent,currentColor,transparent);opacity:.6}.mfsep i[class]{font-size:14px}.mfsep.end{margin:28px auto 10px}
+.mfart{padding-top:8px}
+.mfart p{scroll-margin-top:70px;transition:background .6s}
+.mfn{font:400 calc(var(--mfs) - 5px)/2 "IBM Plex Sans Arabic",system-ui,sans-serif;color:var(--rmute);margin:14px 0;text-align:justify}
+.mfdua{position:relative;margin:16px -6px;padding:18px 16px;border-radius:20px;background:color-mix(in srgb,var(--gold) 7%,var(--rbg));border:1px solid color-mix(in srgb,var(--gold) 22%,transparent)}
+.mfdua::before,.mfdua::after{content:"";position:absolute;left:50%;width:9px;height:9px;background:var(--gold);transform:translateX(-50%) rotate(45deg);border-radius:2px;box-shadow:0 0 0 4px var(--rbg)}.mfdua::before{top:-5px}.mfdua::after{bottom:-5px}
+.mfdua p{font:400 var(--mfs)/2.15 var(--mff),Amiri,serif;color:var(--rink);margin:0;text-align:center;text-wrap:pretty}
+.mfdua p+p{margin-top:12px;padding-top:12px;border-top:1px dashed color-mix(in srgb,var(--gold) 22%,transparent)}
+.mfsu{font:400 var(--mfs)/2.2 "Amiri Quran",Amiri,serif;text-align:center;color:var(--rink);margin:14px 0}
+.mfa{display:inline-grid;place-items:center;min-width:1.5em;height:1.5em;margin:0 3px;font:700 .55em/1 "IBM Plex Sans Arabic",sans-serif;color:var(--gold);border:1.5px solid currentColor;border-radius:50%;vertical-align:middle}
+.mfhit{background:color-mix(in srgb,var(--gold) 26%,transparent)!important;border-radius:10px}
+.mfnav{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0 24px}
+.mfnav button{display:grid;grid-template-columns:1fr auto;align-items:center;gap:0 8px;padding:12px 14px;border-radius:16px;text-align:start;background:color-mix(in srgb,var(--rink) 5%,transparent);border:1px solid var(--rline);color:var(--rink);min-width:0}
+.mfnav small{grid-column:1;font-size:11.5px;color:var(--gold);font-weight:600}.mfnav b{grid-column:1;font-size:13.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.mfnav button>i{grid-column:2;grid-row:1/3;color:var(--rmute)}
+.mfnav button:last-child{grid-template-columns:auto 1fr;text-align:end}.mfnav button:last-child>i{grid-column:1}.mfnav button:last-child small,.mfnav button:last-child b{grid-column:2}
+@media (prefers-reduced-motion:reduce){.mforn,.mffam button,.mfpc{animation:none}}
 </style>
 <link rel="stylesheet" href="fonts/ph.css">
 </head>
@@ -1616,6 +1700,126 @@ function nahj(){
  <p class="mut njnote">النص الإلكتروني لنهج البلاغة: نص الشريف الرضي من مشروع OpenITI (رخصة CC BY-NC-SA 4.0) مأخوذ عن طبعة الشيخ محمد عبده بعد حذف شرحه. الأوصاف أعلاه تعريف موجز بكل كتاب، وتوفّر نسخ الشروح يعتمد على المصادر المفتوحة.</p>`;
 }
 
+/* ---------- مفاتيح الجنان (نص الشيخ عباس القمي، مقسّم حسب أبوابه) ---------- */
+let MFI=null,mfG='m',mfPart=0,mfQ='',mfFamAll=false,mfQT=0,mfSeq=0,mfDl=0;const MFP={};
+const MFK={dua:['دعاء','hands-praying'],mun:['مناجاة','moon-stars'],ziy:['زيارة','mosque'],sal:['صلاة','sparkle'],sura:['سورة','book-open'],taq:['تعقيب','repeat'],amal:['أعمال','calendar-check'],txt:['فصل','article']};
+const MF_DAYS=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+const MF_ZIY=['أمير المؤمنين والزهراء (ع)','الحسن والحسين (ع)','السجاد والباقر والصادق (ع)','الكاظم والرضا والجواد والهادي (ع)','الإمام العسكري (ع)','صاحب الزمان (عج)','النبي الأكرم (ص)'];
+const mfN=s=>norm(s).replace(/[ٰ‌‏]/g,'').replace(/ؤ/g,'و').replace(/ئ/g,'ي').replace(/\s+/g,' ');
+const mfS=()=>{if(!S.mf)S.mf={fav:[],fs:23,font:'Amiri',last:null,pos:{}};return S.mf};
+const mfSplit=t=>{const m=String(t).split(/\s+—\s+|:\s+/);return m.length>1?[m[0].trim(),m.slice(1).join(' — ').replace(/^(في|من)\s/,'').trim()]:['',t]};
+const mfClean=t=>String(t).replace(/^\(\((.*)\)\)$/,'$1').replace(/^\((.*)\)$/,'$1').replace(/\s+—\s+/g,' — ');
+const mfLabel=x=>{const t=mfClean(x.t);if(t.replace(/\s/g,'').length>=12||!MFI)return t;const p=MFI.parts.find(q=>q.id===x.p),c=p&&p.ch[x.ci];return c?`${mfSplit(c.t)[1].replace(/\s+—.*$/,'').slice(0,36)} · ${t}`:t};
+async function mfIndex(){if(MFI)return MFI;let d=await IDB.get('mf:v1:i').catch(()=>null);
+ if(!d){const r=await fetch('/mf/index.json');if(!r.ok)throw new Error('net');d=await r.json();IDB.set('mf:v1:i',d).catch(()=>{})}
+ d.it={};d.seq=[];d.parts.forEach(p=>p.ch.forEach((c,ci)=>c.it.forEach(x=>{d.it[x.i]={...x,p:p.id,ci};d.seq.push(x.i)})));return MFI=d}
+async function mfPartData(pid){if(MFP[pid])return MFP[pid];let d=await IDB.get('mf:v1:p'+pid).catch(()=>null);
+ if(!d){const r=await fetch(`/mf/p${pid}.json`);if(!r.ok)throw new Error('net');d=await r.json();IDB.set('mf:v1:p'+pid,d).catch(()=>{})}return MFP[pid]=d}
+async function mfLoadAll(cb){const I=await mfIndex();let n=0;for(const p of I.parts){await mfPartData(p.id);cb&&cb(++n,I.parts.length)}}
+function openMf(pid){tab='mafatih';mfPart=pid||0;render();$('#view').scrollTop=0}
+const mfMins=n=>Math.max(1,Math.round(n/900));
+const mfRow=x=>{const k=MFK[x.k]||MFK.txt;return `<button class="mfrow" data-mfopen="${x.i}"><em class="mfk-${x.k}"><i class="ph-duotone ph-${k[1]}"></i></em><span><b>${esc(mfClean(x.t))}</b><small>${k[0]} · ${ar(mfMins(x.n))} د قراءة</small></span>${mfS().fav.some(f=>f.i===x.i)?'<i class="ph-fill ph-bookmark-simple mfbm"></i>':''}<i class="ph-bold ph-caret-left"></i></button>`};
+function mfHijri(){try{return new Intl.DateTimeFormat('ar-IQ-u-ca-islamic-umalqura',{day:'numeric',month:'long',year:'numeric'}).format(new Date())}catch(e){return ''}}
+function mafatih(){
+ const top=`<div class="njtop"><button class="ib" ${mfPart?'data-mfback="1"':'data-act="nhome"'} aria-label="رجوع"><i class="ph-bold ph-arrow-right"></i></button><span>${mfPart?'مفاتيح الجنان':'المكتبة الإسلامية'}</span></div>`;
+ if(!MFI){mfIndex().then(()=>{if(tab==='mafatih')render()}).catch(()=>{const v=$('#mfload');if(v)v.innerHTML='<b>تعذّر فتح مفاتيح الجنان</b><span>تأكد من الإنترنت للمرة الأولى، بعدها يشتغل بدون نت.</span><button class="btn" data-mfhome="1">إعادة المحاولة</button>'});
+  return top+`<section class="mfhero"><div class="mforn"></div><h1>مفاتيح الجنان</h1></section><div class="lstate" id="mfload"><span class="spin">◌</span><b>جارٍ تجهيز الفهرس…</b></div>`}
+ const M=mfS();
+ if(mfPart){const p=MFI.parts.find(x=>x.id===mfPart);if(!p){mfPart=0;return mafatih()}const [lb,ds]=mfSplit(p.t);const nIt=p.ch.reduce((a,c)=>a+c.it.length,0);
+  return top+`<section class="mfphd"><div class="mforn"></div><small>${esc(p.g)}${lb?' · '+esc(lb):''}</small><h1>${esc(ds)}</h1><div class="mfpst"><span><i class="ph-duotone ph-list-numbers"></i>${ar(p.ch.length)} فصول</span><span><i class="ph-duotone ph-article"></i>${ar(nIt)} عنواناً</span></div></section>
+  <nav class="chips mfjump">${p.ch.map((c,ci)=>{const [l,d]=mfSplit(c.t);return `<button class="chip" data-mfch="${ci}">${esc(l||d.slice(0,22))}</button>`}).join('')}</nav>
+  ${p.ch.map((c,ci)=>{const [l,d]=mfSplit(c.t);return `<section class="mfch" id="mfch${ci}"><header>${l?`<span class="mfcl">${esc(l)}</span>`:''}<h3>${esc(d)}</h3></header><div class="mfitems">${c.it.map(mfRow).join('')}</div></section>`}).join('')}`}
+ const cnt=k=>Object.values(MFI.it).filter(x=>k.includes(x.k)).length;
+ const last=M.last&&MFI.it[M.last.i]?M.last:null;const dw=new Date().getDay(),D=MFI.days,dua=MFI.it[D.dua[dw]],ziy=D.ziy[dw].map(i=>MFI.it[i]).filter(Boolean);
+ const famBy=t=>MFI.fam.find(f=>f.t===t);const spec=dw===4?[famBy('دعاء كميل'),'يُقرأ ليلة الجمعة']:dw===5?[famBy('دعاء الندبة'),'يُقرأ يوم الجمعة']:dw===2?[famBy('دعاء التوسل'),'يُقرأ ليلة الأربعاء']:dw===3?[famBy('دعاء العهد'),'يُقرأ كل صباح']:[famBy('دعاء الصباح'),'يُقرأ كل صباح'];
+ const groups={m:MFI.parts.filter(p=>p.g!=='الباقيات الصالحات'),b:MFI.parts.filter(p=>p.g==='الباقيات الصالحات')};
+ const fam=MFI.fam.slice(0,mfFamAll?99:8);
+ return top+`<section class="mfhero"><div class="mforn"></div><span class="mfkey"><i class="ph-fill ph-key"></i></span><small>للمحدّث الشيخ عباس القمي (رحمه الله)</small><h1>مفاتيح الجنان</h1><p>الأدعية والزيارات والأعمال المأثورة عن النبي وأهل بيته (ع)، ومعه «الباقيات الصالحات».</p>
+ <div class="njstats mfstats"><button data-mfk="dua"><b data-count="${cnt(['dua','mun','taq'])}">٠</b><span>دعاءً ومناجاة</span></button><button data-mfk="ziy"><b data-count="${cnt(['ziy'])}">٠</b><span>زيارة</span></button><button data-mfk="sal"><b data-count="${cnt(['sal','amal'])}">٠</b><span>صلاة وعمل</span></button></div>
+ <div class="njacts">${last?`<button class="btn" data-mfopen="${last.i}" data-mfj="${last.j||0}"><i class="ph-fill ph-book-open-text"></i><span class="mfct">تابع: ${esc(mfLabel(MFI.it[last.i]))}</span></button>`:`<button class="btn" data-mfopen="${spec[0].i}" data-mfj="${spec[0].j}"><i class="ph-fill ph-book-open-text"></i>${esc(spec[0].t)}</button>`}<button class="btn alt" data-mfidx="1"><i class="ph-bold ph-list-bullets"></i> الفهرس</button></div></section>
+ <div class="mfsrch"><i class="ph-duotone ph-magnifying-glass"></i><input id="mfq" type="search" enterkeyhint="search" autocomplete="off" placeholder="ابحث عن دعاء، زيارة، أو أي عبارة…" value="${esc(mfQ)}"><button data-mfqx="1" aria-label="مسح" ${mfQ?'':'hidden'}><i class="ph-bold ph-x"></i></button></div>
+ <div id="mfres"></div>
+ <div id="mfbody" ${mfQ?'hidden':''}>
+ <section class="mftoday"><header><span><i class="ph-duotone ph-sun-horizon"></i>يوم ${MF_DAYS[dw]}</span><small>${esc(mfHijri())}</small></header>
+  <div class="mftiles">${dua?`<button data-mfopen="${dua.i}"><em class="mfk-dua"><i class="ph-duotone ph-hands-praying"></i></em><span><small>دعاء اليوم</small><b>دعاء يوم ${MF_DAYS[dw]}</b></span></button>`:''}
+  ${ziy[0]?`<button data-mfopen="${ziy[0].i}"><em class="mfk-ziy"><i class="ph-duotone ph-mosque"></i></em><span><small>زيارة اليوم</small><b>${MF_ZIY[dw]}</b></span></button>`:''}
+  ${spec[0]?`<button class="wide" data-mfopen="${spec[0].i}" data-mfj="${spec[0].j}"><em class="mfk-mun"><i class="ph-duotone ph-moon-stars"></i></em><span><small>${spec[1]}</small><b>${esc(spec[0].t)}</b></span><i class="ph-bold ph-caret-left"></i></button>`:''}</div></section>
+ ${M.fav.length?`<section><h2><span><i class="ph-duotone ph-bookmark-simple" style="color:var(--gold)"></i> محفوظاتي <small class="mut" style="font:500 13px inherit">${ar(M.fav.length)}</small></span></h2><div class="chips mffavs">${M.fav.map(f=>`<button class="chip" data-mfopen="${f.i}" data-mfj="${f.j||0}"><i class="ph-fill ph-bookmark-simple"></i>${esc(f.t)}</button>`).join('')}</div></section>`:''}
+ <section><h2><span><i class="ph-duotone ph-star-four" style="color:var(--gold)"></i> الأكثر قراءة</span>${MFI.fam.length>8?`<button data-mffam="1">${mfFamAll?'أقل':'عرض الكل'}<i class="ph-bold ph-caret-${mfFamAll?'up':'left'}"></i></button>`:''}</h2>
+ <div class="mffam">${fam.map((f,n)=>`<button class="mfk-${f.k}" style="--d:${n*35}ms" data-mfopen="${f.i}" data-mfj="${f.j}"><em><i class="ph-duotone ph-${(MFK[f.k]||MFK.txt)[1]}"></i></em><b>${esc(f.t)}</b><small>${(MFK[f.k]||MFK.txt)[0]}</small></button>`).join('')}</div></section>
+ <section id="mfidx"><h2><span><i class="ph-duotone ph-books" style="color:var(--gold)"></i> أبواب الكتاب</span></h2>
+ <div class="stseg mfseg"><button class="chip ${mfG==='m'?'on':''}" data-mfg="m"><i class="ph-duotone ph-key"></i>مفاتيح الجنان</button><button class="chip ${mfG==='b'?'on':''}" data-mfg="b"><i class="ph-duotone ph-flower-lotus"></i>الباقيات الصالحات</button></div>
+ <div class="mfparts">${groups[mfG].map((p,n)=>{const [lb,ds]=mfSplit(p.t);const nIt=p.ch.reduce((a,c)=>a+c.it.length,0);return `<button class="mfpc" style="--d:${n*40}ms" data-mfpart="${p.id}"><span class="mfnum"><em>${ar(n+1)}</em></span><span><small>${esc(lb||(p.g===ds?'تمهيد الكتاب':p.g))}</small><b>${esc(ds)}</b><i>${ar(p.ch.length)} فصول · ${ar(nIt)} عنواناً</i></span><i class="ph-bold ph-caret-left"></i></button>`}).join('')}</div></section>
+ <button class="mfdl" data-mfdl="1" ${M.dl?'disabled':''}><i class="ph-duotone ph-${M.dl?'check-circle':'cloud-arrow-down'}"></i><span><b>${M.dl?'الكتاب محفوظ بجهازك':'احفظ الكتاب كاملاً بالجهاز'}</b><small id="mfdls">${M.dl?'يشتغل بدون إنترنت، والبحث بكل النصوص فوري':'للقراءة والبحث بدون إنترنت (حوالي ٧٠٠ ك.ب)'}</small></span></button>
+ <p class="mut njnote">النص: مفاتيح الجنان والباقيات الصالحات للشيخ عباس القمي (ت ١٣٥٩هـ)، من قاعدة بيانات مفتوحة على GitHub (WWGTX/mafatih)، بعد حذف هوامش التحقيق الحديثة. قد توجد أخطاء طباعية موروثة من المصدر.</p>
+ </div>`}
+function mfHook(){if(tab!=='mafatih'||mfPart||!MFI)return;const qi=$('#mfq');if(!qi)return;
+ qi.oninput=()=>{mfQ=qi.value;const x=document.querySelector('[data-mfqx]');if(x)x.hidden=!mfQ;clearTimeout(mfQT);mfQT=setTimeout(()=>mfSearch(mfQ),280)};
+ qi.onkeydown=e=>{if(e.key==='Enter'){clearTimeout(mfQT);mfSearch(mfQ);qi.blur()}};if(mfQ)mfSearch(mfQ)}
+const mfRe=q=>{const D='[\\u064B-\\u0652\\u0670\\u0640\\u200c\\u200f]*';const map={'ا':'[اأإآٱ]','ه':'[هة]','ي':'[يىئ]','و':'[وؤ]',' ':'\\s+'};
+ const n=mfN(q).trim();if(!n)return null;return new RegExp([...n].map(c=>(map[c]||c.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'))+(c===' '?'':D)).join(''),'g')};
+async function mfSearch(q){const box=$('#mfres'),body=$('#mfbody');if(!box)return;const my=++mfSeq;const n=mfN(q).trim();
+ if(!n){box.innerHTML='';if(body)body.hidden=false;return}if(body)body.hidden=true;
+ const I=await mfIndex();const re=mfRe(q);const tHits=Object.values(I.it).filter(x=>mfN(x.t).includes(n)).slice(0,30);const fHits=I.fam.filter(f=>mfN(f.t).includes(n));
+ const head=`${fHits.length||tHits.length?`<h3 class="mfrh">العناوين</h3><div class="mfitems">${fHits.map(f=>mfRow({...I.it[f.i],t:f.t,k:f.k}).replace(`data-mfopen="${f.i}"`,`data-mfopen="${f.i}" data-mfj="${f.j}"`)).join('')}${tHits.map(mfRow).join('')}</div>`:''}`;
+ if(n.length<3){box.innerHTML=head||'<div class="mfempty">اكتب كلمتين أو أكثر للبحث داخل النصوص</div>';return}
+ box.innerHTML=head+`<h3 class="mfrh">في النصوص</h3><div class="mfempty" id="mfsp"><span class="spin">◌</span> جارٍ البحث في الكتاب…</div>`;
+ try{await mfLoadAll((a,b)=>{const s=$('#mfsp');if(s&&my===mfSeq)s.innerHTML=`<span class="spin">◌</span> جارٍ البحث في الكتاب… ${ar(Math.round(a/b*100))}٪`})}catch(e){const s=$('#mfsp');if(s)s.textContent='تعذّر تحميل النصوص، تأكد من الإنترنت.';return}
+ if(my!==mfSeq)return;const out=[];let total=0;
+ for(const id of I.seq){const x=I.it[id],ps=MFP[x.p][id];if(!ps)continue;for(let j=0;j<ps.length;j++){const t=ps[j][1];re.lastIndex=0;const m=re.exec(t);if(!m)continue;total++;
+   if(out.length<80){const a=Math.max(0,m.index-60),b=Math.min(t.length,m.index+m[0].length+90);out.push({x,j,s:(a?'…':'')+esc(t.slice(a,m.index))+'<mark>'+esc(m[0])+'</mark>'+esc(t.slice(m.index+m[0].length,b))+(b<t.length?'…':''),d:ps[j][0]==='d'})}}}
+ const s=$('#mfsp');if(!s)return;
+ s.outerHTML=out.length?`<p class="mut mfcount">${ar(total)} موضعاً${total>out.length?` · أول ${ar(out.length)}`:''}</p><div class="mfhits">${out.map(h=>`<button data-mfopen="${h.x.i}" data-mfj="${h.j}" data-mfhl="${esc(q)}"><small><i class="ph-duotone ph-${(MFK[h.x.k]||MFK.txt)[1]}"></i>${esc(mfLabel(h.x))}</small><p class="${h.d?'d':''}">${h.s}</p></button>`).join('')}</div>`:'<div class="mfempty">ما لكينا هالعبارة بنصوص الكتاب</div>'}
+/* القارئ */
+let mfCur=null,mfST=0;
+async function mfRead(i,j,hl){const I=await mfIndex().catch(()=>null);if(!I||!I.it[i]){toast('تعذّر الفتح');return}const x=I.it[i];
+ try{closeSheet()}catch(e){}
+ R={id:'mf',mf:true,b:{t:'مفاتيح الجنان',a:'',kind:'mf'},parts:[],pages:null};const rd=$('#reader');rd.classList.add('fr','on');applyR();rStart=Date.now();
+ $('#rtitle').textContent=mfLabel(x);$('#rext').href='https://ar.wikishia.net/view/'+encodeURIComponent('مفاتيح_الجنان');
+ $('#frame').innerHTML='<div class="mfv" id="mfv"><div class="lstate"><span class="spin">◌</span><b>جارٍ الفتح…</b></div></div>';
+ let d;try{d=await mfPartData(x.p)}catch(e){$('#mfv').innerHTML=`<div class="lstate"><b>تعذّر الفتح</b><span>تأكد من الإنترنت للمرة الأولى، أو احفظ الكتاب بالجهاز.</span><button class="btn" data-mfopen="${i}">إعادة المحاولة</button></div>`;return}
+ if(!R||!R.mf)return;mfCur={i,x};const ps=d[i]||[];const M=mfS();const p=I.parts.find(q=>q.id===x.p),ch=p.ch[x.ci];const k=MFK[x.k]||MFK.txt;
+ const re=hl?mfRe(hl):null;const fmt=t=>{let h=esc(t);if(re)h=h.replace(re,m=>`<mark>${m}</mark>`);return h};
+ let body='',grp=false;
+ ps.forEach(([ty,t],n)=>{if(ty==='d'){if(!grp){body+='<div class="mfdua">';grp=true}body+=`<p data-j="${n}">${fmt(t)}</p>`;return}
+  if(grp){body+='</div>';grp=false}
+  if(ty==='s')body+=`<p class="mfsu" data-j="${n}">${fmt(t).replace(/\((\d{1,3})\)/g,(m,a)=>`<span class="mfa">${ar(+a)}</span>`)}</p>`;
+  else body+=`<p class="mfn" data-j="${n}">${fmt(t)}</p>`});
+ if(grp)body+='</div>';
+ const si=I.seq.indexOf(i),prev=I.it[I.seq[si-1]],next=I.it[I.seq[si+1]];const fav=M.fav.some(f=>f.i===i);
+ const [pl]=mfSplit(p.t),[cl,cd]=mfSplit(ch.t);
+ $('#mfv').innerHTML=`<div class="mfbar"><button data-mffs="-1" aria-label="تصغير الخط"><i class="ph-bold ph-text-aa"></i><small>−</small></button><button data-mffs="1" aria-label="تكبير الخط"><i class="ph-bold ph-text-aa"></i><small>+</small></button><button data-mffont="1" aria-label="نوع الخط"><i class="ph-duotone ph-text-t"></i><span id="mffn">${M.font==='Amiri'?'أميري':M.font==='Noto Naskh Arabic'?'نسخ':'كالم'}</span></button><span class="sp"></span><button data-mffav="1" class="${fav?'on':''}" aria-label="حفظ"><i class="ph-${fav?'fill':'duotone'} ph-bookmark-simple"></i></button><button data-mfcopy="1" aria-label="نسخ"><i class="ph-duotone ph-copy"></i></button></div>
+ <div class="mfprog"><b id="mfpb"></b></div>
+ <div class="mfwrap" style="--mfs:${M.fs}px;--mff:'${M.font}'">
+ <header class="mfhead"><span class="mfchip mfk-${x.k}"><i class="ph-duotone ph-${k[1]}"></i>${k[0]}</span><h1>${esc(mfClean(x.t))}</h1><p>${esc(pl||p.g)} · ${esc(cl||cd.slice(0,40))}</p><div class="mfsep"><i></i><i class="ph-fill ph-star-four"></i><i></i></div></header>
+ <article class="mfart">${body||'<p class="mfn">لا يوجد نص.</p>'}</article>
+ <div class="mfsep end"><i></i><i class="ph-fill ph-star-four"></i><i></i></div>
+ <nav class="mfnav">${next?`<button data-mfopen="${next.i}"><small>التالي</small><b>${esc(mfLabel(next))}</b><i class="ph-bold ph-caret-left"></i></button>`:'<span></span>'}${prev?`<button data-mfopen="${prev.i}"><i class="ph-bold ph-caret-right"></i><small>السابق</small><b>${esc(mfLabel(prev))}</b></button>`:'<span></span>'}</nav></div>`;
+ const v=$('#mfv');v.scrollTop=0;
+ if(j>0||hl){const el=v.querySelector(`[data-j="${j||0}"]`);if(el){requestAnimationFrame(()=>{v.scrollTop+=el.getBoundingClientRect().top-v.getBoundingClientRect().top-v.querySelector('.mfbar').offsetHeight-14;el.classList.add('mfhit');setTimeout(()=>el.classList.remove('mfhit'),2200)})}}
+ v.onscroll=()=>{const pb=$('#mfpb');if(pb)pb.style.transform=`scaleX(${Math.min(1,v.scrollTop/Math.max(1,v.scrollHeight-v.clientHeight))})`;clearTimeout(mfST);mfST=setTimeout(mfSavePos,350)};
+ M.last={i,j:j||0};save()}
+function mfSavePos(){const v=$('#mfv');if(!v||!mfCur)return;const y=v.getBoundingClientRect().top+v.querySelector('.mfbar').offsetHeight+20;let jj=0;for(const el of v.querySelectorAll('[data-j]')){if(el.getBoundingClientRect().top>y)break;jj=+el.dataset.j}
+ const M=mfS();M.last={i:mfCur.i,j:jj};M.pos[mfCur.i]=jj;save()}
+document.addEventListener('click',async e=>{const b=e.target.closest('[data-mfopen],[data-mfpart],[data-mfback],[data-mfg],[data-mffam],[data-mfidx],[data-mfk],[data-mfdl],[data-mffs],[data-mffont],[data-mffav],[data-mfcopy],[data-mfqx],[data-mfhome],[data-mfch]');if(!b)return;const D=b.dataset;
+ if(D.mfhome){openMf(0);return}
+ if(D.mfopen){e.preventDefault();buzz();mfRead(D.mfopen,+(D.mfj||0),D.mfhl||'');return}
+ if(D.mfpart){mfPart=+D.mfpart;render();$('#view').scrollTop=0;return}
+ if(D.mfback){mfPart=0;render();const t=$('#mfidx');if(t)t.scrollIntoView();return}
+ if(D.mfch){const t=$('#mfch'+D.mfch);if(t)t.scrollIntoView({behavior:'smooth',block:'start'});return}
+ if(D.mfg){mfG=D.mfg;const y=$('#view').scrollTop;render();$('#view').scrollTop=y;return}
+ if(D.mffam){mfFamAll=!mfFamAll;const y=$('#view').scrollTop;render();$('#view').scrollTop=y;return}
+ if(D.mfidx){const t=$('#mfidx');if(t)t.scrollIntoView({behavior:'smooth'});return}
+ if(D.mfk){mfG='m';const pid={dua:2,ziy:4,sal:3}[D.mfk];if(pid){mfPart=pid;render();$('#view').scrollTop=0}return}
+ if(D.mfqx){mfQ='';const qi=$('#mfq');if(qi){qi.value='';qi.focus()}b.hidden=true;mfSearch('');return}
+ if(D.mfdl){if(mfDl)return;mfDl=1;b.classList.add('busy');try{await mfLoadAll((a,n)=>{const s=$('#mfdls');if(s)s.textContent=`جارٍ الحفظ… ${ar(Math.round(a/n*100))}٪`});mfS().dl=1;save();toast('صار مفاتيح الجنان محفوظ بجهازك');if(tab==='mafatih')render()}catch(err){toast('تعذّر الحفظ، تأكد من الإنترنت');const s=$('#mfdls');if(s)s.textContent='حاول مرة ثانية'}mfDl=0;b.classList.remove('busy');return}
+ const M=mfS(),w=document.querySelector('.mfwrap');
+ if(D.mffs){M.fs=Math.max(16,Math.min(40,M.fs+2*(+D.mffs)));save();if(w){const v=$('#mfv'),r=v.scrollTop/Math.max(1,v.scrollHeight);w.style.setProperty('--mfs',M.fs+'px');v.scrollTop=r*v.scrollHeight}return}
+ if(D.mffont){const F=['Amiri','Noto Naskh Arabic','eKalem'],L=['أميري','نسخ','كالم'];const n=(F.indexOf(M.font)+1)%F.length;M.font=F[n];save();if(w)w.style.setProperty('--mff',`'${F[n]}'`);$('#mffn').textContent=L[n];return}
+ if(D.mffav&&mfCur){const k=M.fav.findIndex(f=>f.i===mfCur.i);if(k>=0){M.fav.splice(k,1);toast('انشال من المحفوظات')}else{mfSavePos();M.fav.unshift({i:mfCur.i,j:M.pos[mfCur.i]||0,t:mfLabel(mfCur.x)});toast('انحفظ بمحفوظاتي')}save();const on=k<0;b.classList.toggle('on',on);b.firstElementChild.className=`ph-${on?'fill':'duotone'} ph-bookmark-simple`;return}
+ if(D.mfcopy){const t=[...document.querySelectorAll('.mfart p')].map(p=>p.textContent).join('\n\n');try{await navigator.clipboard.writeText((mfCur?mfClean(mfCur.x.t)+'\n\n':'')+t);toast('انسخ النص')}catch(err){toast('تعذّر النسخ')}return}
+});
+
 /* أقسام الرئيسية: الأقسام اللي يفتح منها المستخدم كتباً أكثر تطلع أولاً كـ«مقترح لك» */
 function homeSecs(){const hit=S.secHit||{};const top=Object.entries(hit).filter(([k,n])=>n>=2&&SECTIONS.some(x=>x.k===k)).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([k])=>k);
  return [...top.map(k=>({...SECTIONS.find(x=>x.k===k),sug:1})),...SECTIONS.filter(x=>!top.includes(x.k))]}
@@ -1630,7 +1834,7 @@ function home(){
  const n=reading.length||1;
  return `<div class="top"><div class="logo"><i><i class="ph-fill ph-feather"></i></i>مداد</div><span class="mut greet"><i class="ph-duotone ph-${h<12?'sun-horizon':h<18?'sun':'moon-stars'}"></i>${h<12?'صباح الخير':h<18?'نهارك سعيد':'مساء الخير'}</span></div>
  ${installCard()}
- <button class="qcard" data-act="qopen"><span class="qstar"><i class="ph-fill ph-book-open"></i></span><span><b>القرآن الكريم</b><small>١١٤ سورة · تلاوات مرتّلة ومجوّدة وتعليمية · تفاسير</small></span><i class="ph-bold ph-caret-left"></i></button><button class="qcard njcard" data-act="nahj"><span class="qstar"><i class="ph-fill ph-scroll"></i></span><span><b>نهج البلاغة</b><small>المتن · ٢٠ كتاباً بين شرح ودراسة مع شرح محتوى كل كتاب</small></span><i class="ph-bold ph-caret-left"></i></button>
+ <button class="qcard" data-act="qopen"><span class="qstar"><i class="ph-fill ph-book-open"></i></span><span><b>القرآن الكريم</b><small>١١٤ سورة · تلاوات مرتّلة ومجوّدة وتعليمية · تفاسير</small></span><i class="ph-bold ph-caret-left"></i></button><button class="qcard njcard" data-act="nahj"><span class="qstar"><i class="ph-fill ph-scroll"></i></span><span><b>نهج البلاغة</b><small>المتن · ٢٠ كتاباً بين شرح ودراسة مع شرح محتوى كل كتاب</small></span><i class="ph-bold ph-caret-left"></i></button><button class="qcard mfcard" data-mfhome="1"><span class="qstar"><i class="ph-fill ph-key"></i></span><span><b>مفاتيح الجنان</b><small>الأدعية · الزيارات · أعمال الشهور والأيام</small></span><i class="ph-bold ph-caret-left"></i></button>
  <button class="sbar" data-tab="explore" data-focus="1"><i class="ph-duotone ph-magnifying-glass"></i>ابحث في ${ar(enabled().length)} مصادر…</button>
  <div class="feat" id="feat">${hero}</div>
  ${n>1?`<div class="dots">${[...Array(Math.min(n,3))].map((_,i)=>`<i class="${i?'':'on'}"></i>`).join('')}</div>`:''}
@@ -1728,11 +1932,12 @@ function movePill(){const a=document.querySelector('.nav button.on'),p=$('#npill
 addEventListener('resize',movePill);
 $('#nav').addEventListener('transitionend',movePill);
 function render(){
- $('#view').innerHTML=({home,explore,library,sources,profile,nahj})[tab]();
+ $('#view').innerHTML=({home,explore,library,sources,profile,nahj,mafatih})[tab]();
  document.querySelectorAll('.nav button').forEach(b=>{const on=b.dataset.tab===tab;b.classList.toggle('on',on);b.firstElementChild.className=(on?'ph-fill ph-':'ph ph-')+b.dataset.ic});countUp();movePill();
  if(lastTab!==tab){const v=$('#view');v.classList.remove('vin');void v.offsetWidth;v.classList.add('vin');lastTab=tab}
  if(tab==='home')observeShelves();
  if(tab==='nahj'){const sc=SECTIONS.find(x=>x.k==='nahj');if(sc)loadShelf(sc)}
+ if(tab==='mafatih')mfHook();
  {const so=document.querySelector('.sscroll .on');if(so){const p=so.parentElement;p.scrollLeft=so.offsetLeft-(p.clientWidth-so.offsetWidth)/2}}
  if(tab==='explore'&&(q||curTitle)){if(results.length||Object.keys(rstat).length)drawResults();else if(q)searchAll(q)}
  const qi=$('#q');if(qi){qi.onfocus=()=>{if(!fOpen){fOpen=true;const fp=$('.fpanel');if(fp)fp.classList.add('on');const fb=$('.fbtn');if(fb)fb.classList.add('on')}};qi.oninput=()=>{q=qi.value;curTitle='';clearTimeout(qt);if(!q.trim()){render();return}{const sc=$('.sortc');if(sc)sc.style.display=''}if(SCRIBD_RE.test(q)){const u=q.trim();q='';qi.value='';openScribd(u);return}qt=setTimeout(()=>searchAll(q.trim()),500)};qi.onkeydown=e=>{if(e.key==='Enter'&&q.trim()){clearTimeout(qt);S.recent=[q.trim(),...S.recent.filter(x=>x!==q.trim())].slice(0,6);save();searchAll(q.trim());qi.blur()}}}

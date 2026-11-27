@@ -65,6 +65,7 @@
 .ph.ph-files:before { content: "\e710"; }
 .ph.ph-fire:before { content: "\e242"; }
 .ph.ph-flask:before { content: "\e79e"; }
+.ph.ph-flower-lotus:before { content: "\e6cc"; }
 .ph.ph-football:before { content: "\e718"; }
 .ph.ph-function:before { content: "\ebe4"; }
 .ph.ph-gavel:before { content: "\ea32"; }
@@ -136,6 +137,7 @@
 .ph.ph-plus:before { content: "\e3d4"; }
 .ph.ph-plus-circle:before { content: "\e3d6"; }
 .ph.ph-presentation:before { content: "\e654"; }
+.ph.ph-pulse:before { content: "\e000"; }
 .ph.ph-puzzle-piece:before { content: "\e596"; }
 .ph.ph-question:before { content: "\e3e8"; }
 .ph.ph-quotes:before { content: "\e660"; }
@@ -158,6 +160,7 @@
 .ph.ph-stack:before { content: "\e466"; }
 .ph.ph-stairs:before { content: "\e8ec"; }
 .ph.ph-star:before { content: "\e46a"; }
+.ph.ph-star-four:before { content: "\e6a4"; }
 .ph.ph-steps:before { content: "\ecbe"; }
 .ph.ph-stop:before { content: "\e46c"; }
 .ph.ph-stop-circle:before { content: "\e46e"; }
@@ -172,6 +175,7 @@
 .ph.ph-text-aa:before { content: "\e6ee"; }
 .ph.ph-text-align-right:before { content: "\e486"; }
 .ph.ph-text-indent:before { content: "\ea1e"; }
+.ph.ph-text-t:before { content: "\e48a"; }
 .ph.ph-train:before { content: "\e496"; }
 .ph.ph-translate:before { content: "\e4a2"; }
 .ph.ph-trash:before { content: "\e4a6"; }
@@ -259,6 +263,7 @@
 .ph-bold.ph-files:before { content: "\e710"; }
 .ph-bold.ph-fire:before { content: "\e242"; }
 .ph-bold.ph-flask:before { content: "\e79e"; }
+.ph-bold.ph-flower-lotus:before { content: "\e6cc"; }
 .ph-bold.ph-football:before { content: "\e718"; }
 .ph-bold.ph-function:before { content: "\ebe4"; }
 .ph-bold.ph-gavel:before { content: "\ea32"; }
@@ -330,6 +335,7 @@
 .ph-bold.ph-plus:before { content: "\e3d4"; }
 .ph-bold.ph-plus-circle:before { content: "\e3d6"; }
 .ph-bold.ph-presentation:before { content: "\e654"; }
+.ph-bold.ph-pulse:before { content: "\e000"; }
 .ph-bold.ph-puzzle-piece:before { content: "\e596"; }
 .ph-bold.ph-question:before { content: "\e3e8"; }
 .ph-bold.ph-quotes:before { content: "\e660"; }
@@ -352,6 +358,7 @@
 .ph-bold.ph-stack:before { content: "\e466"; }
 .ph-bold.ph-stairs:before { content: "\e8ec"; }
 .ph-bold.ph-star:before { content: "\e46a"; }
+.ph-bold.ph-star-four:before { content: "\e6a4"; }
 .ph-bold.ph-steps:before { content: "\ecbe"; }
 .ph-bold.ph-stop:before { content: "\e46c"; }
 .ph-bold.ph-stop-circle:before { content: "\e46e"; }
@@ -366,6 +373,7 @@
 .ph-bold.ph-text-aa:before { content: "\e6ee"; }
 .ph-bold.ph-text-align-right:before { content: "\e486"; }
 .ph-bold.ph-text-indent:before { content: "\ea1e"; }
+.ph-bold.ph-text-t:before { content: "\e48a"; }
 .ph-bold.ph-train:before { content: "\e496"; }
 .ph-bold.ph-translate:before { content: "\e4a2"; }
 .ph-bold.ph-trash:before { content: "\e4a6"; }
@@ -453,6 +461,7 @@
 .ph-fill.ph-files:before { content: "\e710"; }
 .ph-fill.ph-fire:before { content: "\e242"; }
 .ph-fill.ph-flask:before { content: "\e79e"; }
+.ph-fill.ph-flower-lotus:before { content: "\e6cc"; }
 .ph-fill.ph-football:before { content: "\e718"; }
 .ph-fill.ph-function:before { content: "\ebe4"; }
 .ph-fill.ph-gavel:before { content: "\ea32"; }
@@ -524,6 +533,7 @@
 .ph-fill.ph-plus:before { content: "\e3d4"; }
 .ph-fill.ph-plus-circle:before { content: "\e3d6"; }
 .ph-fill.ph-presentation:before { content: "\e654"; }
+.ph-fill.ph-pulse:before { content: "\e000"; }
 .ph-fill.ph-puzzle-piece:before { content: "\e596"; }
 .ph-fill.ph-question:before { content: "\e3e8"; }
 .ph-fill.ph-quotes:before { content: "\e660"; }
@@ -546,6 +556,7 @@
 .ph-fill.ph-stack:before { content: "\e466"; }
 .ph-fill.ph-stairs:before { content: "\e8ec"; }
 .ph-fill.ph-star:before { content: "\e46a"; }
+.ph-fill.ph-star-four:before { content: "\e6a4"; }
 .ph-fill.ph-steps:before { content: "\ecbe"; }
 .ph-fill.ph-stop:before { content: "\e46c"; }
 .ph-fill.ph-stop-circle:before { content: "\e46e"; }
@@ -560,6 +571,7 @@
 .ph-fill.ph-text-aa:before { content: "\e6ee"; }
 .ph-fill.ph-text-align-right:before { content: "\e486"; }
 .ph-fill.ph-text-indent:before { content: "\ea1e"; }
+.ph-fill.ph-text-t:before { content: "\e48a"; }
 .ph-fill.ph-train:before { content: "\e496"; }
 .ph-fill.ph-translate:before { content: "\e4a2"; }
 .ph-fill.ph-trash:before { content: "\e4a6"; }
@@ -712,6 +724,8 @@
 .ph-duotone.ph-fire:after { content: "\e243"; margin-left: -1em; }
 .ph-duotone.ph-flask:before { content: "\e79e"; opacity: 0.2; }
 .ph-duotone.ph-flask:after { content: "\e79f"; margin-left: -1em; }
+.ph-duotone.ph-flower-lotus:before { content: "\e6cc"; opacity: 0.2; }
+.ph-duotone.ph-flower-lotus:after { content: "\e6cd"; margin-left: -1em; }
 .ph-duotone.ph-football:before { content: "\e718"; opacity: 0.2; }
 .ph-duotone.ph-football:after { content: "\e719"; margin-left: -1em; }
 .ph-duotone.ph-function:before { content: "\ebe4"; opacity: 0.2; }
@@ -854,6 +868,8 @@
 .ph-duotone.ph-plus-circle:after { content: "\e3d7"; margin-left: -1em; }
 .ph-duotone.ph-presentation:before { content: "\e654"; opacity: 0.2; }
 .ph-duotone.ph-presentation:after { content: "\e655"; margin-left: -1em; }
+.ph-duotone.ph-pulse:before { content: "\e000"; opacity: 0.2; }
+.ph-duotone.ph-pulse:after { content: "\e001"; margin-left: -1em; }
 .ph-duotone.ph-puzzle-piece:before { content: "\e596"; opacity: 0.2; }
 .ph-duotone.ph-puzzle-piece:after { content: "\e597"; margin-left: -1em; }
 .ph-duotone.ph-question:before { content: "\e3e8"; opacity: 0.2; }
@@ -898,6 +914,8 @@
 .ph-duotone.ph-stairs:after { content: "\e8ed"; margin-left: -1em; }
 .ph-duotone.ph-star:before { content: "\e46a"; opacity: 0.2; }
 .ph-duotone.ph-star:after { content: "\e46b"; margin-left: -1em; }
+.ph-duotone.ph-star-four:before { content: "\e6a4"; opacity: 0.2; }
+.ph-duotone.ph-star-four:after { content: "\e6a5"; margin-left: -1em; }
 .ph-duotone.ph-steps:before { content: "\ecbe"; opacity: 0.2; }
 .ph-duotone.ph-steps:after { content: "\ecbf"; margin-left: -1em; }
 .ph-duotone.ph-stop:before { content: "\e46c"; opacity: 0.2; }
@@ -926,6 +944,8 @@
 .ph-duotone.ph-text-align-right:after { content: "\e487"; margin-left: -1em; }
 .ph-duotone.ph-text-indent:before { content: "\ea1e"; opacity: 0.2; }
 .ph-duotone.ph-text-indent:after { content: "\ea1f"; margin-left: -1em; }
+.ph-duotone.ph-text-t:before { content: "\e48a"; opacity: 0.2; }
+.ph-duotone.ph-text-t:after { content: "\e48b"; margin-left: -1em; }
 .ph-duotone.ph-train:before { content: "\e496"; opacity: 0.2; }
 .ph-duotone.ph-train:after { content: "\e497"; margin-left: -1em; }
 .ph-duotone.ph-translate:before { content: "\e4a2"; opacity: 0.2; }

@@ -1077,6 +1077,12 @@ mark.sfind.cur{background:var(--gold);color:#2a1900;box-shadow:0 0 0 3px rgb(199
 @property --qhl{syntax:'<color>';inherits:false;initial-value:transparent}
 .qa.qflash{animation:none}
 .qa.qflash{--qhl:rgb(199 154 46/.38)}
+
+/* المؤشر المتحرك فقط: بدون حدود ولا ظل، شريط ناعم متلاشي الأطراف ونص أخضر */
+.qa.on,.qa.qon,.qa.qflash{background-color:transparent!important;box-shadow:none!important;outline:0!important}
+.qa.on,.qa.qon,.qa.qflash{background-image:linear-gradient(180deg,transparent 14%,var(--qhl) 32%,var(--qhl) 74%,transparent 92%)!important}
+.qa.qon{--qhl:color-mix(in srgb,var(--gold) 15%,transparent)!important}
+.qp:has(.qon) .qa.on:not(.qon){--qhl:transparent!important;background-image:none!important}
 </style>
 <link rel="stylesheet" href="fonts/ph.css">
 </head>
@@ -2198,7 +2204,7 @@ function qFollow(ms){const v=$('#qview');if(!v)return;
  if(ms==null||!QTS||!QTS.length){v.querySelectorAll('.qa.qon').forEach(e=>e.classList.remove('qon'));qLastK='';return}
  let lo=0,hi=QTS.length-1,hit=null;while(lo<=hi){const m=(lo+hi)>>1;if(ms<QTS[m].f)hi=m-1;else if(ms>=QTS[m].t)lo=m+1;else{hit=QTS[m];break}}
  if(!hit)return;qMark(hit.k)}
-function qMark(k){const v=$('#qview');if(!v||k===qLastK)return;qLastK=k;
+function qMark(k){const v=$('#qview');if(!v||k===qLastK)return;qLastK=k;document.querySelectorAll('.qa.on').forEach(x=>x.classList.remove('on'));
  v.querySelectorAll('.qa.qon').forEach(e=>e.classList.remove('qon'));const el=v.querySelector(`.qa[data-k="${k}"]`);if(!el)return;el.classList.add('qon');
  S.quran.ay=+k.split(':')[1];
  /* يمرّر فقط إذا الآية خرجت من الثلث الأوسط، وما يتدخّل إذا المستخدم يمرّر بيده */

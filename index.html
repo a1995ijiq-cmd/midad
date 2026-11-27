@@ -2181,6 +2181,8 @@ async function quranAyah(n,key){
 }
 /* التفاسير: الميزان وروائي أهل البيت (نور الثقلين) نصاً حسب الآية؛ الأمثل والنور ككتب كاملة لعدم وجود مصدر مفتوح حسب الآية */
 const QTAFS=[{id:'mizan',n:'الميزان',full:'الميزان في تفسير القرآن',a:'العلامة الطباطبائي',b:'almizan',ic:'scales',site:'holyquran.net'},{id:'amthal',n:'الأمثل',full:'الأمثل في تفسير كتاب الله المنزل',a:'الشيخ ناصر مكارم الشيرازي',ic:'book-open-text',q:'تفسير الأمثل',api:(s,a)=>`/api/amthal?s=${s}&a=${a}`,b:'amthal',site:'books.rafed.net'},{id:'nour',n:'تفسير النور',full:'تفسير النور',a:'الشيخ محسن قرائتي',ic:'sun',q:'تفسير النور قرائتي'},{id:'thaq',n:'روائي أهل البيت (ع)',full:'تفسير نور الثقلين (روايات أهل البيت ع)',a:'الشيخ عبد علي الحويزي',b:'noor',ic:'scroll',site:'holyquran.net'}];
+/* تنظيف بقايا ميزة استيراد تفسير النور الملغاة */
+setTimeout(()=>{try{const nv=JSON.parse(localStorage.getItem('nourVols')||'[]');if(nv.length){nv.forEach(v=>IDB.del('nour:vol:'+v).catch(()=>{}));localStorage.removeItem('nourVols')}}catch(e){}},3000);
 let qtSaving=false;
 async function saveTafSurah(tid,key){if(qtSaving)return;const t=QTAFS.find(z=>z.id===tid);if(!t||!(t.b||t.api))return;const s=+key.split(':')[0],c=(QS[s-1]||{}),n=c.verses_count||0;if(!n)return;qtSaving=true;let done=0,fail=0,ok=0;const btn=()=>document.querySelector('[data-qtsave]');
  const one=async a=>{const k=`${s}:${a}`,ck=`sht2:${t.b}:${k}`;try{let j=await IDB.get(ck).catch(()=>null);if(!j){j=await getJSON(t.api?t.api(s,a):`/api/shtaf?b=${t.b}&s=${s}&a=${a}`,40000);if(j&&j.ok)await IDB.set(ck,j)}if(j&&j.ok)ok++}catch(e){fail++}done++;const b=btn();if(b)b.innerHTML=`<span class="spin">◌</span> جارٍ الحفظ ${ar(done)} / ${ar(n)}`};

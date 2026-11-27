@@ -998,6 +998,21 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 .dqw{font-size:16.5px;line-height:1.75}
 .dqa{margin-top:6px;font-size:11.5px}
 @media(min-width:700px){.dqp{font-size:19px}.dqw{font-size:18px}}
+
+/* تفاسير القرآن */
+.qtchips .chip i{font-size:15px}
+.qtafx{white-space:normal!important}
+.qth{display:flex;flex-direction:column;gap:2px;padding-bottom:10px;margin-bottom:10px;border-bottom:1px solid var(--line2)}
+.qth b{font:700 18px/1.4 Amiri,serif;color:var(--plum)}
+.qth small{font-size:var(--fs-xs);color:var(--mute)}
+.qtr{display:inline-flex;align-items:center;gap:5px;font-size:var(--fs-xs);color:var(--gold);background:color-mix(in srgb,var(--gold) 10%,transparent);padding:4px 10px;border-radius:99px;margin-bottom:8px}
+.qtb p{margin:0 0 10px;font:400 17px/1.95 Amiri,serif;text-align:justify}
+.qtb h5{margin:14px 0 6px;font:700 15px/1.5 "IBM Plex Sans Arabic";color:var(--plum)}
+.qtsrc{display:inline-flex;align-items:center;gap:5px;font-size:var(--fs-xs);color:var(--mute);margin-top:6px}
+.qtna{text-align:center;padding:10px 6px}
+.qtna>i{font-size:40px;color:var(--gold)}
+.qtna p{font-size:var(--fs-sm);line-height:1.8;color:var(--mute);margin:8px 0 12px}
+.qtmsg{color:var(--mute);font-size:var(--fs-sm)}
 </style>
 <link rel="stylesheet" href="fonts/ph.css">
 </head>
@@ -2084,18 +2099,27 @@ async function quranSurah(ch){
 }
 async function quranAyah(n,key){
  document.querySelectorAll('.qa.on').forEach(x=>x.classList.remove('on'));const el=document.querySelector(`.qa[data-qa="${n}"]`);if(el)el.classList.add('on');S.quran.ay=n;save();
- let ts=[];try{ts=((await qget('/resources/tafsirs?language=ar','q:tafs')).tafsirs||[]).filter(t=>/arab/i.test(t.language_name||''))}catch(e){}
- if(!S.quran.tid&&ts[0])S.quran.tid=ts[0].id;
+ const ts=QTAFS;if(!QTAFS.some(t=>t.id===S.quran.tid))S.quran.tid='mizan';
  const txt=el?el.textContent:'';
  $('#rmt').textContent='الآية '+qd(n)+' — سورة '+((QS[S.quran.ch-1]||{}).name_arabic||'');
  const m=$('#rmodal');m.classList.add('on');$('#rmta').style.display='none';
  let box=$('#qtaf');if(!box){box=document.createElement('div');box.id='qtaf';$('#rmta').after(box)}
- box.innerHTML=`<button class="btn full qfrom" data-qfrom="${n}"><i class="ph-fill ph-play-circle"></i> تشغيل التلاوة من هذه الآية</button><p class="qay">${esc(txt)}</p>${ts.length?`<div class="chips" style="padding-top:0">${ts.map(t=>`<button class="chip ${t.id===S.quran.tid?'on':''}" data-qt="${t.id}" data-qk="${key}">${esc(t.name)}</button>`).join('')}</div>`:''}<div class="qtafx" id="qtafx"><span class="spin">◌</span></div>`;
+ box.innerHTML=`<button class="btn full qfrom" data-qfrom="${n}"><i class="ph-fill ph-play-circle"></i> تشغيل التلاوة من هذه الآية</button><p class="qay">${esc(txt)}</p><div class="chips qtchips" style="padding-top:0">${ts.map(t=>`<button class="chip ${t.id===S.quran.tid?'on':''}" data-qt="${t.id}" data-qk="${key}"><i class="ph${t.id===S.quran.tid?'-fill':''} ph-${t.ic}"></i>${esc(t.n)}</button>`).join('')}</div><div class="qtafx" id="qtafx"><span class="spin">◌</span></div>`;
  rmCb=null;$('[data-act=rmsave]').style.display='none';
  loadTafsir(key);
 }
-async function loadTafsir(key){const x=$('#qtafx');if(!x||!S.quran.tid)return;x.innerHTML='<span class="spin">◌</span>';
- try{const j=await qget(`/tafsirs/${S.quran.tid}/by_ayah/${key}`,`q:t:${S.quran.tid}:${key}`);x.textContent=strip((j.tafsir||{}).text||'')||'لا يوجد تفسير لهذه الآية بهذا التفسير.'}catch(e){x.textContent='تعذّر تحميل التفسير.'}}
+/* التفاسير: الميزان وروائي أهل البيت (نور الثقلين) نصاً حسب الآية؛ الأمثل والنور ككتب كاملة لعدم وجود مصدر مفتوح حسب الآية */
+const QTAFS=[{id:'mizan',n:'الميزان',full:'الميزان في تفسير القرآن',a:'العلامة الطباطبائي',b:'almizan',ic:'scales'},{id:'amthal',n:'الأمثل',full:'الأمثل في تفسير كتاب الله المنزل',a:'الشيخ ناصر مكارم الشيرازي',ic:'book-open-text',q:'تفسير الأمثل'},{id:'nour',n:'تفسير النور',full:'تفسير النور',a:'الشيخ محسن قرائتي',ic:'sun',q:'تفسير النور قرائتي'},{id:'thaq',n:'روائي أهل البيت (ع)',full:'تفسير نور الثقلين (روايات أهل البيت ع)',a:'الشيخ عبد علي الحويزي',b:'noor',ic:'scroll'}];
+async function loadTafsir(key){const x=$('#qtafx');if(!x)return;const t=QTAFS.find(z=>z.id===S.quran.tid)||QTAFS[0];
+ document.querySelectorAll('[data-qt]').forEach(c=>{const on=c.dataset.qt===t.id;c.classList.toggle('on',on);const i=c.querySelector('i');if(i)i.className=(on?'ph-fill ph-':'ph ph-')+(QTAFS.find(z=>z.id===c.dataset.qt)||{}).ic});
+ const head=`<div class="qth"><b>${esc(t.full)}</b><small>${esc(t.a)}</small></div>`;
+ if(!t.b){x.innerHTML=`${head}<div class="qtna"><i class="ph-duotone ph-books"></i><p>نص «${esc(t.n)}» غير متوفر حسب الآية من مصدر مفتوح يسمح بعرضه هنا. تگدر تفتح الكتاب كاملاً وتقرأ تفسير السورة منه.</p><button class="btn" data-qbook="${esc(t.q||t.full)}"><i class="ph-bold ph-magnifying-glass"></i> ابحث عن الكتاب كاملاً</button></div>`;return}
+ x.innerHTML=head+'<span class="spin">◌</span>';const [s,a]=key.split(':'),ck=`sht:${t.b}:${key}`;
+ try{let j=await IDB.get(ck).catch(()=>null);if(!j){j=await getJSON(`/api/shtaf?b=${t.b}&s=${s}&a=${a}`,25000);if(j&&j.ok)IDB.set(ck,j).catch(()=>{})}
+  if(!$('#qtafx')||S.quran.tid!==t.id)return;
+  if(!j||!j.ok){x.innerHTML=head+'<p class="qtmsg">لا يوجد تفسير لهذه الآية في هذا الكتاب.</p>';return}
+  x.innerHTML=`${head}${j.range?`<div class="qtr"><i class="ph-bold ph-bookmark-simple"></i>${esc(j.range)}</div>`:''}<div class="qtb">${j.paras.map(p=>/^(قوله تعالى|بيان|بحث روائي|بحث فلسفي|بحث علمي|بحث أخلاقي|بحث قرآني|كلام في|في تفسير)/.test(p)&&p.length<80?`<h5>${esc(p)}</h5>`:`<p>${esc(p)}</p>`).join('')}</div><a class="qtsrc" href="${esc(j.src)}" target="_blank" rel="noopener"><i class="ph-bold ph-arrow-square-out"></i> المصدر: holyquran.net</a>`;
+ }catch(e){x.innerHTML=head+'<p class="qtmsg">تعذّر تحميل التفسير — تأكد من الاتصال وحاول مرة ثانية.</p>'}}
 const QHIDE=/alafasy|afasy|sudais|sudays|العفاسي|السديس/i;
 async function quranReciters(){try{return ((await qget('/resources/recitations?language=ar','q:recs')).recitations||[]).filter(r=>!QHIDE.test((r.reciter_name||'')+' '+(r.translated_name&&r.translated_name.name||'')))}catch(e){return []}}
 let QTS=null,qLastK='',qUserScroll=0,QMODE='ch',QV=null,QVi=0,QSTART=0;
@@ -2407,7 +2431,8 @@ document.addEventListener('click',async ev=>{
  if(d.qpl){qPlace=d.qpl;const y=$('#qview').scrollTop;quranList();$('#qview').scrollTop=y;return}
  if(d.qfrom){$('[data-act=rmcancel]')?.click();qPlayFrom(+d.qfrom);return}
  if(d.qa){const au=$('#qaudio');if(au&&!au.paused){qPlayFrom(+d.qa);return}quranAyah(+d.qa,d.k);return}
- if(d.qt){S.quran.tid=+d.qt;save();document.querySelectorAll('[data-qt]').forEach(x=>x.classList.toggle('on',x===t));loadTafsir(d.qk);return}
+ if(d.qt){S.quran.tid=d.qt;save();loadTafsir(d.qk);return}
+ if(d.qbook){$('#rmodal').classList.remove('on');closeReader();q=d.qbook;curTitle='';curSec=null;tab='explore';render();searchAll(q);return}
  if(d.qr){S.quran.rid=+d.qr;S.quran.cur=0;save();$('#rmodal').classList.remove('on');$('#rmta').style.display='';$('[data-act=rmsave]').style.display='';const qb=$('#qtaf');if(qb)qb.remove();const au=$('#qaudio');if(au)au.pause();quranPlay();return}
  if(d.acopdf){const id=d.acopdf;if(S.dl[id]){openPDF(id);return}toast('جارٍ تحميل الكتاب PDF…');downloadBook(id).then(()=>{if(S.dl[id]&&R&&R.id===id)openPDF(id)});return}
  if(d.dl){downloadBook(d.dl);return}

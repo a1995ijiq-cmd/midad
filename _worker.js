@@ -163,6 +163,27 @@ async function aiHandler(request, env) {
   } catch (e) { return J({ error: 'failed', message: String(e && e.message || e) }, 502); }
 }
 
+/* تفاسير أهل البيت (ع) حسب الآية: الميزان ونور الثقلين من holyquran.net (عرض للقراءة مع ذكر المصدر) */
+const SHT = { almizan: 'almizan', noor: 'noor' };
+const decEnt = t => t.replace(/&nbsp;/g, ' ').replace(/&quot;/g, '"').replace(/&#0?39;|&apos;/g, "'").replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&#(\d+);/g, (_, n) => String.fromCharCode(+n)).replace(/&amp;/g, '&');
+async function shTafsir(url) {
+  const b = SHT[url.searchParams.get('b')], s = +url.searchParams.get('s'), a = +url.searchParams.get('a');
+  if (!b || !(s >= 1 && s <= 114) || !(a >= 1 && a <= 286)) return err('bad params', 400);
+  const src = `https://holyquran.net/tafseer/view.php?book=${b}&ch=${s}&vr=${a}`;
+  try {
+    const r = await fetch(src, { headers: { 'user-agent': 'Mozilla/5.0 MidadReader/1.0', 'accept-language': 'ar' }, cf: { cacheTtl: 2592000, cacheEverything: true } });
+    if (!r.ok) return err('upstream ' + r.status, 502);
+    const h = await r.text();
+    const hero = (h.match(/<header class="tafseer-hero">([\s\S]*?)<\/header>/) || [])[1] || '';
+    const range = decEnt(((hero.match(/التفسير يعرض[^<]*/) || [])[0] || '').trim());
+    const i = h.search(/<div class="tafseer-text[^"]*">/);
+    if (i < 0) return new Response(JSON.stringify({ ok: false, src }), { headers: { ...CORS, 'content-type': 'application/json' } });
+    let body = h.slice(i); const end = body.indexOf('</article>'); if (end > 0) body = body.slice(0, end);
+    const paras = body.replace(/<br\s*\/?>/gi, '\n').split(/<\/p>|<\/h[1-6]>|<\/div>/i).map(x => decEnt(x.replace(/<[^>]+>/g, '')).replace(/[ \t]+/g, ' ').trim()).filter(x => x.length > 0).slice(0, 400);
+    return new Response(JSON.stringify({ ok: paras.length > 0, range, paras, src }), { headers: { ...CORS, 'content-type': 'application/json', 'cache-control': 'public, max-age=604800' } });
+  } catch (e) { return err('fetch failed', 502); }
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -173,6 +194,7 @@ export default {
     }
     if (url.pathname.replace(/\/$/, '') === '/api/libiq') return libiq(request);
     if (url.pathname.replace(/\/$/, '') === '/api/aco') return aco(request);
+    if (url.pathname.replace(/\/$/, '') === '/api/shtaf') return shTafsir(url);
     if (url.pathname.replace(/\/$/, '') === '/api/ai') return aiHandler(request, env || {});
     if (url.pathname.replace(/\/$/, '') === '/api/acon') {
       const id = (url.searchParams.get('id') || '').replace(/[^a-z0-9_]/gi, '');

@@ -205,6 +205,7 @@ async function rfPage(b, p) {
 }
 async function rafedApi(url) {
   const b = +url.searchParams.get('b'), p = +url.searchParams.get('p') || 1;
+  if (url.searchParams.get('probe')) { const [f, t] = url.searchParams.get('probe').split('-').map(Number); const out = await Promise.all(Array.from({ length: Math.min(45, t - f + 1) }, (_, k) => f + k).map(async id => { try { const r = await fetch(`https://books.rafed.net/view/${id}/page/1`, { headers: { 'user-agent': 'Mozilla/5.0' } }); const d = rfDecode(await r.text()); return [id, decEnt(((d.match(/"book":\{"id":\d+,"title":"((?:[^"\\]|\\.)*)"/) || [])[1] || '')), +((d.match(/"part":(\d+)/) || [])[1] || 0)] } catch (e) { return [id, 'ERR', 0] } })); return new Response(JSON.stringify(out), { headers: { ...CORS, 'content-type': 'application/json' } }) }
   if (!(b > 0)) return err('bad params', 400);
   try { const x = await rfPage(b, p); return new Response(JSON.stringify({ ok: true, b, p, ...x, idx: url.searchParams.get('full') ? x.idx : x.idx.slice(0, 12), nidx: x.idx.length }), { headers: { ...CORS, 'content-type': 'application/json', 'cache-control': 'public, max-age=86400' } }) }
   catch (e) { return err(String(e.message || e), 502) }

@@ -2271,7 +2271,7 @@ async function qLoadVerses(ch,rid){const j=await qget(`/recitations/${rid}/by_ch
  const fix=u=>/^https?:/.test(u)?u:u.startsWith('//')?'https:'+u:'https://verses.quran.com/'+u.replace(/^\//,'');
  const L=(j.audio_files||[]).map(x=>({k:x.verse_key,u:fix(x.url||'')})).filter(x=>x.u).sort((a,c)=>+a.k.split(':')[1]-+c.k.split(':')[1]);
  if(!L.length)throw new Error('no verses');if(S.quran.ch!==ch||S.quran.rid!==rid)return;QV=L;QMODE='v';QVi=0;S.quran.cur=ch+':'+rid}
-function qPrep(ch){ch=ch||S.quran.ch;if(!ch)return Promise.resolve();const key=ch+':'+S.quran.rid;if(qPrepP&&qPrepP.key===key)return qPrepP;
+function qPrep(ch){ch=ch||S.quran.ch;if(!ch)return Promise.resolve();const key=ch+':'+S.quran.rid;if(qPrepP&&qPrepP.key===key&&(!qPrepP.done||qReady()))return qPrepP;
  const p=(async()=>{
   const offl=qDlHas(ch)?await IDB.get(qDlKey(S.quran.rid,ch)).catch(()=>null):null;const offU=offl?URL.createObjectURL(offl):null;
   if(isIQ(S.quran.rid)){const R0=QIRAQ.find(x=>x.id===S.quran.rid);if(R0){const au=qAudio(),k=ch+':'+R0.id,url=offU||R0.u+String(ch).padStart(3,'0')+'.mp3';QMODE='ch';QV=null;QAPPROX=true;QTS=null;if(au.dataset.k!==k){au.dataset.k=k;au.dataset.url=url;au.src=url;au.load()}else if(au.readyState>=1)qBuildApprox();S.quran.cur=k;return}S.quran.rid=8;save()}
@@ -2282,7 +2282,7 @@ function qPrep(ch){ch=ch||S.quran.ch;if(!ch)return Promise.resolve();const key=c
   const url=offU||(af.audio_url||'').replace('http:','https:');QTS=(af.timestamps||[]).map(t=>({k:t.verse_key,f:+t.timestamp_from,t:+t.timestamp_to}));
   if(!url){await qLoadVerses(ch,rid);return}
   QMODE='ch';QV=null;if(au.dataset.k!==k){au.dataset.k=k;au.dataset.url=url;au.src=url;au.load()}S.quran.cur=k})();
- p.key=key;qPrepP=p;p.catch(()=>{if(qPrepP===p)qPrepP=null});return p}
+ p.key=key;qPrepP=p;p.then(()=>{p.done=1},()=>{if(qPrepP===p)qPrepP=null});return p}
 /* ===== تنزيل التلاوة: ملف السورة يتحفظ بالجهاز (IndexedDB) فيشتغل فوراً وبدون نت ===== */
 let qDlBusy=null,qDlAll=false;
 const qDlKey=(rid,ch)=>`qa:${rid}:${ch}`;
@@ -2313,17 +2313,20 @@ function qDlAllLabel(){let n=0;for(let c=1;c<=114;c++)if(qDlHas(c))n++;return n>
 async function qDlRemove(ch){const rid=S.quran.rid;await IDB.del(qDlKey(rid,ch)).catch(()=>{});if(S.quran.dl)delete S.quran.dl[rid+':'+ch];save();const au=$('#qaudio');if(au&&au.dataset.k===ch+':'+rid){delete au.dataset.k;qPrepP=null}toast('انحذفت التلاوة المحفوظة لهذي السورة')}
 
 function qReady(){const au=$('#qaudio'),k=S.quran.ch+':'+S.quran.rid;return !!au&&S.quran.cur===k&&((QMODE==='ch'&&(QTS||QAPPROX)&&au.dataset.k===k)||(QMODE==='v'&&QV&&QV.length))}
-function qPlayNow(ay){const au=qAudio(),ch=S.quran.ch;qWantPlay=true;
+function qPlayNow(ay){const au=qAudio(),ch=S.quran.ch;qWantPlay=true;au.muted=false;
  if(QMODE==='v'&&QV){let i=ay?QV.findIndex(x=>+x.k.split(':')[1]===ay):QVi;QVi=Math.max(0,i);if(au.getAttribute('src')!==QV[QVi].u)au.src=QV[QVi].u;qMark(QV[QVi].k);au.play().catch(qBlocked);return}
  if(ay&&QAPPROX&&!QTS){if(au.readyState>=1&&qBuildApprox()){}else{au.addEventListener('loadedmetadata',()=>{if(qBuildApprox()){const k=ch+':'+ay,t=QTS.find(x=>x.k===k);if(t){qSeekTo=t.f/1000;qSeekTry=0;try{au.currentTime=qSeekTo}catch(e){}qLastK='';qMark(k)}}},{once:true});au.play().catch(qBlocked);return}}
  if(ay){const k=ch+':'+ay,t=QTS&&QTS.find(x=>x.k===k);if(t){const sec=t.f/1000+.05;qSeekTo=ay>1?sec:null;qSeekTry=0;qLastK='';qMark(k);
   if(au.readyState<1&&au.dataset.url&&ay>1){au.src=au.dataset.url+'#t='+sec.toFixed(2)}else{try{au.currentTime=sec}catch(e){}}}}
  au.play().catch(qBlocked)}
 function qBlocked(e){if(e&&e.name==='NotAllowedError')toast('اضغط تشغيل مرة ثانية')}
-function qStart(ay){const au0=qAudio();if(qReady()){qUnlocked=true;qPlayNow(ay);return}
- qWantPlay=true;qUnlock(au0);
- const want=ay||0;const t0=Date.now();const slow=setTimeout(()=>toast('جارٍ تجهيز التلاوة…'),450);
- qPrep().then(()=>{clearTimeout(slow);if(qWantPlay)qPlayNow(want)}).catch(()=>{clearTimeout(slow);toast('تعذّر تحميل التلاوة — تأكد من الاتصال')})}
+function qStart(ay){const au=qAudio();qWantPlay=true;au.muted=false;
+ if(qReady()){qPlayNow(ay);return}
+ /* مو جاهز بعد: نشغّل العنصر الآن بنفس الضغطة (آيفون يسمح بعدها بالتشغيل التلقائي)، صامت لحد ما يتجهّز */
+ const k=S.quran.ch+':'+S.quran.rid,src=au.getAttribute('src')||'';
+ try{if(src&&!src.startsWith('data:')&&au.dataset.k===k){if(ay>1)au.muted=true;au.play().catch(()=>{})}else{delete au.dataset.k;au.src=QSIL;au.play().catch(()=>{})}}catch(e){}
+ const want=ay||0;const slow=setTimeout(()=>toast('جارٍ تجهيز التلاوة…'),450);
+ qPrep().then(()=>{clearTimeout(slow);au.muted=false;if(qWantPlay)qPlayNow(want)}).catch(()=>{clearTimeout(slow);au.muted=false;toast('تعذّر تحميل التلاوة — تأكد من الاتصال')})}
 async function quranPlay(){const au=$('#qaudio');if(au&&!au.paused){qWantPlay=false;au.pause();return}
  if(QSTART){const a=QSTART;QSTART=0;qStart(a);return}
  /* أول تشغيل بالسورة: يبدأ من الآية اللي وصلتها (متابعة أو آية مختارة) مو من البداية */

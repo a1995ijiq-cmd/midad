@@ -942,6 +942,45 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 @media(min-width:700px){.sechero{margin-inline:0;border-radius:var(--r-xl);margin-top:0;padding-top:18px}.sechero+.sbrow{padding-inline:24px}}
 
 .pdfv{overflow-anchor:none}
+
+/* ===== بيت اليوم وحكمة اليوم ===== */
+.duo.one{grid-template-columns:1fr}
+.goal.gh{flex-direction:row;align-items:center;justify-content:flex-start;gap:14px;padding:12px 16px}
+.goal.gh svg{width:62px;height:62px;flex:none}
+.ghx{display:flex;flex-direction:column;gap:2px}
+.ghx b{font-size:var(--fs-lg)}
+.ghx .mut{font-size:var(--fs-xs)}
+.dq{position:relative;overflow:hidden;margin-top:12px;padding:16px;border-radius:var(--r-xl);color:#fff;background:var(--plumg);box-shadow:var(--sh2),var(--hl);isolation:isolate}
+.dq::before{content:"";position:absolute;inset:0;z-index:-1;opacity:.45;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44'%3E%3Cpath d='M22 6l4.2 9.8L36 12l-3.8 9.8L42 26l-9.8 4.2L36 40l-9.8-3.8L22 46l-4.2-9.8L8 40l3.8-9.8L2 26l9.8-4.2L8 12l9.8 3.8z' fill='none' stroke='%23e6c26a' stroke-opacity='.2' stroke-width='1'/%3E%3C/svg%3E");-webkit-mask:radial-gradient(120% 90% at 100% 0,#000,transparent 70%);mask:radial-gradient(120% 90% at 100% 0,#000,transparent 70%)}
+.dq::after{content:"\201D";position:absolute;inset-inline-end:14px;bottom:-34px;z-index:-1;font:700 150px/1 Amiri,serif;color:rgb(230 194 106/.14)}
+.dqh{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.dqt{display:inline-flex;padding:3px;border-radius:99px;background:rgb(0 0 0/.2);border:1px solid rgb(255 255 255/.1)}
+.dqt button{display:inline-flex;align-items:center;gap:5px;min-height:34px;padding:0 12px;border-radius:99px;font-size:var(--fs-xs);font-weight:600;color:rgb(255 255 255/.7);transition:background .2s,color .2s,transform .16s var(--e-out)}
+.dqt button i{font-size:15px}
+.dqt button.on{background:var(--goldg);color:#2a1900;box-shadow:inset 0 1px 0 rgb(255 255 255/.4)}
+.dqt button:active{transform:scale(.95)}
+.dqd{font-size:var(--fs-xs);color:rgb(255 255 255/.6)}
+.dqb{padding:18px 4px 8px;transition:opacity .3s var(--e-out);min-height:96px}
+.dqp{margin:0;display:flex;flex-direction:column;gap:4px;font:700 21px/1.75 Amiri,serif;color:#fff;text-align:center}
+.dqp span:last-child{color:var(--gold2)}
+.dqw{margin:0;font:700 20px/1.8 Amiri,serif;color:#fff;text-align:center;text-wrap:balance}
+.dqa{display:block;text-align:center;margin-top:10px;font-size:var(--fs-xs);color:rgb(255 255 255/.65)}
+.dq .qact{justify-content:center;gap:8px;margin-top:6px}
+.dq .qact button{width:38px;height:38px;border-radius:12px;color:#fff;background:rgb(255 255 255/.1);border:1px solid rgb(255 255 255/.12)}
+.dq .qact .dqtd{width:auto;padding:0 12px;display:inline-flex;gap:5px;font-size:var(--fs-xs);color:var(--gold2)}
+.njhikma{padding:16px 18px 14px!important}
+.njhh{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.njhh span{display:inline-flex;align-items:center;gap:6px;font-size:var(--fs-sm);font-weight:600;color:var(--gold)}
+.njhh span i{font-size:18px}
+.njhh small{font-size:var(--fs-xs);color:var(--mute);padding:3px 10px;border-radius:99px;background:var(--soft)}
+.njhikma>i{top:auto!important;bottom:6px;left:12px;opacity:.12!important;font-size:56px!important}
+.njhikma p{font:700 20px/1.8 Amiri,serif!important;margin:12px 0 4px!important}
+.njha{display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap}
+.njha button{position:static!important;width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:var(--soft);color:var(--plum);transition:transform .16s var(--e-out)}
+.njha button:active{transform:scale(.94)}
+.njha button[hidden]{display:none}
+.njha .njread{width:auto!important;display:inline-flex!important;gap:6px;padding:0 14px;margin-inline-start:auto;font-size:var(--fs-sm);font-weight:600;background:var(--plumg)!important;color:#fff!important}
+.njha .njread i{color:var(--gold2)}
 </style>
 <link rel="stylesheet" href="fonts/ph.css">
 </head>
@@ -1203,7 +1242,20 @@ function drawResults(){
 
 /* ---------- الشاشات ---------- */
 const QUO=[['أَعَزُّ مَكانٍ في الدُنى سَرجُ سابِحٍ','وَخَيرُ جَليسٍ في الزَمانِ كِتابُ','المتنبي'],['عَلى قَدرِ أَهلِ العَزمِ تَأتي العَزائِمُ','وَتَأتي عَلى قَدرِ الكِرامِ المَكارِمُ','المتنبي'],['قُم لِلمُعَلِّمِ وَفِّهِ التَبجيلا','كادَ المُعَلِّمُ أَن يَكونَ رَسولا','أحمد شوقي'],['شَكَوتُ إِلى وَكيعٍ سوءَ حِفظي','فَأَرشَدَني إِلى تَركِ المَعاصي','الإمام الشافعي']];
-let qi=new Date().getDate()%QUO.length;
+let qi=0;
+/* بيت اليوم وحكمة اليوم: تتغيّر كل يوم تلقائياً وتمرّ على كل المجموعة قبل ما تتكرر */
+let DAILY=null,dqMode='p',dqOff=0,njOff=0;
+const dayN=()=>{const d=new Date();return Math.floor((d.getTime()-d.getTimezoneOffset()*6e4)/864e5)};
+const pick=(L,off)=>L[((dayN()+off)%L.length+L.length)%L.length];
+fetch('/daily.json').then(r=>r.ok?r.json():null).then(d=>{if(!d)return;DAILY=d;dqPaint(false);njPaint(false)}).catch(()=>{});
+function wisList(){if(!DAILY)return [['قيمةُ كلِّ امرئٍ ما يُحسِنُه','الإمام علي — نهج البلاغة']];const a=DAILY.wisdom,b=DAILY.nahj,o=[];for(let i=0;i<Math.max(a.length,b.length);i++){if(b[i])o.push([b[i][0],`الإمام علي (ع) — نهج البلاغة، الحكمة ${ar(b[i][1])}`,b[i][1]]);if(a[i])o.push(a[i])}return o}
+function dqItem(){if(dqMode==='w')return pick(wisList(),dqOff);const L=DAILY?DAILY.poetry:QUO;return pick(L,dqOff)}
+function dqHTML(){const x=dqItem();return dqMode==='w'?`<p class="dqw">${esc(x[0])}</p><span class="dqa">— ${esc(x[1])}</span>`:`<p class="dqp"><span>${esc(x[0])}</span><span>${esc(x[1])}</span></p><span class="dqa">— ${esc(x[2])}</span>`}
+function dailyCard(){const d=new Date();return `<section class="dq" id="dq"><div class="dqh"><div class="dqt" role="tablist"><button role="tab" class="${dqMode==='p'?'on':''}" data-dq="p"><i class="ph-duotone ph-feather"></i>بيت اليوم</button><button role="tab" class="${dqMode==='w'?'on':''}" data-dq="w"><i class="ph-duotone ph-lightbulb"></i>حكمة اليوم</button></div><span class="dqd">${d.toLocaleDateString('ar-IQ',{weekday:'long',day:'numeric',month:'long'})}</span></div><div class="dqb" id="dqb">${dqHTML()}</div><div class="qact"><button data-act="nextq" aria-label="غيرها"><i class="ph-bold ph-arrows-clockwise"></i></button><button data-act="copyq" aria-label="نسخ"><i class="ph-bold ph-copy"></i></button><button data-act="shareq" aria-label="مشاركة"><i class="ph-bold ph-share-network"></i></button>${dqOff?`<button data-act="todayq" class="dqtd"><i class="ph-bold ph-calendar-check"></i>اليوم</button>`:''}</div></section>`}
+function dqPaint(anim=true){const b=$('#dqb');if(!b)return;const go=()=>{const c=$('#dq');if(c)c.outerHTML=dailyCard();const nb=$('#dqb');if(nb&&anim){nb.style.opacity=0;requestAnimationFrame(()=>{nb.style.opacity=1})}};go()}
+function dqText(){const x=dqItem();return dqMode==='w'?`${x[0]}\n— ${x[1]}`:`${x[0]} ... ${x[1]}\n— ${x[2]}`}
+function njItem(){return DAILY?pick(DAILY.nahj,njOff):[NJ_HIKAM[0][0],81]}
+function njPaint(anim=true){const p=$('#njh');if(!p)return;const x=njItem(),set=()=>{p.textContent=x[0];const r=$('#njhr');if(r)r.textContent=`الحكمة ${ar(x[1])}`;const t=$('#njhtd');if(t)t.hidden=!njOff;p.style.opacity=1};if(anim){p.style.opacity=0;setTimeout(set,200)}else set()}
 /* الأقسام: كل قسم يجمع كتب مرخّصة أو ملكية عامة من أكثر من مصدر */
 const L=(q)=>({src:'libiq',q,o:{},tr:1}),W=(q)=>({src:'wiki',q,o:{}}),I=(q)=>({src:'ia',q,o:{ar:true,ts:true}}),IE=(q)=>({src:'ia',q,o:{}}),G=(q,topic)=>({src:'gut',q,o:topic?{topic}:{},tr:topic?1:0}),O=(q)=>({src:'ol',q,o:{}}),OS=(subj)=>({src:'ol',q:subj,o:{subj},tr:1}),GB=(q,ar)=>({src:'gb',q:/:/.test(q)?q:(ar?'intitle:'+q:'subject:'+q),o:{ar:!!ar}}),AC=(q)=>({src:'aco',q,o:{}}),SW=(q,lang)=>({src:'sw',q,o:{lang},tr:1}),LV=(q)=>({src:'lv',q,o:{},tr:1});
 const T=(q)=>({src:'tr',q,o:{},tr:1}),IA_A=(q)=>({src:'ia',q,o:{media:'audio',ts:true},tr:1});
@@ -1419,7 +1471,7 @@ function nahjBlocks(d){const blocks=[],marks=[];
  d.secs.forEach(sc=>{const H={k:'H',t:sc.t,sub:sc.k==='intro'?'':sc.full};blocks.push(H);marks.push({b:H,title:sc.t,level:1,sec:sc.k});
   sc.items.forEach((it,n)=>{const num=n+1;let ttl=(it.t||'').replace(/^\(|\)$/g,'').replace(/\s{2,}/g,' ').trim();
    if(sc.k!=='intro'){const nb={k:'n',t:sc.k==='hikam'?'':ttl,num,lbl:NJ_LBL[sc.k]};blocks.push(nb);
-    const first=(it.b.find(x=>typeof x==='string')||'');marks.push({b:nb,title:`${NJ_LBL[sc.k]} ${ar(num)}${sc.k==='hikam'?' · '+first.slice(0,38)+'…':(x=>x?' · '+x.slice(0,46):'')(ttl.replace(/^\(?(و?من (خطبة|كلام|كتاب|وصية|عهد|دعاء) له)( عليه السلام)?:?/,'').replace(/[()]/g,'').trim())}`,level:2})}
+    const first=(it.b.find(x=>typeof x==='string')||'');marks.push({b:nb,key:sc.k+':'+num,title:`${NJ_LBL[sc.k]} ${ar(num)}${sc.k==='hikam'?' · '+first.slice(0,38)+'…':(x=>x?' · '+x.slice(0,46):'')(ttl.replace(/^\(?(و?من (خطبة|كلام|كتاب|وصية|عهد|دعاء) له)( عليه السلام)?:?/,'').replace(/[()]/g,'').trim())}`,level:2})}
    it.b.forEach(x=>{if(typeof x==='string')blocks.push({k:'p',t:x});else blocks.push({k:'s',t:x.h})})})});
  return {blocks,marks}}
 async function njGo(sec){njJump=sec||null;const b=NJB();remember(b);openReader(b.id)}
@@ -1430,7 +1482,7 @@ function nahj(){
  <section class="njhero"><div class="njorn"></div><small>كلام أمير المؤمنين علي بن أبي طالب (ع)</small><h1>نهج البلاغة</h1><p>جمعه الشريف الرضي سنة ٤٠٠هـ، وشرحه عشرات العلماء من كل المذاهب على مدى ألف عام.</p>
   <div class="njstats"><button data-njgo="khutab"><b data-count="241">٠</b><span>خطبة</span></button><button data-njgo="kutub"><b data-count="79">٠</b><span>كتاباً ورسالة</span></button><button data-njgo="hikam"><b data-count="480">٠</b><span>حكمة</span></button></div>
   <div class="njacts"><button class="btn" data-njread="1"><i class="ph-fill ph-book-open-text"></i> اقرأ المتن</button><button class="btn alt" data-act="njall"><i class="ph-bold ph-books"></i> كل الكتب</button></div></section>
- <div class="njhikma"><i class="ph-fill ph-quotes"></i><span class="mut">من حِكَمه</span><p id="njh">${NJ_HIKAM[njH%NJ_HIKAM.length][0]}</p><button data-act="njnext" aria-label="حكمة أخرى"><i class="ph-bold ph-arrows-clockwise"></i></button></div>
+ <div class="njhikma"><i class="ph-fill ph-quotes"></i><div class="njhh"><span><i class="ph-duotone ph-sun-horizon"></i>حكمة اليوم</span><small id="njhr">الحكمة ${ar(njItem()[1])}</small></div><p id="njh">${esc(njItem()[0])}</p><div class="njha"><button data-act="njnext" aria-label="حكمة أخرى"><i class="ph-bold ph-arrows-clockwise"></i></button><button data-act="njcopy" aria-label="نسخ"><i class="ph-bold ph-copy"></i></button><button data-act="njtoday" id="njhtd" ${njOff?'':'hidden'} aria-label="حكمة اليوم"><i class="ph-bold ph-calendar-check"></i></button><button class="njread" data-act="njhread"><i class="ph-fill ph-book-open-text"></i>اقرأها في الكتاب</button></div></div>
  <h2 style="margin-top:22px">دليل الكتب <small class="mut" style="font:500 13px inherit">${ar(list.length)} كتاباً</small></h2>
  <div class="chips njchips">${NJ_TYPES.map(([k,l,ic])=>`<button class="chip ${njF===k?'on':''}" data-njf="${k}"><i class="ph${njF===k?'-fill':''} ph-${ic}"></i>${l}</button>`).join('')}</div>
  <div class="njlist">${list.map((x,i)=>`<article class="njc ${njOpen===x.id?'open':''} njt-${x.ty}" style="--d:${i*40}ms">
@@ -1461,8 +1513,9 @@ function home(){
  <div class="feat" id="feat">${hero}</div>
  ${n>1?`<div class="dots">${[...Array(Math.min(n,3))].map((_,i)=>`<i class="${i?'':'on'}"></i>`).join('')}</div>`:''}
  ${localRail('want')}${localRail('fav')}
- <div class="duo"><div class="goal"><svg viewBox="0 0 70 70"><circle cx="35" cy="35" r="29" fill="none" stroke="var(--line)" stroke-width="7"/><circle class="ring" cx="35" cy="35" r="29" fill="none" stroke="var(--gold)" stroke-width="7" stroke-linecap="round" stroke-dasharray="${C*fr} ${C}" transform="rotate(-90 35 35)"/><text x="35" y="41" text-anchor="middle" font-size="17" font-weight="700" fill="currentColor">${ar(m)}</text></svg><b style="font-size:14px">من ${ar(g)} دقيقة</b><span class="mut" style="font-size:12px"><i class="ph-fill ph-fire fire"></i> ${ar(streak())} أيام متتالية</span></div>
- <div class="quote"><i class="ph-fill ph-quotes"></i><span class="mut" style="font-size:12px">بيت اليوم</span><p id="qv">${QUO[qi][0]}<br>${QUO[qi][1]}</p><span class="mut" style="font-size:12px" id="qa">— ${QUO[qi][2]}</span><div class="qact"><button data-act="nextq" aria-label="بيت آخر"><i class="ph-bold ph-arrows-clockwise"></i></button><button data-act="copyq" aria-label="نسخ البيت"><i class="ph-bold ph-copy"></i></button></div></div></div>
+ <div class="duo one"><div class="goal gh"><svg viewBox="0 0 70 70"><circle cx="35" cy="35" r="29" fill="none" stroke="var(--line)" stroke-width="7"/><circle class="ring" cx="35" cy="35" r="29" fill="none" stroke="var(--gold)" stroke-width="7" stroke-linecap="round" stroke-dasharray="${C*fr} ${C}" transform="rotate(-90 35 35)"/><text x="35" y="41" text-anchor="middle" font-size="17" font-weight="700" fill="currentColor">${ar(m)}</text></svg><div class="ghx"><span class="mut">هدف القراءة اليوم</span><b>${ar(m)} من ${ar(g)} دقيقة</b><span class="mut"><i class="ph-fill ph-fire fire"></i> ${ar(streak())} أيام متتالية</span></div></div>
+</div>
+ ${dailyCard()}
  ${[...new Set(SECTIONS.map(x=>x.g))].map(g=>`<h2>${g==='عام'?'الأقسام':g}</h2><div class="cats">${SECTIONS.filter(c=>c.g===g).map((c,ci)=>`<button class="cat" data-sec="${c.k}" style="--cc:${c.c};--i:${ci}"><em><i class="ph-duotone ph-${c.ic}"></i></em><span>${c.t}</span><i class="ph-bold ph-caret-left cgo"></i></button>`).join('')}</div>`).join('')}
  ${homeSecs().map(sec=>`<section data-shelf-k="${sec.k}"><h2><span><i class="ph-duotone ph-${sec.ic}" style="color:${sec.c}"></i> ${sec.sug?'<small class="sugt">مقترح لك</small> ':''}${sec.t}</span><button data-sec="${sec.k}">عرض الكل<i class="ph-bold ph-caret-left"></i></button></h2><p class="mut" style="margin:-8px 0 10px;font-size:13px">${sec.d}</p><div id="sh-${sec.k}">${skel(4)}</div></section>`).join('')}
  <p class="mut" style="text-align:center;font-size:12px;margin-top:24px">كل الكتب من مصادر مرخّصة أو ملكية عامة</p>`;
@@ -2130,8 +2183,8 @@ async function openReader(id,jump){
    e.p=Math.max(1,Math.min(e.p||1,R.pages.length));await ensurePage(e.p);save();drawPage(0);prefetchTr(e.p);
   }else if(b.kind==='nahj'){
    const d=await nahjData();const {blocks,marks}=nahjBlocks(d);R.parts=[{t:b.t}];e.parts=1;R.pages=paginate(blocks);e.pages=R.pages.length;
-   const pos=new Map();R.pages.forEach((pg,i)=>pg.forEach(x=>pos.set(x,i+1)));R.toc=marks.map(m=>({title:m.title,page:pos.get(m.b),level:m.level,sec:m.sec}));
-   if(njJump){const t=R.toc.find(x=>x.sec===njJump);if(t)e.p=t.page;njJump=null}
+   const pos=new Map();R.pages.forEach((pg,i)=>pg.forEach(x=>pos.set(x,i+1)));R.toc=marks.map(m=>({title:m.title,page:pos.get(m.b),level:m.level,sec:m.sec,key:m.key}));
+   if(njJump){const t=R.toc.find(x=>x.sec===njJump||x.key===njJump);if(t)e.p=t.page;njJump=null}
    e.p=Math.max(1,Math.min(e.p||1,e.pages));save();drawPage(0);
   }else if(b.kind==='wiki'){
    const root=await wikiParse(b.key);
@@ -2277,6 +2330,7 @@ document.addEventListener('click',async ev=>{
  if(d.tab){buzz();if(d.tab===tab&&t.closest('.nav')){$('#view').scrollTo({top:0,behavior:'smooth'});$('#nav').classList.remove('mini');return}if(d.lang)fLang=d.lang;go(d.tab,d.focus);return}
  if(d.open){const sk=t.closest('[data-shelf-k]');if(sk){S.secHit[sk.dataset.shelfK]=(S.secHit[sk.dataset.shelfK]||0)+1}openBook(d.open);return}
  if(d.zm){const v=$('#pdfv');if(v&&v._zoom)v._zoom(d.zm);return}
+ if(d.dq){dqMode=d.dq;dqOff=0;dqPaint();return}
  if(d.fso){fSort=d.fso;document.querySelectorAll('[data-fso]').forEach(x=>x.classList.toggle('on',x.dataset.fso===fSort));drawResults();return}
  if(d.golib){libTab=d.golib;tab='library';render();return}
  if(d.fav){const id=d.fav;const b=getB(id);if(b)remember(b);if(S.fav[id]){delete S.fav[id];toast('أُزيل من المفضلة')}else{S.fav[id]=Date.now();toast('أُضيف للمفضلة ♥')}save();openBook(id,1);if(tab==='library')render();return}
@@ -2352,7 +2406,10 @@ document.addEventListener('click',async ev=>{
  if(a==='nahj'){openNahj();return}
  if(a==='nhome'){tab='home';render();return}
  if(a==='njall'){openSection('nahj');return}
- if(a==='njnext'){njH++;const p=$('#njh');if(p){p.style.opacity=0;setTimeout(()=>{p.textContent=NJ_HIKAM[njH%NJ_HIKAM.length][0];p.style.opacity=1},220)}return}
+ if(a==='njnext'){njOff++;njPaint();return}
+ if(a==='njtoday'){njOff=0;njPaint();return}
+ if(a==='njcopy'){const x=njItem();try{navigator.clipboard.writeText(`${x[0]}\n— الإمام علي (ع)، نهج البلاغة، الحكمة ${ar(x[1])}`).then(()=>toast('نُسخت الحكمة'))}catch(e){}return}
+ if(a==='njhread'){njGo('hikam:'+njItem()[1]);return}
  if(a==='qlist'){quranList();$('#qview').scrollTop=0;return}
  if(a==='qplay'){quranPlay();return}
  if(a==='qrec'){quranPickReciter();return}
@@ -2384,8 +2441,10 @@ document.addEventListener('click',async ev=>{
   S.cust[r.sid]=r.books.slice(0,300).map(b=>{const {c,...m}=b;return {...m,c:b.c}});save();closeSheet();render();toast('أُضيف المصدر ✓')}
  else if(a==='install'){if(deferred){deferred.prompt();deferred.userChoice.finally(()=>{deferred=null;render()})}}
  else if(a==='instx'){try{localStorage.setItem('midad-inst','x')}catch(e){}render()}
- else if(a==='nextq'){qi=(qi+1)%QUO.length;const p=$('#qv');p.style.opacity=0;setTimeout(()=>{p.innerHTML=QUO[qi][0]+'<br>'+QUO[qi][1];$('#qa').textContent='— '+QUO[qi][2];p.style.opacity=1},250)}
- else if(a==='copyq'){try{navigator.clipboard.writeText(QUO[qi][0]+' ... '+QUO[qi][1]+' — '+QUO[qi][2]).then(()=>toast('نُسخ البيت'),()=>toast('تعذّر النسخ'))}catch(e){toast('تعذّر النسخ')}}
+ else if(a==='nextq'){dqOff++;dqPaint()}
+ else if(a==='todayq'){dqOff=0;dqPaint()}
+ else if(a==='shareq'){const t=dqText()+'\n\nمن تطبيق مداد';if(navigator.share)navigator.share({text:t}).catch(()=>{});else{try{navigator.clipboard.writeText(t).then(()=>toast('نُسخ للمشاركة'))}catch(e){}}}
+ else if(a==='copyq'){try{navigator.clipboard.writeText(dqText()).then(()=>toast(dqMode==='w'?'نُسخت الحكمة':'نُسخ البيت'),()=>toast('تعذّر النسخ'))}catch(e){toast('تعذّر النسخ')}}
  else if(a==='rclose')closeReader();
  else if(a==='next')turn(1);else if(a==='prev')turn(-1);
  else if(a==='rset'){$('#rtocp').classList.remove('on');$('#raip').classList.remove('on');$('#rsetp').classList.toggle('on')}

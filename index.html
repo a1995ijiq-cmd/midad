@@ -2046,6 +2046,14 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-mffind],[d
  if(D.mhall){const q=($('#mffq')||{}).value||'';if(!q.trim())return;mhQ=q;const rc=document.querySelector('[data-act=rclose]');if(rc)rc.click();setTimeout(()=>{tab='minhaj';mhG=-1;$('#view').scrollTop=0;render()},60)}
 });
 
+/* عند الخروج من التطبيق (واتساب مثلاً): نحرر الذاكرة غير الضرورية حتى ما يقتل النظام الصفحة، فالرجوع يصير فوري بدل إعادة تحميل كاملة */
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)return;try{
+ for(const k in tabStore)if(k!==tab)delete tabStore[k];
+ const keepP=mfCur&&mfCur.x?mfCur.x.p:null;for(const k in MFP)if(+k!==keepP)delete MFP[k];
+ const keepB=mhCur?mhCur.b:mhB;for(const k in MHN)if(k!==keepB)delete MHN[k];
+ if(typeof LQC!=='undefined'&&LQC&&!lqT)LQC=null;
+}catch(e){}});
+
 /* أقسام الرئيسية: الأقسام اللي يفتح منها المستخدم كتباً أكثر تطلع أولاً كـ«مقترح لك» */
 function homeSecs(){const hit=S.secHit||{};const top=Object.entries(hit).filter(([k,n])=>n>=2&&SECTIONS.some(x=>x.k===k)).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([k])=>k);
  return [...top.map(k=>({...SECTIONS.find(x=>x.k===k),sug:1})),...SECTIONS.filter(x=>!top.includes(x.k))]}
@@ -3237,7 +3245,7 @@ if('serviceWorker' in navigator&&location.protocol.startsWith('http')){
  const doReload=()=>{if(reloading)return;if($('#reader.on')||Object.keys(dlProg||{}).length){pendingReload=true;window.__pendingSW=!Object.keys(dlProg||{}).length;return}reloading=true;location.reload()};
  navigator.serviceWorker.register('sw.js').then(reg=>{
   /* تحديث تلقائي: يفحص عند الرجوع للتطبيق وكل ٣٠ دقيقة */
-  const chk=()=>reg.update().catch(()=>{});document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){chk();if(pendingReload)doReload()}});setInterval(chk,30*60*1000)}).catch(()=>{});
+  let lastChk=Date.now();const chk=()=>{lastChk=Date.now();reg.update().catch(()=>{})};document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){if(Date.now()-lastChk>20*60*1000)setTimeout(()=>{if(!document.hidden)chk()},4000);if(pendingReload)setTimeout(doReload,1500)}});setInterval(()=>{if(!document.hidden)chk()},30*60*1000)}).catch(()=>{});
  navigator.serviceWorker.addEventListener('controllerchange',()=>{if(hadCtl)doReload()});
 }
 }

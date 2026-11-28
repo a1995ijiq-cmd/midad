@@ -1264,6 +1264,18 @@ input:not([type=range]):not([type=checkbox]):not([type=radio]),textarea,select{f
 .mffind .mffall{color:var(--gold);font-weight:600}
 mark.mff{background:color-mix(in srgb,var(--gold) 28%,transparent);color:inherit;border-radius:4px;padding:0 1px}
 mark.mff.cur{background:var(--gold);color:#1a1000;box-shadow:0 0 0 2px color-mix(in srgb,var(--gold) 40%,transparent)}
+
+/* ===== الشريط السفلي: ثابت، مؤشر منزلق مرتبط بالزر، ضغط مريح ===== */
+.nav{display:grid!important;grid-template-columns:repeat(5,1fr);padding:6px!important;border-radius:26px!important;transition:none!important;contain:layout paint}
+.nav.mini{margin-inline:12px}
+.nav .nl,.nav.mini .nl{opacity:1!important;max-height:16px!important;transition:none!important}
+.nav button,.nav.mini button{min-height:54px!important;gap:2px!important;transition:color .2s ease!important;-webkit-tap-highlight-color:transparent}
+.nav button i,.nav.mini button i{font-size:23px!important;transition:transform .25s cubic-bezier(.23,1,.32,1)!important}
+.nav button:active i{transform:scale(.88)!important}
+.nav button.on i{transform:translateY(-1px) scale(1.08)!important}
+.npill{position:absolute!important;top:6px!important;bottom:6px!important;height:auto!important;left:auto!important;right:6px!important;width:calc((100% - 12px) / 5)!important;transform:translateX(calc(var(--i,0) * -100%))!important;transition:transform .38s cubic-bezier(.3,1.2,.4,1),opacity .2s!important;border-radius:20px!important;will-change:transform}
+.nav.nopill .npill{opacity:0}
+@media(prefers-reduced-motion:reduce){.npill{transition:none!important}}
 </style>
 <link rel="stylesheet" href="fonts/ph.css">
 </head>
@@ -2136,7 +2148,8 @@ let qt=0;
 function countUp(){document.querySelectorAll('[data-count]').forEach(el=>{el.textContent=ar(+el.dataset.count);el.removeAttribute('data-count')})}
 const buzz=()=>{try{navigator.vibrate&&navigator.vibrate(8)}catch(e){}};
 let lastTab=null;
-function movePill(){const a=document.querySelector('.nav button.on'),p=$('#npill');if(!a||!p)return;p.style.width=a.offsetWidth+'px';p.style.transform=`translateX(${a.offsetLeft}px)`;p.style.top=a.offsetTop+'px';p.style.height=a.offsetHeight+'px'}
+/* مؤشر الشريط: موضعه يُحسب بالـCSS من ترتيب الزر فقط، فما ينفصل عنه مهما تغيّر حجم الشاشة */
+function movePill(){const bs=[...document.querySelectorAll('.nav button')],i=bs.findIndex(b=>b.classList.contains('on')),nv=$('#nav');if(!nv)return;nv.style.setProperty('--i',Math.max(0,i));nv.classList.toggle('nopill',i<0)}
 addEventListener('resize',movePill);
 $('#nav').addEventListener('transitionend',movePill);
 /* إبقاء الرئيسية حيّة: عند مغادرتها تُحفظ عناصرها كما هي، وعند الرجوع تُعاد فوراً بدل إعادة بنائها، ما لم تتغير بياناتها */
@@ -2150,7 +2163,8 @@ function render(){
  if(KEEP[tab])delete tabStore[tab];
  wasRestored=restored;
  if(!restored)v0.innerHTML=({home,explore,library,sources,profile,nahj,mafatih,minhaj})[tab]();
- document.querySelectorAll('.nav button').forEach(b=>{const on=b.dataset.tab===tab;b.classList.toggle('on',on);b.firstElementChild.className=(on?'ph-fill ph-':'ph ph-')+b.dataset.ic});countUp();requestAnimationFrame(movePill);
+ const navTab=['nahj','mafatih','minhaj'].includes(tab)?'home':tab;
+ document.querySelectorAll('.nav button').forEach(b=>{const on=b.dataset.tab===navTab;b.classList.toggle('on',on);b.firstElementChild.className=(on?'ph-fill ph-':'ph ph-')+b.dataset.ic});countUp();requestAnimationFrame(movePill);
  if(lastTab!==tab){const v=$('#view');try{if(window.__va)window.__va.cancel()}catch(e){}window.__va=v.animate([{opacity:.4},{opacity:1}],{duration:160,easing:'cubic-bezier(.2,.8,.2,1)'});lastTab=tab}
  if(tab==='home'){if(restored){document.querySelectorAll('[data-shelf-k]').forEach(e=>{const k=e.dataset.shelfK,r=document.getElementById('sh-'+k);if(shelfCache[k]&&r&&!r.classList.contains('rail'))fillShelf(SECTIONS.find(x=>x.k===k))})}else observeShelves()}
  if(tab==='nahj'){const sc=SECTIONS.find(x=>x.k==='nahj');if(sc&&(!restored||!$('#sh-nahj.rail')))loadShelf(sc)}
@@ -2164,7 +2178,7 @@ function render(){
  const f=$('#feat');if(f)f.onscroll=()=>{const i=Math.round(Math.abs(f.scrollLeft)/f.clientWidth);document.querySelectorAll('.dots i').forEach((d,j)=>d.classList.toggle('on',i===j))};
 }
 const tabY={};let wasRestored=false;
-function go(t,focus){tabY[tab]=$('#view').scrollTop;tab=t;$('#view').scrollTop=0;render();if(wasRestored&&t!=='explore')$('#view').scrollTop=tabY[t]||0;$('#nav').classList.remove('mini');if(focus)setTimeout(()=>$('#q')?.focus(),60)}
+function go(t,focus){tabY[tab]=$('#view').scrollTop;tab=t;$('#view').scrollTop=0;render();if(wasRestored&&t!=='explore')$('#view').scrollTop=tabY[t]||0;if(focus)setTimeout(()=>$('#q')?.focus(),60)}
 /* Scribd: لا يوفّر فهرساً عاماً؛ أي مستند عام يُلصق رابطه يُفتح بالتضمين الرسمي داخل التطبيق */
 const SCRIBD_RE=/scribd\.com\/(?:[a-z]{2}\/)?(document|doc|presentation|book|read|audiobook)\/(\d+)(?:\/([^/?#\s]+))?/i;
 async function openScribd(url){const m=String(url).match(SCRIBD_RE);
@@ -3013,7 +3027,7 @@ function toc(){
 /* ---------- الأحداث ---------- */
 document.addEventListener('click',async ev=>{
  const t=ev.target.closest('button,[data-act],[data-qa]');if(!t)return;const d=t.dataset;
- if(d.tab){buzz();if(d.tab===tab&&t.closest('.nav')){$('#view').scrollTo({top:0,behavior:'smooth'});$('#nav').classList.remove('mini');return}if(d.lang)fLang=d.lang;go(d.tab,d.focus);return}
+ if(d.tab){buzz();if(d.tab===tab&&t.closest('.nav')){$('#view').scrollTo({top:0,behavior:'smooth'});return}if(d.lang)fLang=d.lang;go(d.tab,d.focus);return}
  if(d.open){const sk=t.closest('[data-shelf-k]');if(sk){S.secHit[sk.dataset.shelfK]=(S.secHit[sk.dataset.shelfK]||0)+1}openBook(d.open);return}
  if(d.zm){const v=$('#pdfv');if(v&&v._zoom)v._zoom(d.zm);return}
  if(d.fmode){R.fmode=d.fmode;document.querySelectorAll('[data-fmode]').forEach(x=>x.classList.toggle('on',x===t));(($('#rfv')||{}).dataset||{}).q?qFind(($('#rfind')||{}).value||''):findIn(($('#rfind')||{}).value||'');return}
@@ -3201,7 +3215,7 @@ $('#page').onclick=e=>{
 setInterval(()=>{const f=$('#feat');if(!f||tab!=='home'||f.matches(':hover')||document.hidden)return;const n=f.children.length;if(n<2)return;const i=Math.round(Math.abs(f.scrollLeft)/f.clientWidth);const nx=(i+1)%n;const fr=f.getBoundingClientRect(),vr=$('#view').getBoundingClientRect();if(fr.bottom<vr.top+40||fr.top>vr.bottom-40)return;const c=f.children[nx].getBoundingClientRect();f.scrollBy({left:c.left-fr.left-(fr.width-c.width)/2,behavior:'smooth'})},6000);
 document.addEventListener('keydown',e=>{if(!$('#reader').classList.contains('on'))return;if(e.key==='ArrowLeft')turn(1);else if(e.key==='ArrowRight')turn(-1);else if(e.key==='Escape')closeReader()});
 {const nv0=$('#nav');if(window.ResizeObserver){const ro=new ResizeObserver(()=>movePill());ro.observe(nv0);nv0.querySelectorAll('button').forEach(b=>ro.observe(b))}nv0.addEventListener('transitionend',movePill)}
-{let lastY=0;const v=$('#view'),nv=$('#nav');v.addEventListener('scroll',()=>{const y=v.scrollTop;if(y>lastY+6&&y>90)nv.classList.add('mini');else if(y<lastY-6||y<40)nv.classList.remove('mini');lastY=y},{passive:true})}
+/* الشريط السفلي ثابت الحجم: تصغيره أثناء التمرير كان يحرّك التخطيط كل إطار ويفصل المؤشر عن الزر */
 render();
 setTimeout(()=>lqLoad().catch(()=>{}),2500);
 setTimeout(()=>{const sp=$('#splash');sp.classList.add('off');setTimeout(()=>sp.remove(),700)},1000);

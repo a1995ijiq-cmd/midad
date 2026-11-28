@@ -1218,8 +1218,27 @@ input:not([type=range]):not([type=checkbox]):not([type=radio]),textarea,select{f
 
 /* الأيقونة الموحدة: نفس أيقونة التطبيق بشاشة البداية والشعار */
 .splash{background:radial-gradient(90% 60% at 50% 40%,#4a1d78,#1a0632)}
-.slogo{display:block;width:118px;height:118px;margin:0 auto 18px;border-radius:27px;box-shadow:0 22px 48px -10px rgb(0 0 0/.6),0 0 0 1px rgb(195 140 242/.25)}
+.slogo{display:block;width:124px;height:124px;margin:0 auto 18px;border-radius:28px;overflow:visible;box-shadow:0 22px 48px -10px rgb(0 0 0/.6),0 0 0 1px rgb(195 140 242/.25)}
 .lgimg{width:38px;height:38px;border-radius:10px;box-shadow:0 4px 10px -3px rgb(52 16 94/.45)}
+
+/* حركة الأيقونة بشاشة البداية: تظهر الأيقونة، تنفتح صفحات الكتاب، تطلع الشمس وتنبض، ويمر بريق */
+.splash .slogo{animation:spIn .7s cubic-bezier(.2,.9,.25,1.15) backwards}
+.sp-cv{transform-origin:512px 760px;animation:spCv .55s .15s cubic-bezier(.2,.8,.2,1) backwards}
+.sp-pl{transform-origin:504px 690px;animation:spPl .6s .3s cubic-bezier(.2,.8,.2,1.1) backwards}
+.sp-pr{transform-origin:520px 690px;animation:spPr .6s .3s cubic-bezier(.2,.8,.2,1.1) backwards}
+.sp-hl{animation:spF .4s .75s ease backwards}
+.sp-sun{transform-origin:512px 308px;animation:spSun .55s .6s cubic-bezier(.2,.9,.3,1.3) backwards,spPulse 1.6s 1.2s ease-in-out infinite}
+.sp-sweep{animation:spSw 1.1s .8s cubic-bezier(.4,0,.2,1) both}
+.splash b,.splash>div>span{animation:rise .6s .35s cubic-bezier(.2,.8,.2,1) backwards}
+@keyframes spIn{from{opacity:0;transform:scale(.82) translateY(10px)}}
+@keyframes spCv{from{opacity:0;transform:scaleY(.4) translateY(40px)}}
+@keyframes spPl{from{opacity:0;transform:rotate(28deg) scaleX(.2)}}
+@keyframes spPr{from{opacity:0;transform:rotate(-28deg) scaleX(.2)}}
+@keyframes spF{from{opacity:0}}
+@keyframes spSun{from{opacity:0;transform:translateY(90px) scale(.4)}}
+@keyframes spPulse{50%{transform:scale(1.07)}}
+@keyframes spSw{from{transform:skewX(-18deg) translateX(0)}to{transform:skewX(-18deg) translateX(1700px)}}
+@media (prefers-reduced-motion:reduce){.splash .slogo,.sp-cv,.sp-pl,.sp-pr,.sp-hl,.sp-sun,.sp-sweep{animation:none}}
 </style>
 <link rel="stylesheet" href="fonts/ph.css">
 </head>
@@ -1228,7 +1247,7 @@ input:not([type=range]):not([type=checkbox]):not([type=radio]),textarea,select{f
 <pattern id="pt" width="34" height="34" patternUnits="userSpaceOnUse"><path d="M17 3l4 8 8-4-4 8 8 4-8 4 4 8-8-4-4 8-4-8-8 4 4-8-8-4 8-4-4-8 8 4z" fill="rgb(255 240 200/.11)"/></pattern>
 </defs></svg>
 <div class="app" id="app">
-  <div class="splash" id="splash"><div><img class="slogo" src="icons/icon-512.png?v=2" alt=""><b>مداد</b><span style="opacity:.75">مكتبتك العربية</span></div></div>
+  <div class="splash" id="splash"><div><svg class="slogo" viewBox="0 0 1024 1024" aria-hidden="true"><defs><linearGradient id="sp-bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5a2391"/><stop offset=".55" stop-color="#34105e"/><stop offset="1" stop-color="#1a0632"/></linearGradient><radialGradient id="sp-glow" cx=".5" cy=".38" r=".55"><stop offset="0" stop-color="#9b5fd6" stop-opacity=".55"/><stop offset="1" stop-color="#9b5fd6" stop-opacity="0"/></radialGradient><radialGradient id="sp-rim" cx=".5" cy="1" r=".5"><stop offset="0" stop-color="#ffb37a" stop-opacity=".35"/><stop offset="1" stop-color="#ffb37a" stop-opacity="0"/></radialGradient><linearGradient id="sp-gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff0bf"/><stop offset=".35" stop-color="#f1c96c"/><stop offset=".7" stop-color="#d9a748"/><stop offset="1" stop-color="#b0812c"/></linearGradient><linearGradient id="sp-goldS" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fbe2a0"/><stop offset="1" stop-color="#c7953a"/></linearGradient><radialGradient id="sp-sun" cx=".4" cy=".35" r=".7"><stop offset="0" stop-color="#fff3c9"/><stop offset=".6" stop-color="#ecc064"/><stop offset="1" stop-color="#c2902f"/></radialGradient><filter id="sp-sh" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="18" stdDeviation="16" flood-color="#0d0220" flood-opacity=".6"/></filter><filter id="sp-sh2" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="4" stdDeviation="3" flood-color="#2a0a10" flood-opacity=".45"/></filter><clipPath id="sp-sq"><rect width="1024" height="1024" rx="230"/></clipPath><linearGradient id="sp-swg" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".22"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs><g clip-path="url(#sp-sq)"><rect width="1024" height="1024" fill="url(#sp-bg)"/><rect width="1024" height="1024" fill="url(#sp-glow)"/><rect y="640" width="1024" height="384" fill="url(#sp-rim)"/><g transform="translate(512 512) scale(1) translate(-512 -530)"><g filter="url(#sp-sh)"><g filter="url(#sp-sh2)"><circle class="sp-sun" cx="512" cy="308" r="66" fill="url(#sp-sun)"/><path class="sp-pl" d="M300 405 C410 415 492 505 504 690 C462 645 388 622 300 618 Z" fill="url(#sp-gold)"/><path class="sp-pr" d="M724 405 C614 415 532 505 520 690 C562 645 636 622 724 618 Z" fill="url(#sp-gold)"/><path class="sp-cv" d="M222 452 L262 452 L262 642 C378 648 466 676 512 728 C558 676 646 648 762 642 L762 452 L802 452 L802 682 C688 688 584 724 512 802 C440 724 336 688 222 682 Z" fill="url(#sp-goldS)"/></g></g><g class="sp-hl" fill="none" stroke="#fff7d6" stroke-opacity=".7" stroke-width="3" stroke-linecap="round"><path d="M302 408 C408 418 488 505 502 680"/><path d="M722 408 C616 418 536 505 522 680"/><path d="M224 455 L260 455"/><path d="M764 455 L800 455"/><path d="M264 645 C380 651 466 679 512 731 C558 679 644 651 760 645" stroke-opacity=".45"/></g><circle class="sp-sun" cx="494" cy="288" r="16" fill="#fffbe8" fill-opacity=".35"/></g><rect class="sp-sweep" x="-400" y="0" width="260" height="1024" fill="url(#sp-swg)" transform="skewX(-18)"/><rect x="3" y="3" width="1018" height="1018" rx="230" fill="none" stroke="#c38cf2" stroke-opacity=".35" stroke-width="6"/></g></svg><b>مداد</b><span style="opacity:.75">مكتبتك العربية</span></div></div>
   <div class="sfill" aria-hidden="true"></div>
   <main id="view"></main>
   <nav class="nav" id="nav"><span class="npill" id="npill" aria-hidden="true"></span>
@@ -3029,7 +3048,7 @@ document.addEventListener('keydown',e=>{if(!$('#reader').classList.contains('on'
 {let lastY=0;const v=$('#view'),nv=$('#nav');v.addEventListener('scroll',()=>{const y=v.scrollTop;if(y>lastY+6&&y>90)nv.classList.add('mini');else if(y<lastY-6||y<40)nv.classList.remove('mini');lastY=y},{passive:true})}
 render();
 setTimeout(()=>lqLoad().catch(()=>{}),2500);
-setTimeout(()=>{const sp=$('#splash');sp.classList.add('off');setTimeout(()=>sp.remove(),700)},1000);
+setTimeout(()=>{const sp=$('#splash');sp.classList.add('off');setTimeout(()=>sp.remove(),700)},1500);
 /* منع تكبير واجهة التطبيق كلها بالقرص (يسبب ثقل وإعادة تشغيل على الآيفون)؛ التكبير متاح داخل عارض الصفحات */
 document.addEventListener('gesturestart',e=>{if(!e.target.closest||!e.target.closest('.pdfv'))e.preventDefault()},{passive:false});
 document.addEventListener('touchmove',e=>{if(e.touches.length>1&&!(e.target.closest&&e.target.closest('.pdfv')))e.preventDefault()},{passive:false});

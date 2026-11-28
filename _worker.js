@@ -197,6 +197,41 @@ async function shTafsir(url) {
   } catch (e) { return err('fetch failed', 502); }
 }
 
+
+/* منهاج الصالحين للسيد السيستاني: يُجلب مباشرة من موقع مكتبه الرسمي sistani.org عند الطلب (بدون نسخ للنص داخل التطبيق) */
+const SIS_BOOKS = { '23720': 1, '15': 1, '16': 1 };
+const sisHdr = { 'user-agent': 'Mozilla/5.0 MidadReader/1.0', 'accept-language': 'ar' };
+const sisJ = (o, age) => new Response(JSON.stringify(o), { headers: { ...CORS, 'content-type': 'application/json; charset=utf-8', 'cache-control': 'public, max-age=' + (age || 86400) } });
+const sisTxt = h => decEnt(h.replace(/<br\s*\/?>/gi, '\n').replace(/<\/(p|div|h\d|li)>/gi, '\n').replace(/<[^>]+>/g, '')).replace(/[ \t ]+/g, ' ').split('\n').map(x => x.trim()).filter(Boolean);
+async function sisNode(b, n) {
+  const r = await fetch(`https://www.sistani.org/arabic/book/${b}/${n}/`, { headers: sisHdr, cf: { cacheTtl: 2592000, cacheEverything: true } });
+  if (!r.ok) throw new Error('upstream ' + r.status);
+  const h = await r.text();
+  const t = decEnt(((h.match(/<h1 class="c">([\s\S]*?)<\/h1>/) || [])[1] || '').replace(/<[^>]+>/g, '')).trim();
+  const i = h.search(/<div class="baz book-text"[^>]*>/);
+  let body = '';
+  if (i >= 0) { body = h.slice(i); const re = /<(\/?)div\b[^>]*>/gi; let d = 0, m; while ((m = re.exec(body))) { d += m[1] ? -1 : 1; if (d === 0) { body = body.slice(0, m.index); break } } }
+  return { n: +n, t, p: sisTxt(body) };
+}
+async function sistaniApi(url) {
+  const b = url.searchParams.get('b'); if (!SIS_BOOKS[b]) return err('bad book', 400);
+  const ns = (url.searchParams.get('ns') || '').split(',').filter(x => /^\d{1,6}$/.test(x)).slice(0, 20);
+  try {
+    if (!ns.length) {
+      const r = await fetch(`https://www.sistani.org/arabic/book/${b}/`, { headers: sisHdr, cf: { cacheTtl: 604800, cacheEverything: true } });
+      if (!r.ok) return err('upstream ' + r.status, 502);
+      const h = await r.text(); const re = new RegExp(`<a[^>]+href="(?:https?://www\\.sistani\\.org)?/arabic/book/${b}/(\\d+)/"[^>]*>([\\s\\S]*?)</a>`, 'g');
+      const seen = new Set(), toc = []; let m;
+      while ((m = re.exec(h))) { const t = decEnt(m[2].replace(/<[^>]+>/g, '')).replace(/\s+/g, ' ').trim(); if (!t || seen.has(m[1])) continue; seen.add(m[1]); toc.push({ n: +m[1], t }) }
+      const title = decEnt(((h.match(/<h1[^>]*>([\s\S]*?)<\/h1>/) || [])[1] || '').replace(/<[^>]+>/g, '')).trim();
+      return sisJ({ ok: toc.length > 0, b, title, toc, src: `https://www.sistani.org/arabic/book/${b}/` }, 86400);
+    }
+    const out = []; const q = [...ns];
+    await Promise.all(Array.from({ length: 6 }, async () => { while (q.length) { const n = q.shift(); try { out.push(await sisNode(b, n)) } catch (e) { out.push({ n: +n, e: 1 }) } } }));
+    out.sort((x, y) => ns.indexOf(String(x.n)) - ns.indexOf(String(y.n)));
+    return sisJ({ ok: true, b, items: out }, 604800);
+  } catch (e) { return err('fetch failed', 502); }
+}
 /* rafed.net (كتب شيعية رقمية): استخراج الفهرس ونص الصفحة من حمولة Next.js */
 function rfDecode(h) {
   let out = ''; const re = /self\.__next_f\.push\(\[1,"((?:[^"\\]|\\.)*)"\]\)/g; let m;
@@ -286,6 +321,7 @@ export default {
     if (url.pathname.replace(/\/$/, '') === '/api/shtaf') return shTafsir(url);
     if (url.pathname.replace(/\/$/, '') === '/api/rafed') return rafedApi(url);
     if (url.pathname.replace(/\/$/, '') === '/api/amthal') return amthalApi(url);
+    if (url.pathname.replace(/\/$/, '') === '/api/sistani') return sistaniApi(url);
     if (url.pathname.replace(/\/$/, '') === '/api/ai') return aiHandler(request, env || {});
     if (url.pathname.replace(/\/$/, '') === '/api/acon') {
       const id = (url.searchParams.get('id') || '').replace(/[^a-z0-9_]/gi, '');

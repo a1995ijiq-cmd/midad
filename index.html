@@ -16,6 +16,7 @@
 <title>مداد — مكتبتك</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Noto+Naskh+Arabic:wght@400;600&display=swap" rel="stylesheet">
+<link rel="preload" href="fonts/ekalem.woff" as="font" type="font/woff" crossorigin>
 <style>@font-face{font-family:"eKalem";src:url("fonts/ekalem.woff") format("woff");font-weight:100 900;font-display:swap;size-adjust:110%;unicode-range:U+0600-065F,U+066A-06EF,U+06FA-06FF,U+0750-077F,U+FB50-FDFF,U+FE70-FEFF,U+200C-200F}
 
 /* VOICE: هادئ وفاخر، مثل مكتبة مخطوطات حديثة
@@ -26,7 +27,7 @@
 :root{color-scheme:light dark;--bg:light-dark(#fbfafc,#120e17);--card:light-dark(#fff,#1c1724);--ink:light-dark(#1d1626,#f1ecf6);--mute:light-dark(#6c6478,#a59db2);--line:light-dark(#ece8f1,#2b2436);--plum:light-dark(#3b2157,#c3a6ea);--plumbg:light-dark(#3b2157,#2a1b3d);--gold:#c79a2e;--soft:light-dark(#f2eef7,#231c2d);--ok:light-dark(#1d7a4a,#5fd39a);--bad:light-dark(#b3261e,#ff8a80)}
 :root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
 *{box-sizing:border-box;min-width:0;-webkit-tap-highlight-color:transparent}
-body{margin:0;background:light-dark(#e9e4ef,#0a080d);color:var(--ink);font:16px/1.55 "IBM Plex Sans Arabic",system-ui,sans-serif;overflow-x:clip}
+body{margin:0;background:light-dark(#e9e4ef,#0a080d);color:var(--ink);font:16px/1.55 "eKalem","IBM Plex Sans Arabic",system-ui,sans-serif;overflow-x:clip}
 button,input{font:inherit;color:inherit}
 button{cursor:pointer;border:0;background:none}
 :focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:8px}
@@ -43,7 +44,7 @@ button{cursor:pointer;border:0;background:none}
 .nav button.on svg{stroke:var(--gold)}
 h1{font:700 30px/1.15 eKalem,Amiri,serif;margin:0}
 h2{font:700 21px/1.2 eKalem,Amiri,serif;margin:26px 0 12px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
-h2 button,h2 small{font:500 13px "IBM Plex Sans Arabic";color:var(--plum)}
+h2 button,h2 small{font:500 13px "eKalem","IBM Plex Sans Arabic";color:var(--plum)}
 .mut{color:var(--mute);font-size:14px}
 .top{display:flex;justify-content:space-between;align-items:center;gap:12px}
 .logo{display:flex;align-items:center;gap:8px;font:700 24px eKalem,Amiri;color:var(--plum)}
@@ -81,7 +82,7 @@ h2 button,h2 small{font:500 13px "IBM Plex Sans Arabic";color:var(--plum)}
 .bk:active .cv{transform:scale(.97)}
 .cv svg{position:absolute;inset:0;width:100%;height:100%}
 .cv::before{content:"";position:absolute;inset:7%;border:1px solid rgb(255 230 170/.55);border-radius:4px 10px 10px 4px}
-.cv b{position:relative;font:700 1.15em/1.2 Amiri;text-wrap:balance;text-shadow:0 1px 6px rgb(0 0 0/.3)}
+.cv b{position:relative;font:700 1.15em/1.2 eKalem,Amiri;text-wrap:balance;text-shadow:0 1px 6px rgb(0 0 0/.3)}
 .cv i{position:relative;font-style:normal;font-size:.7em;opacity:.85;margin-top:6px}
 .cv.en b{font-family:Georgia,serif}
 .cats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
@@ -188,7 +189,7 @@ input[type=range]{accent-color:var(--gold);width:140px;height:44px}
 .page p{margin:0 0 1em;border-radius:6px;transition:background .2s}
 .page p.hl{background:var(--hl);box-shadow:0 0 0 4px var(--hl)}
 .reader.hlm .page p{cursor:pointer;outline:1px dashed var(--rline);outline-offset:4px}
-.page .note{font:13px "IBM Plex Sans Arabic";color:var(--rmute);text-align:center;border-top:1px dashed var(--rline);padding-top:10px}
+.page .note{font:13px "eKalem","IBM Plex Sans Arabic";color:var(--rmute);text-align:center;border-top:1px dashed var(--rline);padding-top:10px}
 .rnav{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--rmute)}
 .rnav input{flex:1;width:auto}
 .pnl{position:absolute;inset:auto 10px 118px;max-height:60%;overflow-y:auto;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:22px;padding:16px;box-shadow:0 20px 50px rgb(0 0 0/.25);display:none}
@@ -346,9 +347,9 @@ html,body{height:100%;overscroll-behavior:none}
 .reader.imm .ribbon{position:absolute;top:0;left:0;right:0;z-index:2}
 .page{padding:18px clamp(20px,6vw,56px) 28px}
 .page .pw{max-width:40em;margin:0 auto}
-.page .rh{display:flex;justify-content:space-between;gap:12px;font:12px "IBM Plex Sans Arabic";color:var(--rmute);border-bottom:1px solid var(--rline);padding-bottom:8px;margin-bottom:18px}
+.page .rh{display:flex;justify-content:space-between;gap:12px;font:12px "eKalem","IBM Plex Sans Arabic";color:var(--rmute);border-bottom:1px solid var(--rline);padding-bottom:8px;margin-bottom:18px}
 .page .rh span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.page .rf{text-align:center;font:13px "IBM Plex Sans Arabic";color:var(--rmute);margin-top:22px}
+.page .rf{text-align:center;font:13px "eKalem","IBM Plex Sans Arabic";color:var(--rmute);margin-top:22px}
 .page .rf::before,.page .rf::after{content:"—";margin:0 8px;opacity:.5}
 .page p{hyphens:auto;position:relative}
 .page p.c-y{background:color-mix(in srgb,#f5d76e 55%,transparent);box-shadow:0 0 0 4px color-mix(in srgb,#f5d76e 55%,transparent)}
@@ -356,7 +357,7 @@ html,body{height:100%;overscroll-behavior:none}
 .page p.c-b{background:color-mix(in srgb,#8cc4f0 50%,transparent);box-shadow:0 0 0 4px color-mix(in srgb,#8cc4f0 50%,transparent)}
 .page p.c-p{background:color-mix(in srgb,#f3a3c4 50%,transparent);box-shadow:0 0 0 4px color-mix(in srgb,#f3a3c4 50%,transparent)}
 .page p.sel{outline:2px solid var(--gold)!important;outline-offset:6px}
-.page p.edited::after{content:"معدّل";font:10px "IBM Plex Sans Arabic";color:var(--gold);margin-inline-start:6px;vertical-align:super}
+.page p.edited::after{content:"معدّل";font:10px "eKalem","IBM Plex Sans Arabic";color:var(--gold);margin-inline-start:6px;vertical-align:super}
 .page .nb{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:8px;background:var(--gold);color:#241500;font-size:14px;vertical-align:middle;margin-inline-start:6px}
 .page .mine{border-inline-start:3px solid var(--gold);padding-inline-start:12px;color:color-mix(in srgb,var(--rink) 80%,var(--gold));font-style:italic}
 .page .mine::before{content:"✎ ";color:var(--gold);font-style:normal}
@@ -376,7 +377,7 @@ html,body{height:100%;overscroll-behavior:none}
 .rmodal.on{display:flex}
 .rmodal>div{width:100%;background:var(--card);color:var(--ink);border-radius:24px 24px 0 0;padding:18px 18px calc(18px + env(safe-area-inset-bottom));animation:rise .25s ease}
 .rmodal h6{font:700 18px eKalem,Amiri;margin:0 0 10px}
-.rmodal textarea{width:100%;min-height:140px;border-radius:14px;border:1px solid var(--line);background:var(--bg);color:var(--ink);padding:12px;font:17px/1.8 Amiri;resize:vertical}
+.rmodal textarea{width:100%;min-height:140px;border-radius:14px;border:1px solid var(--line);background:var(--bg);color:var(--ink);padding:12px;font:17px/1.8 eKalem,Amiri;resize:vertical}
 .rmodal .acts{margin-top:12px}
 .pdfv{position:absolute;inset:0;overflow-y:auto;background:#5a5560;padding:12px 0 80px;-webkit-overflow-scrolling:touch}
 .pdfv .pp{position:relative;margin:0 auto 12px;background:#fff;box-shadow:0 6px 20px rgb(0 0 0/.35);width:min(96%,900px)}
@@ -478,7 +479,7 @@ html[dir=rtl] .npill{right:auto;left:0}
 .qnum{font-style:normal;color:var(--gold);font-size:.85em;white-space:nowrap}
 .qnav{display:flex;justify-content:space-between;gap:10px;margin-top:22px}
 .qay{font:22px/2 "Amiri Quran",eKalem,Amiri,serif;margin:0 0 10px;color:var(--plum)}
-.qtafx{max-height:45vh;overflow-y:auto;font:17px/1.9 Amiri,serif;white-space:pre-line;background:var(--bg);border-radius:14px;padding:12px;margin-top:8px}
+.qtafx{max-height:45vh;overflow-y:auto;font:17px/1.9 eKalem,Amiri,serif;white-space:pre-line;background:var(--bg);border-radius:14px;padding:12px;margin-top:8px}
 .qrecs{max-height:55vh;overflow-y:auto}
 .qrecs button{display:flex;justify-content:space-between;width:100%;padding:12px 6px;border-bottom:1px solid var(--line);min-height:48px;text-align:start}
 .qrecs button.on{color:var(--gold);font-weight:700}.qrecs small{color:var(--mute)}
@@ -696,10 +697,10 @@ h1{font:700 var(--fs-3xl)/1.15 eKalem,Amiri,serif;letter-spacing:0}
 h2{font:700 var(--fs-xl)/1.25 eKalem,Amiri,serif;margin:30px 0 12px;align-items:center}
 h2>span{display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap}
 h2>span>i:first-child{width:32px;height:32px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;direction:ltr;font-size:18px;background:color-mix(in srgb,currentColor 12%,transparent)}
-h2 button{display:inline-flex;align-items:center;gap:4px;font:600 var(--fs-xs)/1 "IBM Plex Sans Arabic";color:var(--plum);background:color-mix(in srgb,var(--plum) 9%,transparent);padding:8px 12px;border-radius:99px;flex:none;transition:transform .16s var(--e-out),background .2s}
+h2 button{display:inline-flex;align-items:center;gap:4px;font:600 var(--fs-xs)/1 "eKalem","IBM Plex Sans Arabic";color:var(--plum);background:color-mix(in srgb,var(--plum) 9%,transparent);padding:8px 12px;border-radius:99px;flex:none;transition:transform .16s var(--e-out),background .2s}
 h2 button i{font-size:13px}
 h2 button:active{transform:scale(.95)}
-h2 small{font:500 var(--fs-xs) "IBM Plex Sans Arabic";color:var(--mute)}
+h2 small{font:500 var(--fs-xs) "eKalem","IBM Plex Sans Arabic";color:var(--mute)}
 
 /* الشعار والتحية */
 .top{padding-top:2px}
@@ -871,7 +872,7 @@ button.sbar:active{transform:scale(.985)}
 .links .ext:active{background:var(--soft)}
 .meta{grid-template-columns:repeat(4,1fr)}
 .meta>div+div{border-inline-start:1px solid var(--line2)}
-.meta b{display:block;font:700 var(--fs-lg)/1.3 "IBM Plex Sans Arabic";color:var(--plum)}
+.meta b{display:block;font:700 var(--fs-lg)/1.3 "eKalem","IBM Plex Sans Arabic";color:var(--plum)}
 .sheet .grab{width:40px;height:5px}
 
 /* ===== تصميم ٢: القارئ ===== */
@@ -1007,8 +1008,8 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 .qth b{font:700 18px/1.4 eKalem,Amiri,serif;color:var(--plum)}
 .qth small{font-size:var(--fs-xs);color:var(--mute)}
 .qtr{display:inline-flex;align-items:center;gap:5px;font-size:var(--fs-xs);color:var(--gold);background:color-mix(in srgb,var(--gold) 10%,transparent);padding:4px 10px;border-radius:99px;margin-bottom:8px}
-.qtb p{margin:0 0 10px;font:400 17px/1.95 Amiri,serif;text-align:justify}
-.qtb h5{margin:14px 0 6px;font:700 15px/1.5 "IBM Plex Sans Arabic";color:var(--plum)}
+.qtb p{margin:0 0 10px;font:400 17px/1.95 eKalem,Amiri,serif;text-align:justify}
+.qtb h5{margin:14px 0 6px;font:700 15px/1.5 "eKalem","IBM Plex Sans Arabic";color:var(--plum)}
 .qtsrc{display:inline-flex;align-items:center;gap:5px;font-size:var(--fs-xs);color:var(--mute);margin-top:6px}
 .qtna{text-align:center;padding:10px 6px}
 .qtna>i{font-size:40px;color:var(--gold)}
@@ -1038,7 +1039,7 @@ mark.sfind.cur{background:var(--gold);color:#2a1900;box-shadow:0 0 0 3px rgb(199
 .rfx{width:42px;height:42px;flex:none;border-radius:13px;display:grid;place-items:center;font-size:20px;background:color-mix(in srgb,var(--gold) 12%,transparent)}
 .rfin{flex:1;display:flex;align-items:center;gap:8px;height:46px;padding:0 12px;border-radius:14px;background:var(--surf);border:1.5px solid color-mix(in srgb,var(--gold) 55%,var(--line2));box-shadow:0 0 0 4px rgb(199 154 46/.12)}
 .rfin>i{font-size:19px;color:var(--gold)}
-.rfin input{flex:1;min-width:0;border:0;outline:0;background:none;font:500 17px/1.2 "IBM Plex Sans Arabic";color:var(--ink);-webkit-appearance:none}
+.rfin input{flex:1;min-width:0;border:0;outline:0;background:none;font:500 17px/1.2 "eKalem","IBM Plex Sans Arabic";color:var(--ink);-webkit-appearance:none}
 .rfin input::-webkit-search-cancel-button{display:none}
 .rfclr{font-size:20px;color:var(--mute);display:grid;place-items:center}
 .rfclr[hidden]{display:none}
@@ -1054,8 +1055,8 @@ mark.sfind.cur{background:var(--gold);color:#2a1900;box-shadow:0 0 0 3px rgb(199
 .rfres .fres:active{transform:scale(.985)}
 .frp{flex:none;width:50px;padding:6px 0;border-radius:12px;display:flex;flex-direction:column;align-items:center;background:color-mix(in srgb,var(--gold) 12%,transparent);color:var(--plum)}
 .frp small{font-size:10px;color:var(--mute)}
-.frp b{font:700 16px/1.2 "IBM Plex Sans Arabic"}
-.frt{flex:1;font:400 17px/1.85 Amiri,serif;color:var(--ink);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.frp b{font:700 16px/1.2 "eKalem","IBM Plex Sans Arabic"}
+.frt{flex:1;font:400 17px/1.85 eKalem,Amiri,serif;color:var(--ink);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .frt mark{background:var(--gold);color:#2a1900;border-radius:4px;padding:0 2px;font-weight:700}
 .rfempty{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;padding:48px 20px;color:var(--mute)}
 .rfempty i{font-size:44px;color:var(--gold);margin-bottom:6px}
@@ -1095,7 +1096,7 @@ mark.sfind.cur{background:var(--gold);color:#2a1900;box-shadow:0 0 0 3px rgb(199
 .qrh i{color:var(--gold)}
 #qtaf:has(.qrh){max-height:62vh;overflow-y:auto;-webkit-overflow-scrolling:touch}#qtaf .qrecs{max-height:none!important;overflow:visible!important}
 
-.qdlp{font:700 11px/1 "IBM Plex Sans Arabic";color:#e6c26a}
+.qdlp{font:700 11px/1 "eKalem","IBM Plex Sans Arabic";color:#e6c26a}
 .qbar [data-act=qdl] .ph-check-circle{color:#7fe0b5}
 .qdlok{color:#1d5f4f;font-size:12px;margin-inline-end:4px}
 .qdlok[hidden]{display:none}
@@ -1173,13 +1174,13 @@ em[class*=mfk-],.mffam [class*=mfk-] em,.mffam button em{color:var(--k);backgrou
 .mfsep{display:flex;align-items:center;justify-content:center;gap:10px;margin:16px auto 6px;color:var(--gold);max-width:260px}.mfsep i:not([class]){flex:1;height:1px;background:linear-gradient(90deg,transparent,currentColor,transparent);opacity:.6}.mfsep i[class]{font-size:14px}.mfsep.end{margin:28px auto 10px}
 .mfart{padding-top:8px}
 .mfart p{scroll-margin-top:70px;transition:background .6s}
-.mfn{font:400 calc(var(--mfs) - 5px)/2 "IBM Plex Sans Arabic",system-ui,sans-serif;color:var(--rmute);margin:14px 0;text-align:justify}
+.mfn{font:400 calc(var(--mfs) - 5px)/2 "eKalem","IBM Plex Sans Arabic",system-ui,sans-serif;color:var(--rmute);margin:14px 0;text-align:justify}
 .mfdua{position:relative;margin:16px -6px;padding:18px 16px;border-radius:20px;background:color-mix(in srgb,var(--gold) 7%,var(--rbg));border:1px solid color-mix(in srgb,var(--gold) 22%,transparent)}
 .mfdua::before,.mfdua::after{content:"";position:absolute;left:50%;width:9px;height:9px;background:var(--gold);transform:translateX(-50%) rotate(45deg);border-radius:2px;box-shadow:0 0 0 4px var(--rbg)}.mfdua::before{top:-5px}.mfdua::after{bottom:-5px}
 .mfdua p{font:400 var(--mfs)/2.15 var(--mff),Amiri,serif;color:var(--rink);margin:0;text-align:center;text-wrap:pretty}
 .mfdua p+p{margin-top:12px;padding-top:12px;border-top:1px dashed color-mix(in srgb,var(--gold) 22%,transparent)}
 .mfsu{font:400 var(--mfs)/2.2 "Amiri Quran",Amiri,serif;text-align:center;color:var(--rink);margin:14px 0}
-.mfa{display:inline-grid;place-items:center;min-width:1.5em;height:1.5em;margin:0 3px;font:700 .55em/1 "IBM Plex Sans Arabic",sans-serif;color:var(--gold);border:1.5px solid currentColor;border-radius:50%;vertical-align:middle}
+.mfa{display:inline-grid;place-items:center;min-width:1.5em;height:1.5em;margin:0 3px;font:700 .55em/1 "eKalem","IBM Plex Sans Arabic",sans-serif;color:var(--gold);border:1.5px solid currentColor;border-radius:50%;vertical-align:middle}
 .mfhit{background:color-mix(in srgb,var(--gold) 26%,transparent)!important;border-radius:10px}
 .mfnav{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0 24px}
 .mfnav button{display:grid;grid-template-columns:1fr auto;align-items:center;gap:0 8px;padding:12px 14px;border-radius:16px;text-align:start;background:color-mix(in srgb,var(--rink) 5%,transparent);border:1px solid var(--rline);color:var(--rink);min-width:0}
@@ -1386,9 +1387,9 @@ const extUrl=b=>b.kind==='scribd'?b.link:b.kind==='nahj'?'https://github.com/Ope
 /* ---------- الحالة ---------- */
 const seed=()=>({lib:{},books:{},hl:[],recent:[],cust:{},stat:{pages:0},
  src:Object.keys(BUILTIN).map(k=>({id:k,on:true,sync:0})),
- set:{fs:20,lh:2,font:'Amiri',theme:'sepia',arFirst:true,goal:20,yearGoal:24},days:{}});
+ set:{fs:20,lh:2,font:'eKalem',theme:'sepia',arFirst:true,goal:20,yearGoal:24},days:{}});
 let S;try{S=JSON.parse(localStorage.getItem('midad4'))||seed()}catch(e){S=seed()}
-if(!S.empty)S.empty={};if(!S.fontMig2){if(S.set.font==='eKalem')S.set.font='Amiri';S.fontMig=S.fontMig2=1}if(!S.fav)S.fav={};if(!S.lists)S.lists=[];if(!S.hist)S.hist=[];if(!S.secHit)S.secHit={};
+if(!S.empty)S.empty={};if(!S.fontMig3){if(!S.fontMig2||S.set.font==='Amiri')S.set.font='eKalem';S.fontMig=S.fontMig2=S.fontMig3=1}if(!S.fav)S.fav={};if(!S.lists)S.lists=[];if(!S.hist)S.hist=[];if(!S.secHit)S.secHit={};
 if(!S.src.some(s=>s.id==='libiq'))S.src.splice(0,0,{id:'libiq',on:true,sync:0});
 ['gb','sw','lv','tr','aco'].forEach(k=>{if(!S.src.some(s=>s.id===k))S.src.push({id:k,on:true,sync:0})});
 const saveNow=()=>{clearTimeout(saveT);saveT=0;try{localStorage.setItem('midad4',JSON.stringify(S))}catch(e){try{S.cust={};localStorage.setItem('midad4',JSON.stringify(S))}catch(_){}}};
@@ -2198,13 +2199,13 @@ async function exportPDF(id){
   const pdf=new window.jspdf.jsPDF({unit:'pt',format:'a5',compress:true});let first=true,pno=0;
   const isA=isAr(b.t);
   const start=()=>{g.setTransform(1,0,0,1,0,0);g.fillStyle='#fffdf8';g.fillRect(0,0,W,H);g.direction=isA?'rtl':'ltr';g.textBaseline='alphabetic'};
-  const flush=async(num)=>{if(num){g.font='22px "IBM Plex Sans Arabic", sans-serif';g.fillStyle='#9a8f80';g.textAlign='center';g.fillText(ar(num),W/2,H-44)}
+  const flush=async(num)=>{if(num){g.font='22px "eKalem","IBM Plex Sans Arabic", sans-serif';g.fillStyle='#9a8f80';g.textAlign='center';g.fillText(ar(num),W/2,H-44)}
    if(!first)pdf.addPage();first=false;pdf.addImage(cv.toDataURL('image/jpeg',.8),'JPEG',0,0,419.53,595.28);await new Promise(r=>setTimeout(r))};
   const wrap=(t,font,maxW)=>{g.font=font;const out=[];t.split('\n').forEach(par=>{let line='';par.split(/\s+/).forEach(w=>{const tr=line?line+' '+w:w;if(g.measureText(tr).width>maxW&&line){out.push(line);line=w}else line=tr});out.push(line)});return out};
   // صفحة العنوان
   start();g.textAlign='center';g.fillStyle='#3b2157';g.font='bold 64px eKalem,Amiri, serif';let ty=H*0.36;wrap(b.t,'bold 64px eKalem,Amiri, serif',TW).forEach(l=>{g.fillText(l,W/2,ty);ty+=86});
   g.fillStyle='#c79a2e';g.fillRect(W/2-60,ty,120,4);ty+=70;g.fillStyle='#555';g.font='34px eKalem,Amiri, serif';if(b.a)g.fillText(b.a,W/2,ty);
-  g.font='24px "IBM Plex Sans Arabic", sans-serif';g.fillStyle='#9a8f80';g.fillText('صُدّر من تطبيق مداد · '+new Date().toLocaleDateString('ar-EG'),W/2,H-90);await flush(0);
+  g.font='24px "eKalem","IBM Plex Sans Arabic", sans-serif';g.fillStyle='#9a8f80';g.fillText('صُدّر من تطبيق مداد · '+new Date().toLocaleDateString('ar-EG'),W/2,H-90);await flush(0);
   let y=0;const LH=52,BODY='30px eKalem,Amiri, serif',total=parts.reduce((s,p)=>s+p.blocks.length,0);let done=0;
   const newPage=async()=>{if(y)await flush(++pno);start();y=M+20};
   await newPage();
@@ -2220,7 +2221,7 @@ async function exportPDF(id){
      const text=(a.text!=null?a.text:bl.t).replace(/\t/g,'    ');const verse=bl.k==='v';
      const lines=wrap(text,BODY,TW);
      for(const l of lines){await ensure(LH);if(a.c){g.fillStyle=HLC[a.c]||HLC.y;g.fillRect(M-8,y+10,TW+16,LH)}g.fillStyle='#2a2230';g.font=BODY;if(verse){g.textAlign='center';g.fillText(l,W/2,y+LH-6)}else{g.fillText(l,align(l),y+LH-6)}y+=LH}
-     if(a.note){const nl=wrap('ملاحظة: '+a.note,'24px "IBM Plex Sans Arabic", sans-serif',TW-40);await ensure(nl.length*38+24);g.fillStyle='#f3ecdc';g.fillRect(M,y+8,TW,nl.length*38+20);g.fillStyle='#c79a2e';g.fillRect(isA?X-6:M,y+8,6,nl.length*38+20);g.fillStyle='#6b5a3a';g.font='24px "IBM Plex Sans Arabic", sans-serif';let ny=y+44;nl.forEach(l=>{g.textAlign=isA?'right':'left';g.fillText(l,isA?X-20:M+20,ny);ny+=38});y+=nl.length*38+30}
+     if(a.note){const nl=wrap('ملاحظة: '+a.note,'24px "eKalem","IBM Plex Sans Arabic", sans-serif',TW-40);await ensure(nl.length*38+24);g.fillStyle='#f3ecdc';g.fillRect(M,y+8,TW,nl.length*38+20);g.fillStyle='#c79a2e';g.fillRect(isA?X-6:M,y+8,6,nl.length*38+20);g.fillStyle='#6b5a3a';g.font='24px "eKalem","IBM Plex Sans Arabic", sans-serif';let ny=y+44;nl.forEach(l=>{g.textAlign=isA?'right':'left';g.fillText(l,isA?X-20:M+20,ny);ny+=38});y+=nl.length*38+30}
      if(a.add){const al=wrap('✎ '+a.add,'italic 28px eKalem,Amiri, serif',TW-20);for(const l of al){await ensure(48);g.fillStyle='#5a3a8a';g.font='italic 28px eKalem,Amiri, serif';g.fillText(l,align(l),y+42);y+=48}}
      y+=18;
      if(done%40===0)pr(30+done/total*65);

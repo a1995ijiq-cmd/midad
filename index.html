@@ -1283,6 +1283,10 @@ mark.mff.cur{background:var(--gold);color:#1a1000;box-shadow:0 0 0 2px color-mix
 .nav.mini .nl{opacity:0!important}
 .nav.mini button i{transform:translateY(7px) scale(1.12)!important}
 .nav.mini button.on i{transform:translateY(7px) scale(1.18)!important}
+
+/* النصوص الطويلة: الفقرات البعيدة عن الشاشة ما تنحسب ولا تنرسم.
+   هذا يخلي الرجوع للتطبيق سريع لأن الآيفون عند الرجوع يعيد حساب خطوط الصفحة، وبهذا يحسب الظاهر فقط */
+.mfdua p,.mfn,.mfsu,.mhq,.mhp,.qtb p,.qtafx p,.njc,.mfrow,.mfhits button,.grid .bk{content-visibility:auto;contain-intrinsic-size:auto 110px}
 </style>
 <link rel="stylesheet" href="fonts/ph.css">
 </head>

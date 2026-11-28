@@ -7,8 +7,8 @@
 <meta name="theme-color" content="#120e17" media="(prefers-color-scheme: dark)">
 <meta name="description" content="مداد — ابحث عن الكتب واقرأها، والأولوية للكتاب العربي">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="icons/icon-192.png">
-<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" href="icons/icon-192.png?v=2">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png?v=2">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="مداد">
@@ -1215,6 +1215,11 @@ input:not([type=range]):not([type=checkbox]):not([type=radio]),textarea,select{f
 .qframe .qfm{justify-self:start;line-height:1.5;white-space:nowrap}.qframe h3+.qfm{justify-self:end}
 .qframe h3{font:700 clamp(21px,6.6vw,29px)/1.75 "Amiri",serif!important;padding:0 4px;margin:-.12em 0 0!important;letter-spacing:0;color:var(--qgold2);text-shadow:0 2px 10px rgb(0 0 0/.35);white-space:nowrap}
 @media (max-width:360px){.qframe h3{font-size:25px!important}.qframe{padding:10px 14px!important}}
+
+/* الأيقونة الموحدة: نفس أيقونة التطبيق بشاشة البداية والشعار */
+.splash{background:radial-gradient(90% 60% at 50% 40%,#4a1d78,#1a0632)}
+.slogo{display:block;width:118px;height:118px;margin:0 auto 18px;border-radius:27px;box-shadow:0 22px 48px -10px rgb(0 0 0/.6),0 0 0 1px rgb(195 140 242/.25)}
+.lgimg{width:38px;height:38px;border-radius:10px;box-shadow:0 4px 10px -3px rgb(52 16 94/.45)}
 </style>
 <link rel="stylesheet" href="fonts/ph.css">
 </head>
@@ -1223,7 +1228,7 @@ input:not([type=range]):not([type=checkbox]):not([type=radio]),textarea,select{f
 <pattern id="pt" width="34" height="34" patternUnits="userSpaceOnUse"><path d="M17 3l4 8 8-4-4 8 8 4-8 4 4 8-8-4-4 8-4-8-8 4 4-8-8-4 8-4-4-8 8 4z" fill="rgb(255 240 200/.11)"/></pattern>
 </defs></svg>
 <div class="app" id="app">
-  <div class="splash" id="splash"><div><div class="book"><span class="l"></span><span class="r"></span><span class="pg"></span><span class="pg"></span><i class="ph-fill ph-feather"></i></div><b>مداد</b><span style="opacity:.75">مكتبتك العربية</span></div></div>
+  <div class="splash" id="splash"><div><img class="slogo" src="icons/icon-512.png?v=2" alt=""><b>مداد</b><span style="opacity:.75">مكتبتك العربية</span></div></div>
   <div class="sfill" aria-hidden="true"></div>
   <main id="view"></main>
   <nav class="nav" id="nav"><span class="npill" id="npill" aria-hidden="true"></span>
@@ -1871,7 +1876,7 @@ function home(){
  const hero=reading.length?reading.slice(0,3).map(b=>{const e=S.lib[b.id];return `<div class="hero">${cover(b)}<div><span class="badge"><i class="ph-fill ph-book-open"></i>أكمل القراءة</span><h3>${esc(b.t)}</h3><div class="mut">${esc(b.a||srcOf(b.src)?.n||'')}</div>${b.kind==='wiki'||e.pages?`<div class="bar"><b style="width:${pctOf(b.id)}%"></b></div><div class="mut">${e.pages?`صفحة ${ar(e.p)} من ${ar(e.pages)}${e.parts>1?` · الجزء ${ar((e.part||0)+1)} من ${ar(e.parts)}`:''}`:''} · ${ar(pctOf(b.id))}٪</div>`:'<div class="mut" style="margin-top:8px">يُقرأ بقارئ المصدر</div>'}<button class="btn" style="margin-top:12px" data-read="${esc(b.id)}"><i class="ph-fill ph-book-open-text"></i>تابع القراءة</button></div></div>`}).join('')
   :`<div class="hero"><div class="cv" style="--c1:#c79a2e;--c2:#6b4a12"><b>مداد</b><i>مكتبتك</i></div><div><span class="badge"><i class="ph-fill ph-sparkle"></i>مرحباً بك</span><h3>ملايين الكتب بين يديك</h3><div class="mut">ابحث في ويكي مصدر وأرشيف الإنترنت وOpen Library وGutenberg من مكان واحد.</div><button class="btn" style="margin-top:12px" data-tab="explore" data-focus="1"><i class="ph-bold ph-magnifying-glass"></i>ابدأ البحث</button></div></div>`;
  const n=reading.length||1;
- return `<div class="top"><div class="logo"><i><i class="ph-fill ph-feather"></i></i>مداد</div><span class="mut greet"><i class="ph-duotone ph-${h<12?'sun-horizon':h<18?'sun':'moon-stars'}"></i>${h<12?'صباح الخير':h<18?'نهارك سعيد':'مساء الخير'}</span></div>
+ return `<div class="top"><div class="logo"><img class="lgimg" src="icons/icon-192.png?v=2" alt="">مداد</div><span class="mut greet"><i class="ph-duotone ph-${h<12?'sun-horizon':h<18?'sun':'moon-stars'}"></i>${h<12?'صباح الخير':h<18?'نهارك سعيد':'مساء الخير'}</span></div>
  ${installCard()}
  <button class="qcard" data-act="qopen"><span class="qstar"><i class="ph-fill ph-book-open"></i></span><span><b>القرآن الكريم</b><small>١١٤ سورة · تلاوات مرتّلة ومجوّدة وتعليمية · تفاسير</small></span><i class="ph-bold ph-caret-left"></i></button><button class="qcard njcard" data-act="nahj"><span class="qstar"><i class="ph-fill ph-scroll"></i></span><span><b>نهج البلاغة</b><small>المتن · ٢٠ كتاباً بين شرح ودراسة مع شرح محتوى كل كتاب</small></span><i class="ph-bold ph-caret-left"></i></button><button class="qcard mfcard" data-mfhome="1"><span class="qstar"><i class="ph-fill ph-key"></i></span><span><b>مفاتيح الجنان</b><small>الأدعية · الزيارات · أعمال الشهور والأيام</small></span><i class="ph-bold ph-caret-left"></i></button>
  <button class="sbar" data-tab="explore" data-focus="1"><i class="ph-duotone ph-magnifying-glass"></i>ابحث في ${ar(enabled().length)} مصادر…</button>
@@ -1959,7 +1964,7 @@ const FONTS=[['eKalem','كالم'],['Amiri','أميري'],['Noto Naskh Arabic','
 
 let deferred=null;const standalone=()=>matchMedia('(display-mode: standalone)').matches||navigator.standalone;
 const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
-const installCard=()=>{let dis=false;try{dis=localStorage.getItem('midad-inst')==='x'}catch(e){}if(standalone()||dis||!(deferred||isIOS))return '';return `<div class="inst on"><img src="icons/icon-192.png" alt=""><div><b>ثبّت مداد على شاشتك</b><br>${deferred?'يفتح مثل التطبيق':'اضغط زر المشاركة ⬆︎ ثم «إضافة إلى الشاشة الرئيسية»'}</div>${deferred?'<button class="btn" data-act="install" style="min-height:38px;padding:0 14px">تثبيت</button>':''}<button class="x" data-act="instx" aria-label="إغلاق">✕</button></div>`};
+const installCard=()=>{let dis=false;try{dis=localStorage.getItem('midad-inst')==='x'}catch(e){}if(standalone()||dis||!(deferred||isIOS))return '';return `<div class="inst on"><img src="icons/icon-192.png?v=2" alt=""><div><b>ثبّت مداد على شاشتك</b><br>${deferred?'يفتح مثل التطبيق':'اضغط زر المشاركة ⬆︎ ثم «إضافة إلى الشاشة الرئيسية»'}</div>${deferred?'<button class="btn" data-act="install" style="min-height:38px;padding:0 14px">تثبيت</button>':''}<button class="x" data-act="instx" aria-label="إغلاق">✕</button></div>`};
 addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferred=e;if(tab==='home')render()});
 addEventListener('appinstalled',()=>{deferred=null;toast('تم تثبيت مداد ✓');render()});
 

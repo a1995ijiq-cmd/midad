@@ -51,6 +51,7 @@
 .ph.ph-crown-simple:before { content: "\e616"; }
 .ph.ph-cursor:before { content: "\e1dc"; }
 .ph.ph-detective:before { content: "\e83e"; }
+.ph.ph-dot-outline:before { content: "\ece0"; }
 .ph.ph-download:before { content: "\e20a"; }
 .ph.ph-download-simple:before { content: "\e20c"; }
 .ph.ph-ear:before { content: "\e70c"; }
@@ -97,6 +98,7 @@
 .ph.ph-list:before { content: "\e2f0"; }
 .ph.ph-list-bullets:before { content: "\e2f2"; }
 .ph.ph-list-checks:before { content: "\eadc"; }
+.ph.ph-list-dashes:before { content: "\e2f4"; }
 .ph.ph-list-numbers:before { content: "\e2f6"; }
 .ph.ph-list-plus:before { content: "\e2f8"; }
 .ph.ph-lock:before { content: "\e2fa"; }
@@ -141,6 +143,7 @@
 .ph.ph-puzzle-piece:before { content: "\e596"; }
 .ph.ph-question:before { content: "\e3e8"; }
 .ph.ph-quotes:before { content: "\e660"; }
+.ph.ph-radio:before { content: "\e77e"; }
 .ph.ph-repeat:before { content: "\e3f6"; }
 .ph.ph-resize:before { content: "\ed6e"; }
 .ph.ph-rows:before { content: "\e5a2"; }
@@ -249,6 +252,7 @@
 .ph-bold.ph-crown-simple:before { content: "\e616"; }
 .ph-bold.ph-cursor:before { content: "\e1dc"; }
 .ph-bold.ph-detective:before { content: "\e83e"; }
+.ph-bold.ph-dot-outline:before { content: "\ece0"; }
 .ph-bold.ph-download:before { content: "\e20a"; }
 .ph-bold.ph-download-simple:before { content: "\e20c"; }
 .ph-bold.ph-ear:before { content: "\e70c"; }
@@ -295,6 +299,7 @@
 .ph-bold.ph-list:before { content: "\e2f0"; }
 .ph-bold.ph-list-bullets:before { content: "\e2f2"; }
 .ph-bold.ph-list-checks:before { content: "\eadc"; }
+.ph-bold.ph-list-dashes:before { content: "\e2f4"; }
 .ph-bold.ph-list-numbers:before { content: "\e2f6"; }
 .ph-bold.ph-list-plus:before { content: "\e2f8"; }
 .ph-bold.ph-lock:before { content: "\e2fa"; }
@@ -339,6 +344,7 @@
 .ph-bold.ph-puzzle-piece:before { content: "\e596"; }
 .ph-bold.ph-question:before { content: "\e3e8"; }
 .ph-bold.ph-quotes:before { content: "\e660"; }
+.ph-bold.ph-radio:before { content: "\e77e"; }
 .ph-bold.ph-repeat:before { content: "\e3f6"; }
 .ph-bold.ph-resize:before { content: "\ed6e"; }
 .ph-bold.ph-rows:before { content: "\e5a2"; }
@@ -447,6 +453,7 @@
 .ph-fill.ph-crown-simple:before { content: "\e616"; }
 .ph-fill.ph-cursor:before { content: "\e1dc"; }
 .ph-fill.ph-detective:before { content: "\e83e"; }
+.ph-fill.ph-dot-outline:before { content: "\ece0"; }
 .ph-fill.ph-download:before { content: "\e20a"; }
 .ph-fill.ph-download-simple:before { content: "\e20c"; }
 .ph-fill.ph-ear:before { content: "\e70c"; }
@@ -493,6 +500,7 @@
 .ph-fill.ph-list:before { content: "\e2f0"; }
 .ph-fill.ph-list-bullets:before { content: "\e2f2"; }
 .ph-fill.ph-list-checks:before { content: "\eadc"; }
+.ph-fill.ph-list-dashes:before { content: "\e2f4"; }
 .ph-fill.ph-list-numbers:before { content: "\e2f6"; }
 .ph-fill.ph-list-plus:before { content: "\e2f8"; }
 .ph-fill.ph-lock:before { content: "\e2fa"; }
@@ -537,6 +545,7 @@
 .ph-fill.ph-puzzle-piece:before { content: "\e596"; }
 .ph-fill.ph-question:before { content: "\e3e8"; }
 .ph-fill.ph-quotes:before { content: "\e660"; }
+.ph-fill.ph-radio:before { content: "\e77e"; }
 .ph-fill.ph-repeat:before { content: "\e3f6"; }
 .ph-fill.ph-resize:before { content: "\ed6e"; }
 .ph-fill.ph-rows:before { content: "\e5a2"; }
@@ -696,6 +705,8 @@
 .ph-duotone.ph-cursor:after { content: "\e1dd"; margin-left: -1em; }
 .ph-duotone.ph-detective:before { content: "\e83e"; opacity: 0.2; }
 .ph-duotone.ph-detective:after { content: "\e83f"; margin-left: -1em; }
+.ph-duotone.ph-dot-outline:before { content: "\ece0"; opacity: 0.2; }
+.ph-duotone.ph-dot-outline:after { content: "\ece1"; margin-left: -1em; }
 .ph-duotone.ph-download:before { content: "\e20a"; opacity: 0.2; }
 .ph-duotone.ph-download:after { content: "\e20b"; margin-left: -1em; }
 .ph-duotone.ph-download-simple:before { content: "\e20c"; opacity: 0.2; }
@@ -788,6 +799,8 @@
 .ph-duotone.ph-list-bullets:after { content: "\e2f3"; margin-left: -1em; }
 .ph-duotone.ph-list-checks:before { content: "\eadc"; opacity: 0.2; }
 .ph-duotone.ph-list-checks:after { content: "\eadd"; margin-left: -1em; }
+.ph-duotone.ph-list-dashes:before { content: "\e2f4"; opacity: 0.2; }
+.ph-duotone.ph-list-dashes:after { content: "\e2f5"; margin-left: -1em; }
 .ph-duotone.ph-list-numbers:before { content: "\e2f6"; opacity: 0.2; }
 .ph-duotone.ph-list-numbers:after { content: "\e2f7"; margin-left: -1em; }
 .ph-duotone.ph-list-plus:before { content: "\e2f8"; opacity: 0.2; }
@@ -876,6 +889,8 @@
 .ph-duotone.ph-question:after { content: "\e3eb"; margin-left: -1em; }
 .ph-duotone.ph-quotes:before { content: "\e660"; opacity: 0.2; }
 .ph-duotone.ph-quotes:after { content: "\e661"; margin-left: -1em; }
+.ph-duotone.ph-radio:before { content: "\e77e"; opacity: 0.2; }
+.ph-duotone.ph-radio:after { content: "\e77f"; margin-left: -1em; }
 .ph-duotone.ph-repeat:before { content: "\e3f6"; opacity: 0.2; }
 .ph-duotone.ph-repeat:after { content: "\e3f9"; margin-left: -1em; }
 .ph-duotone.ph-resize:before { content: "\ed6e"; opacity: 0.2; }

@@ -572,8 +572,8 @@ html[dir=rtl] .npill{right:auto;left:0}
 }
 @media (min-width:1100px){
  .grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
- .qcard{display:inline-flex;width:calc(33.333% - 8px);vertical-align:top}
- .qcard+.qcard{margin-inline-start:12px}
+ .qcard{display:inline-flex;width:calc(50% - 6px);vertical-align:top}
+ .qcard+.qcard:nth-of-type(even){margin-inline-start:12px}
  .qcard{margin-top:16px!important;min-height:76px}
 }
 .qfrom{margin:0 0 12px;display:flex;align-items:center;justify-content:center;gap:8px}
@@ -1230,6 +1230,29 @@ input:not([type=range]):not([type=checkbox]):not([type=radio]),textarea,select{f
 
 /* محتوى بطاقات نهج البلاغة المطوية ما ينحسب ولا ينرسم إلا عند فتحها */
 .njc:not(.open) .njb>div{content-visibility:hidden}
+
+/* ===== منهاج الصالحين: هوية كحلية ذهبية ===== */
+.mhcard{background:linear-gradient(135deg,#1f3f78,#0b1836);margin-top:10px;box-shadow:0 12px 28px rgb(11 24 54/.32)}
+.mhhero{--mg1:#2a5196;--mg2:#13285a;--mg3:#081430;box-shadow:0 18px 40px -8px rgb(11 24 54/.45),inset 0 1px 0 rgb(255 255 255/.12)}
+.mhhero .mfkey{color:#13285a}
+.mhseg{display:grid!important;grid-template-columns:repeat(3,1fr)!important;gap:8px;margin-top:16px}
+.mhseg .chip{display:flex;flex-direction:column;align-items:center;gap:1px;padding:9px 6px;border-radius:16px;height:auto;min-height:56px}
+.mhseg .chip b{font-size:15px;font-weight:700}.mhseg .chip small{font-size:11.5px;opacity:.75}
+.mhpc .mfnum{background:linear-gradient(145deg,#1f3f78,#0b1836)}
+.mhlist{margin-top:16px}
+.mhrow.lv2{padding-inline-start:30px}.mhrow.lv2 em{width:30px;height:30px;font-size:16px;border-radius:10px}.mhrow.lv2 b{font-weight:500;font-size:14.5px}
+.mhrow.lv1 b{font-weight:700}
+.mhart{padding-bottom:6px}
+.mhp{font:400 calc(var(--mfs) - 3px)/2 "eKalem","IBM Plex Sans Arabic",sans-serif;color:var(--rink);margin:12px 0;text-align:justify}
+.mhh{font:700 calc(var(--mfs) - 1px)/1.7 eKalem,Amiri,serif;color:var(--gold);margin:18px 0 6px}
+.mhq{position:relative;margin:14px -4px;padding:14px 14px 12px;border-radius:18px;background:color-mix(in srgb,#2a5196 6%,var(--rbg));border:1px solid color-mix(in srgb,#2a5196 18%,transparent);scroll-margin-top:70px;transition:background .6s}
+.mhq p{margin:0;font:400 calc(var(--mfs) - 3px)/2 "eKalem","IBM Plex Sans Arabic",sans-serif;color:var(--rink);text-align:justify}
+.mhn{display:inline-flex;align-items:center;margin-bottom:6px;padding:3px 12px;border-radius:99px;font:700 13px/1.6 "eKalem","IBM Plex Sans Arabic",sans-serif;color:#fff;background:linear-gradient(135deg,#2a5196,#13285a);box-shadow:0 4px 10px -4px rgb(19 40 90/.5)}
+.mfhits p mark{background:color-mix(in srgb,var(--gold) 32%,transparent);color:inherit;border-radius:4px;padding:0 2px}
+
+.mfpc b{line-height:1.75!important;padding-top:.12em}
+.mhhero p{margin-top:10px!important}
+.mhhero ~ * .mfnav button,#view .mfnav button{background:var(--surf,var(--card));color:var(--ink);border-color:var(--line2,var(--line))}
 </style>
 <link rel="stylesheet" href="fonts/ph.css">
 </head>
@@ -1874,6 +1897,111 @@ document.addEventListener('click',async e=>{const b=e.target.closest('[data-mfop
  if(D.mfcopy){const t=[...document.querySelectorAll('.mfart p')].map(p=>p.textContent).join('\n\n');try{await navigator.clipboard.writeText((mfCur?mfClean(mfCur.x.t)+'\n\n':'')+t);toast('انسخ النص')}catch(err){toast('تعذّر النسخ')}return}
 });
 
+/* ---------- منهاج الصالحين (السيد السيستاني): النص يُجلب من موقع مكتبه الرسمي ويُحفظ بالجهاز ---------- */
+const MH_PARTS=[{b:'23720',t:'الجزء الأول',s:'العبادات'},{b:'15',t:'الجزء الثاني',s:'المعاملات'},{b:'16',t:'الجزء الثالث',s:'تتمّة المعاملات'}];
+let mhB='23720',mhG=-1,mhQ='',mhQT=0,mhSeq=0,mhCur=null,mhST=0,mhDl=0;const MHT={},MHN={};
+const mhS=()=>{if(!S.mh)S.mh={fav:[],last:null,pos:{},dl:{}};return S.mh};
+const mhClean=t=>String(t).replace(/^[‌‏\s]+/,'').replace(/[‌]/g,' ');
+async function mhToc(b){if(MHT[b])return MHT[b];let d=await IDB.get('mh:toc:'+b).catch(()=>null);
+ if(!d||!d.toc){const r=await fetch('/api/sistani?b='+b);if(!r.ok)throw new Error('net');d=await r.json();if(!d.ok)throw new Error('empty');IDB.set('mh:toc:'+b,d).catch(()=>{})}
+ const groups=[];let cur=null;const gk=x=>x.replace(/^الخاتمة\s+/,'').replace(/^كتاب\s+(ال)?/,'كتاب ').replace(/\s+/g,' ').trim();
+ d.toc.forEach((e,i)=>{const segs=e.t.split('»').map(x=>x.trim()).filter(Boolean);let g,it;
+  if(segs.length===1){if(/^(كتاب|مستحدثات|الاعتكاف)/.test(segs[0])){g=segs[0];it='مدخل '+segs[0].replace(/^كتاب\s+/,'')}else{g='مقدّمات الرسالة';it=segs[0]}}
+  else{g=segs[0].replace(/^الخاتمة\s+/,'');it=segs.slice(1).join(' · ')}
+  if(!cur||gk(cur.t)!==gk(g)){cur={t:g,it:[]};groups.push(cur)}
+  const lv=/^(الفصل|فصل|الأوّل:|الثاني:|الثالث:|الرابع:|الخامس:|السادس:|السابع:|تنبيه|تتميم|تكملة|\()/.test(it)?2:1;
+  cur.it.push({n:e.n,t:it,lv,i})});
+ return MHT[b]={b,toc:d.toc,groups,src:d.src}}
+async function mhNodes(b){if(MHN[b])return MHN[b];MHN[b]=(await IDB.get('mh:n:'+b).catch(()=>null))||{};return MHN[b]}
+let mhSaveT=0;const mhSave=b=>{clearTimeout(mhSaveT);mhSaveT=setTimeout(()=>IDB.set('mh:n:'+b,MHN[b]).catch(()=>{}),800)};
+async function mhFetch(b,ns){const r=await fetch(`/api/sistani?b=${b}&ns=${ns.join(',')}`);if(!r.ok)throw new Error('net');const d=await r.json();const N=await mhNodes(b);
+ (d.items||[]).forEach(x=>{if(!x.e&&x.p)N[x.n]={t:x.t,p:x.p.map(mhClean)}});mhSave(b);return N}
+async function mhNode(b,n){const N=await mhNodes(b);if(N[n])return N[n];const T=await mhToc(b);const k=T.toc.findIndex(x=>x.n===+n);const ns=T.toc.slice(Math.max(0,k),k+10).map(x=>x.n).filter(x=>!N[x]);if(!ns.includes(+n))ns.unshift(+n);await mhFetch(b,ns.slice(0,20));return N[n]}
+async function mhLoadAll(b,cb){const T=await mhToc(b),N=await mhNodes(b);const miss=T.toc.map(x=>x.n).filter(x=>!N[x]);const tot=T.toc.length;let done=tot-miss.length;cb&&cb(done,tot);
+ for(let i=0;i<miss.length;i+=20){const ch=miss.slice(i,i+20);let ok=false;for(let a=0;a<3&&!ok;a++){try{await mhFetch(b,ch);ok=true}catch(e){await new Promise(r=>setTimeout(r,800))}}if(!ok)throw new Error('net');done+=ch.length;cb&&cb(Math.min(done,tot),tot)}
+ mhS().dl[b]=1;save()}
+function openMh(){tab='minhaj';mhG=-1;$('#view').scrollTop=0;render()}
+const mhLvIc=lv=>lv===2?'dot-outline':'bookmark-simple';
+const mhRow=(b,x)=>`<button class="mfrow mhrow lv${x.lv}" data-mhopen="${x.n}" data-mhb="${b}"><em class="mfk-${x.lv===2?'txt':'sal'}"><i class="ph-duotone ph-${x.lv===2?'list-dashes':'book-bookmark'}"></i></em><span><b>${esc(x.t)}</b></span>${mhS().fav.some(f=>f.n===x.n)?'<i class="ph-fill ph-bookmark-simple mfbm"></i>':''}<i class="ph-bold ph-caret-left"></i></button>`;
+function minhaj(){
+ const P=MH_PARTS.find(x=>x.b===mhB)||MH_PARTS[0];const T=MHT[mhB];
+ const top=`<div class="njtop"><button class="ib" ${mhG>=0?'data-mhback="1"':'data-act="nhome"'} aria-label="رجوع"><i class="ph-bold ph-arrow-right"></i></button><span>${mhG>=0?'منهاج الصالحين':'المكتبة الإسلامية'}</span></div>`;
+ if(!T){mhToc(mhB).then(()=>{if(tab==='minhaj')render()}).catch(()=>{const v=$('#mhload');if(v)v.innerHTML='<b>تعذّر فتح الفهرس</b><span>تأكد من الإنترنت للمرة الأولى، بعدها يشتغل بدون نت.</span><button class="btn" data-mhpart="'+mhB+'">إعادة المحاولة</button>'});
+  return top+`<section class="mfhero mhhero"><div class="mforn"></div><h1>منهاج الصالحين</h1></section><div class="lstate" id="mhload"><span class="spin">◌</span><b>جارٍ تجهيز فهرس ${P.t}…</b></div>`}
+ const M=mhS();
+ if(mhG>=0){const g=T.groups[mhG];if(!g){mhG=-1;return minhaj()}
+  return top+`<section class="mfphd mhhero"><div class="mforn"></div><small>${P.t} · ${P.s}</small><h1>${esc(g.t)}</h1><div class="mfpst"><span><i class="ph-duotone ph-list-numbers"></i>${ar(g.it.length)} عنواناً</span></div></section>
+  <div class="mfitems mhlist">${g.it.map(x=>mhRow(mhB,x)).join('')}</div>
+  <nav class="mfnav" style="margin-top:16px">${T.groups[mhG+1]?`<button data-mhg="${mhG+1}"><small>الكتاب التالي</small><b>${esc(T.groups[mhG+1].t)}</b><i class="ph-bold ph-caret-left"></i></button>`:'<span></span>'}${mhG>0?`<button data-mhg="${mhG-1}"><i class="ph-bold ph-caret-right"></i><small>السابق</small><b>${esc(T.groups[mhG-1].t)}</b></button>`:'<span></span>'}</nav>`}
+ const last=M.last;const nAll=T.toc.length;
+ return top+`<section class="mfhero mhhero"><div class="mforn"></div><span class="mfkey"><i class="ph-fill ph-scales"></i></span><small>الرسالة العمليّة لسماحة المرجع الديني الأعلى</small><h1>منهاج الصالحين</h1><p>السيد علي الحسيني السيستاني (دام ظلّه) · الطبعة المصحّحة ١٤٤٥ هـ</p>
+ <div class="njstats mfstats"><button data-mhpart="23720"><b>${ar(3)}</b><span>أجزاء</span></button><button data-mhidx="1"><b>${ar(T.groups.length)}</b><span>كتاباً بهذا الجزء</span></button><button data-mhidx="1"><b>${ar(nAll)}</b><span>عنواناً</span></button></div>
+ <div class="njacts">${last&&last.t?`<button class="btn" data-mhopen="${last.n}" data-mhb="${last.b}" data-mhj="${last.j||0}"><i class="ph-fill ph-book-open-text"></i><span class="mfct">تابع: ${esc(last.t)}</span></button>`:`<button class="btn" data-mhopen="3600" data-mhb="23720"><i class="ph-fill ph-book-open-text"></i>ابدأ بالتقليد</button>`}<button class="btn alt" data-mhidx="1"><i class="ph-bold ph-list-bullets"></i> الفهرس</button></div></section>
+ <div class="mfsrch"><i class="ph-duotone ph-magnifying-glass"></i><input id="mhq" type="search" enterkeyhint="search" autocomplete="off" placeholder="ابحث بـ${P.t}: مسألة، حكم، كلمة…" value="${esc(mhQ)}"><button data-mhqx="1" aria-label="مسح" ${mhQ?'':'hidden'}><i class="ph-bold ph-x"></i></button></div>
+ <div id="mhres"></div>
+ <div id="mhbody" ${mhQ?'hidden':''}>
+ <div class="stseg mhseg">${MH_PARTS.map(x=>`<button class="chip ${x.b===mhB?'on':''}" data-mhpart="${x.b}"><b>${x.t}</b><small>${x.s}</small></button>`).join('')}</div>
+ ${M.fav.length?`<section><h2><span><i class="ph-duotone ph-bookmark-simple" style="color:var(--gold)"></i> محفوظاتي</span></h2><div class="chips mffavs">${M.fav.map(f=>`<button class="chip" data-mhopen="${f.n}" data-mhb="${f.b}" data-mhj="${f.j||0}"><i class="ph-fill ph-bookmark-simple"></i>${esc(f.t)}</button>`).join('')}</div></section>`:''}
+ <section id="mhidx"><h2><span><i class="ph-duotone ph-books" style="color:var(--gold)"></i> كتب ${P.t}</span></h2>
+ <div class="mfparts">${T.groups.map((g,n)=>`<button class="mfpc mhpc" data-mhg="${n}"><span class="mfnum"><em>${ar(n+1)}</em></span><span><small>${P.t}</small><b>${esc(g.t)}</b><i>${ar(g.it.length)} عنواناً</i></span><i class="ph-bold ph-caret-left"></i></button>`).join('')}</div></section>
+ <button class="mfdl" data-mhdl="1" ${M.dl[mhB]?'disabled':''}><i class="ph-duotone ph-${M.dl[mhB]?'check-circle':'cloud-arrow-down'}"></i><span><b>${M.dl[mhB]?P.t+' محفوظ بجهازك':'احفظ '+P.t+' بالجهاز'}</b><small id="mhdls">${M.dl[mhB]?'يشتغل بدون إنترنت والبحث فوري':'للقراءة بدون إنترنت والبحث السريع بكل المسائل'}</small></span></button>
+ <p class="mut njnote">النص من الموقع الرسمي لمكتب سماحة السيد السيستاني (sistani.org)، يُعرض كما هو ويُحفظ على جهازك فقط. للاطلاع على الطبعة الرسمية: <a href="${T.src}" target="_blank" rel="noopener">صفحة الكتاب بالموقع</a>.</p>
+ </div>`}
+function mhHook(){if(tab!=='minhaj'||mhG>=0||!MHT[mhB])return;const qi=$('#mhq');if(!qi)return;
+ qi.oninput=()=>{mhQ=qi.value;const x=document.querySelector('[data-mhqx]');if(x)x.hidden=!mhQ;clearTimeout(mhQT);mhQT=setTimeout(()=>mhSearch(mhQ),300)};
+ qi.onkeydown=e=>{if(e.key==='Enter'){clearTimeout(mhQT);mhSearch(mhQ);qi.blur()}};if(mhQ)mhSearch(mhQ)}
+async function mhSearch(q){const box=$('#mhres'),body=$('#mhbody');if(!box)return;const my=++mhSeq;const n=mfN(q).trim();
+ if(!n){box.innerHTML='';if(body)body.hidden=false;return}if(body)body.hidden=true;
+ const b=mhB,T=await mhToc(b),re=mfRe(q);const P=MH_PARTS.find(x=>x.b===b);
+ const tHits=T.toc.filter(x=>mfN(x.t).includes(n)).slice(0,20);
+ const head=tHits.length?`<h3 class="mfrh">العناوين</h3><div class="mfitems">${tHits.map(x=>`<button class="mfrow" data-mhopen="${x.n}" data-mhb="${b}"><em class="mfk-sal"><i class="ph-duotone ph-book-bookmark"></i></em><span><b>${esc(x.t.replace(/\s*»\s*/g,' · '))}</b></span><i class="ph-bold ph-caret-left"></i></button>`).join('')}</div>`:'';
+ if(n.length<2){box.innerHTML=head||'<div class="mfempty">اكتب كلمة للبحث</div>';return}
+ box.innerHTML=head+`<h3 class="mfrh">في المسائل · ${P.t}</h3><div class="mfempty" id="mhsp"><span class="spin">◌</span> جارٍ تجهيز ${P.t} للبحث…</div>`;
+ try{await mhLoadAll(b,(a,t)=>{const s=$('#mhsp');if(s&&my===mhSeq)s.innerHTML=`<span class="spin">◌</span> جارٍ تجهيز ${P.t} للبحث… ${ar(Math.round(a/t*100))}٪<br><small>مرة وحدة بس، بعدها البحث فوري وبدون نت</small>`})}catch(e){const s=$('#mhsp');if(s)s.textContent='تعذّر التحميل، تأكد من الإنترنت.';return}
+ if(my!==mhSeq)return;const N=MHN[b],out=[];let total=0;
+ for(const e of T.toc){const x=N[e.n];if(!x)continue;for(let j=0;j<x.p.length;j++){const t=x.p[j];re.lastIndex=0;const m=re.exec(t);if(!m)continue;total++;
+  if(out.length<80){const a=Math.max(0,m.index-60),z=Math.min(t.length,m.index+m[0].length+100);out.push({e,j,s:(a?'…':'')+esc(t.slice(a,m.index))+'<mark>'+esc(m[0])+'</mark>'+esc(t.slice(m.index+m[0].length,z))+(z<t.length?'…':''),mq:(t.match(/^مسألة\s*([0-9٠-٩]+)/)||[])[1]})}}}
+ const s=$('#mhsp');if(!s)return;
+ s.outerHTML=out.length?`<p class="mut mfcount">${ar(total)} موضعاً${total>out.length?` · أول ${ar(out.length)}`:''}</p><div class="mfhits">${out.map(h=>`<button data-mhopen="${h.e.n}" data-mhb="${b}" data-mhj="${h.j}" data-mhhl="${esc(q)}"><small><i class="ph-duotone ph-book-bookmark"></i>${esc(h.e.t.replace(/\s*»\s*/g,' · '))}${h.mq?` · مسألة ${ar(+h.mq)}`:''}</small><p>${h.s}</p></button>`).join('')}</div>`:'<div class="mfempty">ما لكينا هالكلمة بهذا الجزء، جرّب جزء ثاني</div>'}
+async function mhRead(b,n,j,hl){let T;try{T=await mhToc(b)}catch(e){toast('تعذّر الفتح، تأكد من الإنترنت');return}const k=T.toc.findIndex(x=>x.n===+n);if(k<0){toast('تعذّر الفتح');return}const e=T.toc[k];
+ try{closeSheet()}catch(_){}
+ R={id:'mh',mf:true,b:{t:'منهاج الصالحين',a:'',kind:'mf'},parts:[],pages:null};const rd=$('#reader');rd.classList.add('fr','on');applyR();rStart=Date.now();
+ $('#rtitle').textContent=e.t.split('»').pop().trim();$('#rext').href=`https://www.sistani.org/arabic/book/${b}/${n}/`;
+ $('#frame').innerHTML='<div class="mfv" id="mfv"><div class="lstate"><span class="spin">◌</span><b>جارٍ الفتح…</b></div></div>';
+ let x;try{x=await mhNode(b,n)}catch(err){$('#mfv').innerHTML=`<div class="lstate"><b>تعذّر الفتح</b><span>تأكد من الإنترنت للمرة الأولى، أو احفظ الجزء بالجهاز.</span><button class="btn" data-mhopen="${n}" data-mhb="${b}">إعادة المحاولة</button></div>`;return}
+ if(!R||R.id!=='mh'||!x)return;mhCur={b,n:+n,e};const M=mhS(),MF=mfS();mfCur=null;const P=MH_PARTS.find(q=>q.b===b);
+ const re=hl?mfRe(hl):null;const fmt=t=>{let h=esc(t);if(re)h=h.replace(re,m=>`<mark>${m}</mark>`);return h};
+ const body=x.p.map((t,i)=>{const m=t.match(/^(مسألة\s*[0-9٠-٩]+)\s*[:：]\s*/);if(m)return `<div class="mhq" data-j="${i}"><span class="mhn">${esc(m[1].replace(/[0-9]/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]))}</span><p>${fmt(t.slice(m[0].length))}</p></div>`;
+  if(/^(الأوّل|الثاني|الثالث|الرابع|الخامس|السادس|السابع|الثامن|التاسع|العاشر)\s*[:：]/.test(t)&&t.length<200)return `<h4 class="mhh" data-j="${i}">${fmt(t)}</h4>`;
+  return `<p class="mhp" data-j="${i}">${fmt(t)}</p>`}).join('');
+ const prev=T.toc[k-1],next=T.toc[k+1];const fav=M.fav.some(f=>f.n===+n);const segs=e.t.split('»').map(s=>s.trim());
+ $('#mfv').innerHTML=`<div class="mfbar"><button data-mffs="-1" aria-label="تصغير الخط"><i class="ph-bold ph-text-aa"></i><small>−</small></button><button data-mffs="1" aria-label="تكبير الخط"><i class="ph-bold ph-text-aa"></i><small>+</small></button><span class="sp"></span><button data-mhfav="1" class="${fav?'on':''}" aria-label="حفظ"><i class="ph-${fav?'fill':'duotone'} ph-bookmark-simple"></i></button><button data-mfcopy="1" aria-label="نسخ"><i class="ph-duotone ph-copy"></i></button></div>
+ <div class="mfprog"><b id="mfpb"></b></div>
+ <div class="mfwrap" style="--mfs:${MF.fs}px;--mff:'${MF.font}'">
+ <header class="mfhead"><span class="mfchip mfk-sal"><i class="ph-duotone ph-scales"></i>${P.t}${segs.length>1?' · '+esc(segs[0]):''}</span><h1>${esc(segs[segs.length-1])}</h1><p>منهاج الصالحين · السيد السيستاني</p><div class="mfsep"><i></i><i class="ph-fill ph-star-four"></i><i></i></div></header>
+ <article class="mfart mhart">${body||'<p class="mhp">هذا العنوان مدخل لما بعده، انتقل للتالي.</p>'}</article>
+ <div class="mfsep end"><i></i><i class="ph-fill ph-star-four"></i><i></i></div>
+ <nav class="mfnav">${next?`<button data-mhopen="${next.n}" data-mhb="${b}"><small>التالي</small><b>${esc(next.t.split('»').pop().trim())}</b><i class="ph-bold ph-caret-left"></i></button>`:'<span></span>'}${prev?`<button data-mhopen="${prev.n}" data-mhb="${b}"><i class="ph-bold ph-caret-right"></i><small>السابق</small><b>${esc(prev.t.split('»').pop().trim())}</b></button>`:'<span></span>'}</nav>
+ <p class="mut" style="text-align:center;font-size:12px;margin:0 0 20px">المصدر: <a href="https://www.sistani.org/arabic/book/${b}/${n}/" target="_blank" rel="noopener">موقع مكتب سماحة السيد السيستاني</a></p></div>`;
+ const v=$('#mfv');v.scrollTop=0;
+ if(j>0||hl){const el=v.querySelector(`[data-j="${j||0}"]`);if(el)requestAnimationFrame(()=>{v.scrollTop+=el.getBoundingClientRect().top-v.getBoundingClientRect().top-v.querySelector('.mfbar').offsetHeight-14;el.classList.add('mfhit');setTimeout(()=>el.classList.remove('mfhit'),2200)})}
+ v.onscroll=()=>{const pb=$('#mfpb');if(pb)pb.style.transform=`scaleX(${Math.min(1,v.scrollTop/Math.max(1,v.scrollHeight-v.clientHeight))})`;clearTimeout(mhST);mhST=setTimeout(mhSavePos,350)};
+ M.last={b,n:+n,j:j||0,t:segs[segs.length-1]};save();
+ if(next&&!MHN[b][next.n])mhNode(b,next.n).catch(()=>{})}
+function mhSavePos(){const v=$('#mfv');if(!v||!mhCur||!R||R.id!=='mh')return;const y=v.getBoundingClientRect().top+v.querySelector('.mfbar').offsetHeight+20;let jj=0;for(const el of v.querySelectorAll('[data-j]')){if(el.getBoundingClientRect().top>y)break;jj=+el.dataset.j}
+ const M=mhS();M.last={...M.last,b:mhCur.b,n:mhCur.n,j:jj};M.pos[mhCur.n]=jj;save()}
+document.addEventListener('click',async e=>{const b=e.target.closest('[data-mhopen],[data-mhpart],[data-mhback],[data-mhg],[data-mhidx],[data-mhdl],[data-mhfav],[data-mhqx],[data-mhhome]');if(!b)return;const D=b.dataset;
+ if(D.mhhome){openMh();return}
+ if(D.mhopen){e.preventDefault();buzz();mhRead(D.mhb||mhB,+D.mhopen,+(D.mhj||0),D.mhhl||'');return}
+ if(D.mhpart){mhB=D.mhpart;mhG=-1;const y=$('#view').scrollTop;render();const t=$('#mhidx');if(t&&y>200)t.scrollIntoView();return}
+ if(D.mhback){mhG=-1;render();const t=$('#mhidx');if(t)t.scrollIntoView();return}
+ if(D.mhg){mhG=+D.mhg;$('#view').scrollTop=0;render();return}
+ if(D.mhidx){const t=$('#mhidx');if(t)t.scrollIntoView({behavior:'smooth'});return}
+ if(D.mhqx){mhQ='';const qi=$('#mhq');if(qi){qi.value='';qi.focus()}b.hidden=true;mhSearch('');return}
+ if(D.mhdl){if(mhDl)return;mhDl=1;b.classList.add('busy');const P=MH_PARTS.find(x=>x.b===mhB);try{await mhLoadAll(mhB,(a,n)=>{const s=$('#mhdls');if(s)s.textContent=`جارٍ الحفظ… ${ar(Math.round(a/n*100))}٪`});toast(`صار ${P.t} محفوظ بجهازك`);if(tab==='minhaj')render()}catch(err){toast('تعذّر الحفظ، تأكد من الإنترنت');const s=$('#mhdls');if(s)s.textContent='حاول مرة ثانية'}mhDl=0;b.classList.remove('busy');return}
+ if(D.mhfav&&mhCur){const M=mhS();const k=M.fav.findIndex(f=>f.n===mhCur.n);if(k>=0){M.fav.splice(k,1);toast('انشال من المحفوظات')}else{mhSavePos();M.fav.unshift({b:mhCur.b,n:mhCur.n,j:M.pos[mhCur.n]||0,t:mhCur.e.t.split('»').pop().trim()});toast('انحفظ بمحفوظاتي')}save();const on=k<0;b.classList.toggle('on',on);b.firstElementChild.className=`ph-${on?'fill':'duotone'} ph-bookmark-simple`;return}
+});
+
 /* أقسام الرئيسية: الأقسام اللي يفتح منها المستخدم كتباً أكثر تطلع أولاً كـ«مقترح لك» */
 function homeSecs(){const hit=S.secHit||{};const top=Object.entries(hit).filter(([k,n])=>n>=2&&SECTIONS.some(x=>x.k===k)).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([k])=>k);
  return [...top.map(k=>({...SECTIONS.find(x=>x.k===k),sug:1})),...SECTIONS.filter(x=>!top.includes(x.k))]}
@@ -1888,7 +2016,7 @@ function home(){
  const n=reading.length||1;
  return `<div class="top"><div class="logo"><img class="lgimg" src="icons/icon-192.png?v=2" alt="">مداد</div><span class="mut greet"><i class="ph-duotone ph-${h<12?'sun-horizon':h<18?'sun':'moon-stars'}"></i>${h<12?'صباح الخير':h<18?'نهارك سعيد':'مساء الخير'}</span></div>
  ${installCard()}
- <button class="qcard" data-act="qopen"><span class="qstar"><i class="ph-fill ph-book-open"></i></span><span><b>القرآن الكريم</b><small>١١٤ سورة · تلاوات مرتّلة ومجوّدة وتعليمية · تفاسير</small></span><i class="ph-bold ph-caret-left"></i></button><button class="qcard njcard" data-act="nahj"><span class="qstar"><i class="ph-fill ph-scroll"></i></span><span><b>نهج البلاغة</b><small>المتن · ٢٠ كتاباً بين شرح ودراسة مع شرح محتوى كل كتاب</small></span><i class="ph-bold ph-caret-left"></i></button><button class="qcard mfcard" data-mfhome="1"><span class="qstar"><i class="ph-fill ph-key"></i></span><span><b>مفاتيح الجنان</b><small>الأدعية · الزيارات · أعمال الشهور والأيام</small></span><i class="ph-bold ph-caret-left"></i></button>
+ <button class="qcard" data-act="qopen"><span class="qstar"><i class="ph-fill ph-book-open"></i></span><span><b>القرآن الكريم</b><small>١١٤ سورة · تلاوات مرتّلة ومجوّدة وتعليمية · تفاسير</small></span><i class="ph-bold ph-caret-left"></i></button><button class="qcard njcard" data-act="nahj"><span class="qstar"><i class="ph-fill ph-scroll"></i></span><span><b>نهج البلاغة</b><small>المتن · ٢٠ كتاباً بين شرح ودراسة مع شرح محتوى كل كتاب</small></span><i class="ph-bold ph-caret-left"></i></button><button class="qcard mfcard" data-mfhome="1"><span class="qstar"><i class="ph-fill ph-key"></i></span><span><b>مفاتيح الجنان</b><small>الأدعية · الزيارات · أعمال الشهور والأيام</small></span><i class="ph-bold ph-caret-left"></i></button><button class="qcard mhcard" data-mhhome="1"><span class="qstar"><i class="ph-fill ph-scales"></i></span><span><b>منهاج الصالحين</b><small>رسالة السيد السيستاني · مع البحث بالمسائل</small></span><i class="ph-bold ph-caret-left"></i></button>
  <button class="sbar" data-tab="explore" data-focus="1"><i class="ph-duotone ph-magnifying-glass"></i>ابحث في ${ar(enabled().length)} مصادر…</button>
  <div class="feat" id="feat">${hero}</div>
  ${n>1?`<div class="dots">${[...Array(Math.min(n,3))].map((_,i)=>`<i class="${i?'':'on'}"></i>`).join('')}</div>`:''}
@@ -1989,19 +2117,20 @@ $('#nav').addEventListener('transitionend',movePill);
 /* إبقاء الرئيسية حيّة: عند مغادرتها تُحفظ عناصرها كما هي، وعند الرجوع تُعاد فوراً بدل إعادة بنائها، ما لم تتغير بياناتها */
 const tabStore={};
 const homeKey=()=>{try{return JSON.stringify([S.lib,S.days[today()]||0,S.set.goal,S.set.theme,new Date().getHours(),Object.keys(S.books).length,Object.keys(S.fav||{}).length,(S.lists||[]).length,Object.keys(S.empty||{}).length,(S.src||[]).map(x=>x.on?1:0).join('')])}catch(e){return String(Math.random())}};
-const KEEP={explore:()=>[q,curTitle,curSec&&curSec.k,results.length,JSON.stringify(rstat),fLang,fSrc,fSort,fOpen,resN,Object.keys(S.empty||{}).length].join('|'),home:()=>homeKey(),nahj:()=>Object.keys(S.empty||{}).length+'|'+S.set.theme,mafatih:()=>mfPart+'|'+mfG+'|'+mfFamAll+'|'+JSON.stringify(S.mf||{})+'|'+new Date().getDay()};
+const KEEP={explore:()=>[q,curTitle,curSec&&curSec.k,results.length,JSON.stringify(rstat),fLang,fSrc,fSort,fOpen,resN,Object.keys(S.empty||{}).length].join('|'),home:()=>homeKey(),nahj:()=>Object.keys(S.empty||{}).length+'|'+S.set.theme,minhaj:()=>mhB+'|'+mhG+'|'+!!MHT[mhB]+'|'+JSON.stringify(S.mh||{}),mafatih:()=>mfPart+'|'+mfG+'|'+mfFamAll+'|'+JSON.stringify(S.mf||{})+'|'+new Date().getDay()};
 function render(){
  const v0=$('#view');let restored=false;
  if(KEEP[lastTab]&&tab!==lastTab&&v0.firstChild){const f=document.createDocumentFragment();while(v0.firstChild)f.appendChild(v0.firstChild);tabStore[lastTab]={f,key:KEEP[lastTab]()}}
  if(KEEP[tab]&&lastTab!==tab&&tabStore[tab]&&tabStore[tab].key===KEEP[tab]()){v0.textContent='';v0.appendChild(tabStore[tab].f);restored=true}
  if(KEEP[tab])delete tabStore[tab];
  wasRestored=restored;
- if(!restored)v0.innerHTML=({home,explore,library,sources,profile,nahj,mafatih})[tab]();
+ if(!restored)v0.innerHTML=({home,explore,library,sources,profile,nahj,mafatih,minhaj})[tab]();
  document.querySelectorAll('.nav button').forEach(b=>{const on=b.dataset.tab===tab;b.classList.toggle('on',on);b.firstElementChild.className=(on?'ph-fill ph-':'ph ph-')+b.dataset.ic});countUp();requestAnimationFrame(movePill);
  if(lastTab!==tab){const v=$('#view');try{if(window.__va)window.__va.cancel()}catch(e){}window.__va=v.animate([{opacity:.4},{opacity:1}],{duration:160,easing:'cubic-bezier(.2,.8,.2,1)'});lastTab=tab}
  if(tab==='home'){if(restored){document.querySelectorAll('[data-shelf-k]').forEach(e=>{const k=e.dataset.shelfK,r=document.getElementById('sh-'+k);if(shelfCache[k]&&r&&!r.classList.contains('rail'))fillShelf(SECTIONS.find(x=>x.k===k))})}else observeShelves()}
  if(tab==='nahj'){const sc=SECTIONS.find(x=>x.k==='nahj');if(sc&&(!restored||!$('#sh-nahj.rail')))loadShelf(sc)}
  if(tab==='mafatih'&&!restored)mfHook();
+ if(tab==='minhaj'&&!restored)mhHook();
  {const so=document.querySelector('.sscroll .on');if(so){const p=so.parentElement;p.scrollLeft=so.offsetLeft-(p.clientWidth-so.offsetWidth)/2}}
  if(tab==='explore'&&!restored&&(q||curTitle)){if(results.length||Object.keys(rstat).length)drawResults();else if(q)searchAll(q)}
  const qi=$('#q');if(qi){qi.onfocus=()=>{if(!fOpen){fOpen=true;const fp=$('.fpanel');if(fp)fp.classList.add('on');const fb=$('.fbtn');if(fb)fb.classList.add('on')}};qi.oninput=()=>{q=qi.value;curTitle='';clearTimeout(qt);if(!q.trim()){render();return}{const sc=$('.sortc');if(sc)sc.style.display=''}if(SCRIBD_RE.test(q)){const u=q.trim();q='';qi.value='';openScribd(u);return}qt=setTimeout(()=>searchAll(q.trim()),500)};qi.onkeydown=e=>{if(e.key==='Enter'&&q.trim()){clearTimeout(qt);S.recent=[q.trim(),...S.recent.filter(x=>x!==q.trim())].slice(0,6);save();searchAll(q.trim());qi.blur()}}}

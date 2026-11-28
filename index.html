@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#fbfafc" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#120e17" media="(prefers-color-scheme: dark)">
 <meta name="description" content="مداد — ابحث عن الكتب واقرأها، والأولوية للكتاب العربي">
@@ -538,7 +538,7 @@ html[dir=rtl] .npill{right:auto;left:0}
 .njbab{display:flex;flex-direction:column;align-items:center;gap:6px;margin:1.4em 0 1.1em;text-align:center}
 .njbab h3{font:700 1.6em/1.4 eKalem,Amiri;color:var(--gold);margin:0}.njbab small{font-size:.78em;opacity:.7;line-height:1.7;max-width:34em}
 .njbab i{display:block;width:120px;height:14px;background:radial-gradient(circle,var(--gold) 2.5px,transparent 3px) center/14px 14px repeat-x;opacity:.55}
-.njn{margin:1.5em 0 .7em;text-align:center}.njn span{display:inline-block;font:700 .78em/1 inherit;padding:6px 14px;border-radius:99px;border:1px solid color-mix(in srgb,var(--gold) 60%,transparent);color:var(--gold);background:color-mix(in srgb,var(--gold) 9%,transparent)}
+.njn{margin:1.5em 0 .7em;text-align:center}.njn span{display:inline-block;font-weight:700;font-size:.78em;line-height:1;padding:6px 14px;border-radius:99px;border:1px solid color-mix(in srgb,var(--gold) 60%,transparent);color:var(--gold);background:color-mix(in srgb,var(--gold) 9%,transparent)}
 .njn h4{font:700 1.08em/1.7 eKalem,Amiri;margin:.55em 0 0;color:inherit;opacity:.92}
 .njs{font:700 1em eKalem,Amiri;color:var(--gold);margin:1em 0 .4em;text-align:center;opacity:.9}
 .toc .tocsec{font-weight:700;color:var(--gold);border-top:1px solid var(--rline);margin-top:6px}
@@ -646,7 +646,7 @@ mark.sfind{animation:sfl 1.6s ease 2}@keyframes sfl{50%{background:color-mix(in 
 .lhead{display:flex;align-items:center;gap:12px;width:100%;padding:12px;text-align:start}.lhead>span:nth-child(2){flex:1;display:grid}.lhead b{font-size:16px}.lhead>i{transition:transform .3s;color:var(--mute)}.lcard.open .lhead>i{transform:rotate(180deg)}
 .lcov{display:flex;width:64px;height:52px;align-items:center}.lcov .cv{width:34px!important;height:48px!important;margin-inline-start:-16px;box-shadow:0 4px 10px rgb(0 0 0/.18);font-size:6px}.lcov .cv:first-child{margin:0}.lcov .cv b,.lcov .cv i{display:none}.lcov>i{font-size:30px;color:var(--gold)}
 .lbody{padding:0 12px 12px}.lbk{display:flex;align-items:center;gap:4px}.lbk .row{flex:1}.lacts{display:flex;gap:8px;margin-top:8px}
-.sugt{font:600 11px inherit;color:#fff;background:var(--gold);border-radius:99px;padding:2px 8px;vertical-align:middle}
+.sugt{font-weight:600;font-size:11px;color:#fff;background:var(--gold);border-radius:99px;padding:2px 8px;vertical-align:middle}
 .askin{width:100%;height:50px;border-radius:14px;border:1px solid var(--line);background:var(--soft);padding:0 14px;font:inherit;font-size:16px;color:var(--ink)}
 .sortc{align-items:center}.sortc>span{font-size:12.5px;white-space:nowrap;display:flex;align-items:center;gap:4px}
 
@@ -1119,7 +1119,7 @@ mark.sfind.cur{background:var(--gold);color:#2a1900;box-shadow:0 0 0 3px rgb(199
 .mfphd{padding:22px 20px 18px;margin-bottom:4px}.mfphd h1{font:700 28px/1.45 eKalem,Amiri;margin:6px 0 10px;color:#fff;text-wrap:balance}
 .mfpst{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}.mfpst span{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;padding:5px 12px;border-radius:99px;background:rgb(255 255 255/.08);border:1px solid rgb(233 196 106/.22)}.mfpst i{color:var(--mgold)}
 .mfsrch{position:relative;display:flex;align-items:center;gap:10px;margin-top:16px;min-height:54px;padding:0 16px;border-radius:18px;background:var(--surf,var(--card));border:1px solid var(--line2,var(--line));box-shadow:var(--sh1)}
-.mfsrch>i{font-size:22px;color:var(--gold)}.mfsrch input{flex:1;min-width:0;border:0;outline:0;background:none;font:500 16px/1.2 inherit;color:var(--ink)}.mfsrch input::-webkit-search-cancel-button{display:none}
+.mfsrch>i{font-size:22px;color:var(--gold)}.mfsrch input{flex:1;min-width:0;border:0;outline:0;background:none;font-weight:500;font-size:16px;line-height:1.2;color:var(--ink)}.mfsrch input::-webkit-search-cancel-button{display:none}
 .mfsrch button[hidden]{display:none}.mfsrch button{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;background:var(--soft);color:var(--mute)}
 .mfsrch:focus-within{border-color:color-mix(in srgb,var(--gold) 55%,transparent);box-shadow:0 0 0 4px color-mix(in srgb,var(--gold) 14%,transparent)}
 .mftoday{margin-top:16px;padding:14px;border-radius:22px;background:var(--surf,var(--card));border:1px solid var(--line2,var(--line));box-shadow:var(--sh1)}
@@ -1205,6 +1205,9 @@ em[class*=mfk-],.mffam [class*=mfk-] em,.mffam button em{color:var(--k);backgrou
 .nav{background:var(--card)!important}.sfill{background:var(--bg)!important}.greet{background:var(--surf,var(--card))!important}
 .rtop,.rbot,.mfbar{background:var(--rbg)!important}#fbar{background:var(--surf,var(--card))!important}.rfh,.rfch{background:var(--rbg,var(--bg))!important}
 .cv{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='34'%3E%3Cpath d='M17 3l4 8 8-4-4 8 8 4-8 4 4 8-8-4-4 8-4-8-8 4 4-8-8-4 8-4-4-8 8 4z' fill='rgb(255 240 200/.11)'/%3E%3C/svg%3E"),linear-gradient(160deg,var(--c1),var(--c2));background-size:34px 34px,auto}
+
+/* منع التكبير التلقائي بالآيفون عند الكتابة بخانات البحث: لازم الخط ١٦ بكسل أو أكثر */
+input:not([type=range]):not([type=checkbox]):not([type=radio]),textarea,select{font-size:max(16px,1em)!important}
 </style>
 <link rel="stylesheet" href="fonts/ph.css">
 </head>
@@ -1710,7 +1713,7 @@ function nahj(){
   <div class="njstats"><button data-njgo="khutab"><b data-count="241">٠</b><span>خطبة</span></button><button data-njgo="kutub"><b data-count="79">٠</b><span>كتاباً ورسالة</span></button><button data-njgo="hikam"><b data-count="480">٠</b><span>حكمة</span></button></div>
   <div class="njacts"><button class="btn" data-njread="1"><i class="ph-fill ph-book-open-text"></i> اقرأ المتن</button><button class="btn alt" data-act="njall"><i class="ph-bold ph-books"></i> كل الكتب</button></div></section>
  <div class="njhikma"><i class="ph-fill ph-quotes"></i><div class="njhh"><span><i class="ph-duotone ph-sun-horizon"></i>حكمة اليوم</span><small id="njhr">الحكمة ${ar(njItem()[1])}</small></div><p id="njh">${esc(njItem()[0])}</p><div class="njha"><button data-act="njnext" aria-label="حكمة أخرى"><i class="ph-bold ph-arrows-clockwise"></i></button><button data-act="njcopy" aria-label="نسخ"><i class="ph-bold ph-copy"></i></button><button data-act="njtoday" id="njhtd" ${njOff?'':'hidden'} aria-label="حكمة اليوم"><i class="ph-bold ph-calendar-check"></i></button><button class="njread" data-act="njhread"><i class="ph-fill ph-book-open-text"></i>اقرأها في الكتاب</button></div></div>
- <h2 style="margin-top:22px">دليل الكتب <small class="mut" style="font:500 13px inherit">${ar(list.length)} كتاباً</small></h2>
+ <h2 style="margin-top:22px">دليل الكتب <small class="mut" style="font-weight:500;font-size:13px">${ar(list.length)} كتاباً</small></h2>
  <div class="chips njchips">${NJ_TYPES.map(([k,l,ic])=>`<button class="chip ${njF===k?'on':''}" data-njf="${k}"><i class="ph${njF===k?'-fill':''} ph-${ic}"></i>${l}</button>`).join('')}</div>
  <div class="njlist">${list.map((x,i)=>`<article class="njc ${njOpen===x.id?'open':''} njt-${x.ty}" style="--d:${i*40}ms">
   <button class="njh" data-njo="${x.id}" aria-expanded="${njOpen===x.id}"><em><i class="ph-duotone ph-${x.ic}"></i></em><span><b>${esc(x.t)}${x.star?' <i class="ph-fill ph-star njstar"></i>':''}</b><small>${esc(x.a)}</small><span class="njtags"><i>${T[x.ty][1]}</i><i>${esc(x.era)}</i><i>${esc(x.v)}</i></span></span><i class="ph-bold ph-caret-down njcar"></i></button>
@@ -1765,7 +1768,7 @@ function mafatih(){
   <div class="mftiles">${dua?`<button data-mfopen="${dua.i}"><em class="mfk-dua"><i class="ph-duotone ph-hands-praying"></i></em><span><small>دعاء اليوم</small><b>دعاء يوم ${MF_DAYS[dw]}</b></span></button>`:''}
   ${ziy[0]?`<button data-mfopen="${ziy[0].i}"><em class="mfk-ziy"><i class="ph-duotone ph-mosque"></i></em><span><small>زيارة اليوم</small><b>${MF_ZIY[dw]}</b></span></button>`:''}
   ${spec[0]?`<button class="wide" data-mfopen="${spec[0].i}" data-mfj="${spec[0].j}"><em class="mfk-mun"><i class="ph-duotone ph-moon-stars"></i></em><span><small>${spec[1]}</small><b>${esc(spec[0].t)}</b></span><i class="ph-bold ph-caret-left"></i></button>`:''}</div></section>
- ${M.fav.length?`<section><h2><span><i class="ph-duotone ph-bookmark-simple" style="color:var(--gold)"></i> محفوظاتي <small class="mut" style="font:500 13px inherit">${ar(M.fav.length)}</small></span></h2><div class="chips mffavs">${M.fav.map(f=>`<button class="chip" data-mfopen="${f.i}" data-mfj="${f.j||0}"><i class="ph-fill ph-bookmark-simple"></i>${esc(f.t)}</button>`).join('')}</div></section>`:''}
+ ${M.fav.length?`<section><h2><span><i class="ph-duotone ph-bookmark-simple" style="color:var(--gold)"></i> محفوظاتي <small class="mut" style="font-weight:500;font-size:13px">${ar(M.fav.length)}</small></span></h2><div class="chips mffavs">${M.fav.map(f=>`<button class="chip" data-mfopen="${f.i}" data-mfj="${f.j||0}"><i class="ph-fill ph-bookmark-simple"></i>${esc(f.t)}</button>`).join('')}</div></section>`:''}
  <section><h2><span><i class="ph-duotone ph-star-four" style="color:var(--gold)"></i> الأكثر قراءة</span>${MFI.fam.length>8?`<button data-mffam="1">${mfFamAll?'أقل':'عرض الكل'}<i class="ph-bold ph-caret-${mfFamAll?'up':'left'}"></i></button>`:''}</h2>
  <div class="mffam">${fam.map((f,n)=>`<button class="mfk-${f.k}" style="--d:${n*35}ms" data-mfopen="${f.i}" data-mfj="${f.j}"><em><i class="ph-duotone ph-${(MFK[f.k]||MFK.txt)[1]}"></i></em><b>${esc(f.t)}</b><small>${(MFK[f.k]||MFK.txt)[0]}</small></button>`).join('')}</div></section>
  <section id="mfidx"><h2><span><i class="ph-duotone ph-books" style="color:var(--gold)"></i> أبواب الكتاب</span></h2>
@@ -1846,7 +1849,7 @@ function homeSecs(){const hit=S.secHit||{};const top=Object.entries(hit).filter(
  return [...top.map(k=>({...SECTIONS.find(x=>x.k===k),sug:1})),...SECTIONS.filter(x=>!top.includes(x.k))]}
 function localRail(kind){const ids=kind==='want'?Object.entries(S.lib).filter(([id,e])=>e.s==='want'&&S.books[id]).sort((a,b)=>(b[1].last||0)-(a[1].last||0)).map(([id])=>id):Object.entries(S.fav).filter(([id])=>S.books[id]).sort((a,b)=>b[1]-a[1]).map(([id])=>id);
  if(!ids.length)return '';const T=kind==='want'?['bookmark-simple','قائمة القراءة','want']:['heart','المفضلة','fav'];
- return `<section><h2><span><i class="ph-duotone ph-${T[0]}" style="color:var(--gold)"></i> ${T[1]} <small class="mut" style="font:500 13px inherit">${ar(ids.length)}</small></span><button data-golib="${T[2]}">عرض الكل<i class="ph-bold ph-caret-left"></i></button></h2><div class="rail">${ids.slice(0,12).map(id=>card(S.books[id])).join('')}</div></section>`}
+ return `<section><h2><span><i class="ph-duotone ph-${T[0]}" style="color:var(--gold)"></i> ${T[1]} <small class="mut" style="font-weight:500;font-size:13px">${ar(ids.length)}</small></span><button data-golib="${T[2]}">عرض الكل<i class="ph-bold ph-caret-left"></i></button></h2><div class="rail">${ids.slice(0,12).map(id=>card(S.books[id])).join('')}</div></section>`}
 function home(){
  const reading=Object.entries(S.lib).filter(([id,e])=>e.s==='reading'&&S.books[id]).sort((a,b)=>(b[1].last||0)-(a[1].last||0)).map(([id])=>S.books[id]);
  const m=S.days[today()]||0,g=S.set.goal,fr=Math.min(1,m/g),C=2*Math.PI*29,h=new Date().getHours();

@@ -1253,6 +1253,17 @@ input:not([type=range]):not([type=checkbox]):not([type=radio]),textarea,select{f
 .mfpc b{line-height:1.75!important;padding-top:.12em}
 .mhhero p{margin-top:10px!important}
 .mhhero ~ * .mfnav button,#view .mfnav button{background:var(--surf,var(--card));color:var(--ink);border-color:var(--line2,var(--line))}
+
+.mffind{position:sticky;top:52px;z-index:3;display:flex;align-items:center;gap:6px;padding:8px 12px;background:var(--rbg);border-bottom:1px solid var(--rline)}
+.mffind[hidden]{display:none}
+.mffind>i{font-size:19px;color:var(--gold)}
+.mffind input{flex:1;min-width:0;height:38px;padding:0 12px;border-radius:12px;border:1px solid var(--rline);background:color-mix(in srgb,var(--rink) 5%,transparent);color:var(--rink);outline:0}
+.mffind input:focus{border-color:color-mix(in srgb,var(--gold) 60%,transparent)}
+.mffind span{min-width:36px;text-align:center;font-size:13px;color:var(--rmute)}
+.mffind button{flex:none;height:36px;min-width:36px;padding:0 8px;border-radius:11px;display:grid;place-items:center;color:var(--rink);background:color-mix(in srgb,var(--rink) 6%,transparent);font-size:13px}
+.mffind .mffall{color:var(--gold);font-weight:600}
+mark.mff{background:color-mix(in srgb,var(--gold) 28%,transparent);color:inherit;border-radius:4px;padding:0 1px}
+mark.mff.cur{background:var(--gold);color:#1a1000;box-shadow:0 0 0 2px color-mix(in srgb,var(--gold) 40%,transparent)}
 </style>
 <link rel="stylesheet" href="fonts/ph.css">
 </head>
@@ -1865,8 +1876,8 @@ async function mfRead(i,j,hl){const I=await mfIndex().catch(()=>null);if(!I||!I.
  if(grp)body+='</div>';
  const si=I.seq.indexOf(i),prev=I.it[I.seq[si-1]],next=I.it[I.seq[si+1]];const fav=M.fav.some(f=>f.i===i);
  const [pl]=mfSplit(p.t),[cl,cd]=mfSplit(ch.t);
- $('#mfv').innerHTML=`<div class="mfbar"><button data-mffs="-1" aria-label="تصغير الخط"><i class="ph-bold ph-text-aa"></i><small>−</small></button><button data-mffs="1" aria-label="تكبير الخط"><i class="ph-bold ph-text-aa"></i><small>+</small></button><button data-mffont="1" aria-label="نوع الخط"><i class="ph-duotone ph-text-t"></i><span id="mffn">${M.font==='Amiri'?'أميري':M.font==='Noto Naskh Arabic'?'نسخ':'كالم'}</span></button><span class="sp"></span><button data-mffav="1" class="${fav?'on':''}" aria-label="حفظ"><i class="ph-${fav?'fill':'duotone'} ph-bookmark-simple"></i></button><button data-mfcopy="1" aria-label="نسخ"><i class="ph-duotone ph-copy"></i></button></div>
- <div class="mfprog"><b id="mfpb"></b></div>
+ $('#mfv').innerHTML=`<div class="mfbar"><button data-mffs="-1" aria-label="تصغير الخط"><i class="ph-bold ph-text-aa"></i><small>−</small></button><button data-mffs="1" aria-label="تكبير الخط"><i class="ph-bold ph-text-aa"></i><small>+</small></button><button data-mffont="1" aria-label="نوع الخط"><i class="ph-duotone ph-text-t"></i><span id="mffn">${M.font==='Amiri'?'أميري':M.font==='Noto Naskh Arabic'?'نسخ':'كالم'}</span></button><span class="sp"></span><button data-mffind="1" aria-label="بحث بالصفحة"><i class="ph-bold ph-magnifying-glass"></i></button><button data-mffav="1" class="${fav?'on':''}" aria-label="حفظ"><i class="ph-${fav?'fill':'duotone'} ph-bookmark-simple"></i></button><button data-mfcopy="1" aria-label="نسخ"><i class="ph-duotone ph-copy"></i></button></div>
+ <div class="mffind" id="mffind" hidden><i class="ph-duotone ph-magnifying-glass"></i><input id="mffq" type="search" enterkeyhint="search" autocomplete="off" placeholder="ابحث بهذه الصفحة…"><span id="mffc"></span><button data-mffn="1" aria-label="السابق"><i class="ph-bold ph-caret-up"></i></button><button data-mffn="-1" aria-label="التالي"><i class="ph-bold ph-caret-down"></i></button><button data-mffx="1" aria-label="إغلاق"><i class="ph-bold ph-x"></i></button></div><div class="mfprog"><b id="mfpb"></b></div>
  <div class="mfwrap" style="--mfs:${M.fs}px;--mff:'${M.font}'">
  <header class="mfhead"><span class="mfchip mfk-${x.k}"><i class="ph-duotone ph-${k[1]}"></i>${k[0]}</span><h1>${esc(mfClean(x.t))}</h1><p>${esc(pl||p.g)} · ${esc(cl||cd.slice(0,40))}</p><div class="mfsep"><i></i><i class="ph-fill ph-star-four"></i><i></i></div></header>
  <article class="mfart">${body||'<p class="mfn">لا يوجد نص.</p>'}</article>
@@ -1975,8 +1986,8 @@ async function mhRead(b,n,j,hl){let T;try{T=await mhToc(b)}catch(e){toast('تع�
   if(/^(الأوّل|الثاني|الثالث|الرابع|الخامس|السادس|السابع|الثامن|التاسع|العاشر)\s*[:：]/.test(t)&&t.length<200)return `<h4 class="mhh" data-j="${i}">${fmt(t)}</h4>`;
   return `<p class="mhp" data-j="${i}">${fmt(t)}</p>`}).join('');
  const prev=T.toc[k-1],next=T.toc[k+1];const fav=M.fav.some(f=>f.n===+n);const segs=e.t.split('»').map(s=>s.trim());
- $('#mfv').innerHTML=`<div class="mfbar"><button data-mffs="-1" aria-label="تصغير الخط"><i class="ph-bold ph-text-aa"></i><small>−</small></button><button data-mffs="1" aria-label="تكبير الخط"><i class="ph-bold ph-text-aa"></i><small>+</small></button><span class="sp"></span><button data-mhfav="1" class="${fav?'on':''}" aria-label="حفظ"><i class="ph-${fav?'fill':'duotone'} ph-bookmark-simple"></i></button><button data-mfcopy="1" aria-label="نسخ"><i class="ph-duotone ph-copy"></i></button></div>
- <div class="mfprog"><b id="mfpb"></b></div>
+ $('#mfv').innerHTML=`<div class="mfbar"><button data-mffs="-1" aria-label="تصغير الخط"><i class="ph-bold ph-text-aa"></i><small>−</small></button><button data-mffs="1" aria-label="تكبير الخط"><i class="ph-bold ph-text-aa"></i><small>+</small></button><span class="sp"></span><button data-mffind="1" aria-label="بحث بالصفحة"><i class="ph-bold ph-magnifying-glass"></i></button><button data-mhfav="1" class="${fav?'on':''}" aria-label="حفظ"><i class="ph-${fav?'fill':'duotone'} ph-bookmark-simple"></i></button><button data-mfcopy="1" aria-label="نسخ"><i class="ph-duotone ph-copy"></i></button></div>
+ <div class="mffind" id="mffind" hidden><i class="ph-duotone ph-magnifying-glass"></i><input id="mffq" type="search" enterkeyhint="search" autocomplete="off" placeholder="ابحث بهذه الصفحة…"><span id="mffc"></span><button data-mffn="1" aria-label="السابق"><i class="ph-bold ph-caret-up"></i></button><button data-mffn="-1" aria-label="التالي"><i class="ph-bold ph-caret-down"></i></button><button class="mffall" data-mhall="1">بكل الجزء</button><button data-mffx="1" aria-label="إغلاق"><i class="ph-bold ph-x"></i></button></div><div class="mfprog"><b id="mfpb"></b></div>
  <div class="mfwrap" style="--mfs:${MF.fs}px;--mff:'${MF.font}'">
  <header class="mfhead"><span class="mfchip mfk-sal"><i class="ph-duotone ph-scales"></i>${P.t}${segs.length>1?' · '+esc(segs[0]):''}</span><h1>${esc(segs[segs.length-1])}</h1><p>منهاج الصالحين · السيد السيستاني</p><div class="mfsep"><i></i><i class="ph-fill ph-star-four"></i><i></i></div></header>
  <article class="mfart mhart">${body||'<p class="mhp">هذا العنوان مدخل لما بعده، انتقل للتالي.</p>'}</article>
@@ -2000,6 +2011,20 @@ document.addEventListener('click',async e=>{const b=e.target.closest('[data-mhop
  if(D.mhqx){mhQ='';const qi=$('#mhq');if(qi){qi.value='';qi.focus()}b.hidden=true;mhSearch('');return}
  if(D.mhdl){if(mhDl)return;mhDl=1;b.classList.add('busy');const P=MH_PARTS.find(x=>x.b===mhB);try{await mhLoadAll(mhB,(a,n)=>{const s=$('#mhdls');if(s)s.textContent=`جارٍ الحفظ… ${ar(Math.round(a/n*100))}٪`});toast(`صار ${P.t} محفوظ بجهازك`);if(tab==='minhaj')render()}catch(err){toast('تعذّر الحفظ، تأكد من الإنترنت');const s=$('#mhdls');if(s)s.textContent='حاول مرة ثانية'}mhDl=0;b.classList.remove('busy');return}
  if(D.mhfav&&mhCur){const M=mhS();const k=M.fav.findIndex(f=>f.n===mhCur.n);if(k>=0){M.fav.splice(k,1);toast('انشال من المحفوظات')}else{mhSavePos();M.fav.unshift({b:mhCur.b,n:mhCur.n,j:M.pos[mhCur.n]||0,t:mhCur.e.t.split('»').pop().trim()});toast('انحفظ بمحفوظاتي')}save();const on=k<0;b.classList.toggle('on',on);b.firstElementChild.className=`ph-${on?'fill':'duotone'} ph-bookmark-simple`;return}
+});
+
+/* البحث داخل صفحة القارئ (مفاتيح الجنان ومنهاج الصالحين) */
+let mffOrig=null,mffI=0,mffT=0;
+function mffRun(q){const art=document.querySelector('#mfv .mfart');if(!art)return;if(mffOrig===null)mffOrig=art.innerHTML;const c=$('#mffc');
+ const re=mfN(q).trim().length>=1?mfRe(q):null;art.innerHTML=re?mffOrig.replace(/>([^<]+)</g,(m,t)=>'>'+t.replace(re,x=>`<mark class="mff">${x}</mark>`)+'<'):mffOrig;
+ const ms=art.querySelectorAll('mark.mff');mffI=0;if(c)c.textContent=re?(ms.length?`${ar(1)}/${ar(ms.length)}`:'٠'):'';if(ms.length)mffGo(0)}
+function mffGo(d){const ms=document.querySelectorAll('#mfv mark.mff');if(!ms.length)return;mffI=(mffI+d+ms.length)%ms.length;ms.forEach(m=>m.classList.remove('cur'));const m=ms[mffI];m.classList.add('cur');
+ const v=$('#mfv'),top=v.querySelector('.mfbar').offsetHeight+($('#mffind')?.offsetHeight||0)+30;v.scrollTop+=m.getBoundingClientRect().top-v.getBoundingClientRect().top-top;const c=$('#mffc');if(c)c.textContent=`${ar(mffI+1)}/${ar(ms.length)}`}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-mffind],[data-mffn],[data-mffx],[data-mhall]');if(!b)return;const D=b.dataset,f=$('#mffind');
+ if(D.mffind){if(!f)return;f.hidden=!f.hidden;if(!f.hidden){mffOrig=null;const qi=$('#mffq');qi.value='';$('#mffc').textContent='';qi.focus();qi.oninput=()=>{clearTimeout(mffT);mffT=setTimeout(()=>mffRun(qi.value),220)};qi.onkeydown=ev=>{if(ev.key==='Enter'){ev.preventDefault();mffGo(ev.shiftKey?-1:1)}}}else{if(mffOrig!==null){const art=document.querySelector('#mfv .mfart');if(art)art.innerHTML=mffOrig}mffOrig=null}return}
+ if(D.mffn){mffGo(+D.mffn*-1);return}
+ if(D.mffx){if(mffOrig!==null){const art=document.querySelector('#mfv .mfart');if(art)art.innerHTML=mffOrig}mffOrig=null;if(f)f.hidden=true;return}
+ if(D.mhall){const q=($('#mffq')||{}).value||'';if(!q.trim())return;mhQ=q;const rc=document.querySelector('[data-act=rclose]');if(rc)rc.click();setTimeout(()=>{tab='minhaj';mhG=-1;$('#view').scrollTop=0;render()},60)}
 });
 
 /* أقسام الرئيسية: الأقسام اللي يفتح منها المستخدم كتباً أكثر تطلع أولاً كـ«مقترح لك» */

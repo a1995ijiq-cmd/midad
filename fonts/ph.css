@@ -32,6 +32,7 @@
 .ph.ph-caret-down:before { content: "\e136"; }
 .ph.ph-caret-left:before { content: "\e138"; }
 .ph.ph-caret-right:before { content: "\e13a"; }
+.ph.ph-caret-up:before { content: "\e13c"; }
 .ph.ph-cat:before { content: "\e748"; }
 .ph.ph-chalkboard-teacher:before { content: "\e600"; }
 .ph.ph-chart-bar:before { content: "\e150"; }
@@ -233,6 +234,7 @@
 .ph-bold.ph-caret-down:before { content: "\e136"; }
 .ph-bold.ph-caret-left:before { content: "\e138"; }
 .ph-bold.ph-caret-right:before { content: "\e13a"; }
+.ph-bold.ph-caret-up:before { content: "\e13c"; }
 .ph-bold.ph-cat:before { content: "\e748"; }
 .ph-bold.ph-chalkboard-teacher:before { content: "\e600"; }
 .ph-bold.ph-chart-bar:before { content: "\e150"; }
@@ -434,6 +436,7 @@
 .ph-fill.ph-caret-down:before { content: "\e136"; }
 .ph-fill.ph-caret-left:before { content: "\e138"; }
 .ph-fill.ph-caret-right:before { content: "\e13a"; }
+.ph-fill.ph-caret-up:before { content: "\e13c"; }
 .ph-fill.ph-cat:before { content: "\e748"; }
 .ph-fill.ph-chalkboard-teacher:before { content: "\e600"; }
 .ph-fill.ph-chart-bar:before { content: "\e150"; }
@@ -667,6 +670,8 @@
 .ph-duotone.ph-caret-left:after { content: "\e139"; margin-left: -1em; }
 .ph-duotone.ph-caret-right:before { content: "\e13a"; opacity: 0.2; }
 .ph-duotone.ph-caret-right:after { content: "\e13b"; margin-left: -1em; }
+.ph-duotone.ph-caret-up:before { content: "\e13c"; opacity: 0.2; }
+.ph-duotone.ph-caret-up:after { content: "\e13d"; margin-left: -1em; }
 .ph-duotone.ph-cat:before { content: "\e748"; opacity: 0.2; }
 .ph-duotone.ph-cat:after { content: "\e749"; margin-left: -1em; }
 .ph-duotone.ph-chalkboard-teacher:before { content: "\e600"; opacity: 0.2; }

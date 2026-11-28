@@ -1209,6 +1209,12 @@ input:not([type=range]):not([type=checkbox]):not([type=radio]),textarea,select{f
 
 /* غلاف الصورة يظهر فقط بعد تحميله، وقبلها يبقى عنوان الكتاب ظاهراً */
 .cv img{opacity:0;background:none!important;transition:opacity .3s}.cv img.ok{opacity:1}
+
+/* إطار اسم السورة: توسيط حقيقي للعنوان بين الشارتين، واسم السورة مشكول بخط المصحف */
+.qframe{grid-template-columns:1fr auto 1fr!important;min-height:64px;padding:10px 20px!important}
+.qframe .qfm{justify-self:start;line-height:1.5;white-space:nowrap}.qframe .qfm:last-of-type{justify-self:end}
+.qframe h3{font:400 clamp(21px,6.8vw,30px)/1 "Amiri Quran","Amiri",serif!important;padding:.42em 4px .18em;letter-spacing:0;color:var(--qgold2);text-shadow:0 2px 10px rgb(0 0 0/.35);white-space:nowrap}
+@media (max-width:360px){.qframe h3{font-size:25px!important}.qframe{padding:10px 14px!important}}
 </style>
 <link rel="stylesheet" href="fonts/ph.css">
 </head>
@@ -2414,13 +2420,14 @@ function quranList(f){
  <div class="qgrid" id="qgrid">${cards}</div>`;
  const qf=$('#qf');qf.oninput=()=>quranList(qf.value);
 }
+const QSV='الْفَاتِحَةِ|الْبَقَرَةِ|آلِ عِمْرَانَ|النِّسَاءِ|الْمَائِدَةِ|الْأَنْعَامِ|الْأَعْرَافِ|الْأَنْفَالِ|التَّوْبَةِ|يُونُسَ|هُودٍ|يُوسُفَ|الرَّعْدِ|إِبْرَاهِيمَ|الْحِجْرِ|النَّحْلِ|الْإِسْرَاءِ|الْكَهْفِ|مَرْيَمَ|طه|الْأَنْبِيَاءِ|الْحَجِّ|الْمُؤْمِنُونَ|النُّورِ|الْفُرْقَانِ|الشُّعَرَاءِ|النَّمْلِ|الْقَصَصِ|الْعَنْكَبُوتِ|الرُّومِ|لُقْمَانَ|السَّجْدَةِ|الْأَحْزَابِ|سَبَإٍ|فَاطِرٍ|يس|الصَّافَّاتِ|ص|الزُّمَرِ|غَافِرٍ|فُصِّلَتْ|الشُّورَىٰ|الزُّخْرُفِ|الدُّخَانِ|الْجَاثِيَةِ|الْأَحْقَافِ|مُحَمَّدٍ|الْفَتْحِ|الْحُجُرَاتِ|ق|الذَّارِيَاتِ|الطُّورِ|النَّجْمِ|الْقَمَرِ|الرَّحْمَٰنِ|الْوَاقِعَةِ|الْحَدِيدِ|الْمُجَادَلَةِ|الْحَشْرِ|الْمُمْتَحَنَةِ|الصَّفِّ|الْجُمُعَةِ|الْمُنَافِقُونَ|التَّغَابُنِ|الطَّلَاقِ|التَّحْرِيمِ|الْمُلْكِ|الْقَلَمِ|الْحَاقَّةِ|الْمَعَارِجِ|نُوحٍ|الْجِنِّ|الْمُزَّمِّلِ|الْمُدَّثِّرِ|الْقِيَامَةِ|الْإِنْسَانِ|الْمُرْسَلَاتِ|النَّبَإِ|النَّازِعَاتِ|عَبَسَ|التَّكْوِيرِ|الِانْفِطَارِ|الْمُطَفِّفِينَ|الِانْشِقَاقِ|الْبُرُوجِ|الطَّارِقِ|الْأَعْلَىٰ|الْغَاشِيَةِ|الْفَجْرِ|الْبَلَدِ|الشَّمْسِ|اللَّيْلِ|الضُّحَىٰ|الشَّرْحِ|التِّينِ|الْعَلَقِ|الْقَدْرِ|الْبَيِّنَةِ|الزَّلْزَلَةِ|الْعَادِيَاتِ|الْقَارِعَةِ|التَّكَاثُرِ|الْعَصْرِ|الْهُمَزَةِ|الْفِيلِ|قُرَيْشٍ|الْمَاعُونِ|الْكَوْثَرِ|الْكَافِرُونَ|النَّصْرِ|الْمَسَدِ|الْإِخْلَاصِ|الْفَلَقِ|النَّاسِ'.split('|');
 async function quranSurah(ch,target){
  const v=$('#qview');const c=QS[ch-1];if(!c||!v)return;document.querySelectorAll('.qresume').forEach(x=>x.remove());if(S.quran.ch!==ch||target==null)S.quran.ay=target||0;S.quran.ch=ch;qPosReady=false;save();
  qLastK='';if(!v.dataset.fl){v.dataset.fl=1;const us=()=>{qUserScroll=Date.now()};v.addEventListener('touchmove',us,{passive:true});v.addEventListener('wheel',us,{passive:true})}
  v.innerHTML=`<div class="qbar"><button data-act="qlist"><i class="ph-bold ph-list-bullets"></i> السور</button><b>سورة ${esc(c.name_arabic)}</b><span style="display:flex;gap:4px"><button data-act="rfind" aria-label="بحث في القرآن"><i class="ph-bold ph-magnifying-glass"></i></button><button data-act="qdl" data-ch="${ch}" aria-label="تنزيل التلاوة">${qDlHas(ch)?'<i class="ph-fill ph-check-circle"></i>':'<i class="ph-bold ph-download-simple"></i>'}</button><button data-act="qrec" aria-label="القارئ"><i class="ph-duotone ph-microphone-stage"></i></button><button data-act="qplay" id="qplay" aria-label="استماع"><i class="ph-fill ph-play-circle"></i></button></span></div><div class="qtext"><div class="lstate"><span class="spin">◌</span></div></div>`;
  try{const j=await qget(`/quran/verses/uthmani?chapter_number=${ch}`,'q:v:'+ch);const vs=j.verses||[];
   const bism=ch!==1&&ch!==9?'<div class="qbism">بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</div>':'';
-  v.querySelector('.qtext').innerHTML=`<div class="qframe"><span class="qfc"></span><span class="qfm">${c.revelation_place==='makkah'?'مكية':'مدنية'}</span><h3>سورة ${esc(c.name_arabic)}</h3><span class="qfm">${qd(c.verses_count)} آية</span><span class="qfc r"></span></div>${bism}<p class="qp">${vs.map(x=>{const n=+x.verse_key.split(':')[1];return `<span class="qa${target===n?' on':''}" data-qa="${n}" data-k="${x.verse_key}">${esc(x.text_uthmani)} <i class="qnum">﴿${qd(n)}﴾</i></span>`}).join(' ')}</p>
+  v.querySelector('.qtext').innerHTML=`<div class="qframe"><span class="qfc"></span><span class="qfm">${c.revelation_place==='makkah'?'مكية':'مدنية'}</span><h3>${QSV[c.id-1]?'سُورَةُ '+QSV[c.id-1]:'سورة '+esc(c.name_arabic)}</h3><span class="qfm">${qd(c.verses_count)} آية</span><span class="qfc r"></span></div>${bism}<p class="qp">${vs.map(x=>{const n=+x.verse_key.split(':')[1];return `<span class="qa${target===n?' on':''}" data-qa="${n}" data-k="${x.verse_key}">${esc(x.text_uthmani)} <i class="qnum">﴿${qd(n)}﴾</i></span>`}).join(' ')}</p>
   <div class="qend">${QSTAR}<span>نهاية سورة ${esc(c.name_arabic)}</span>${QSTAR}</div><div class="qnav">${ch>1?`<button class="qnb" data-qch="${ch-1}"><i class="ph-bold ph-caret-right"></i><span><small>السورة السابقة</small><b>${esc(QS[ch-2].name_arabic)}</b></span></button>`:'<span></span>'}${ch<114?`<button class="qnb nx" data-qch="${ch+1}"><span><small>السورة التالية</small><b>${esc(QS[ch].name_arabic)}</b></span><i class="ph-bold ph-caret-left"></i></button>`:''}</div>`;
   const on=v.querySelector('.qa.on');if(on)setTimeout(()=>on.scrollIntoView({block:'center'}),80);else v.scrollTop=0;
   setTimeout(()=>{qPosReady=true},700);

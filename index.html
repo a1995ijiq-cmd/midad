@@ -1223,6 +1223,13 @@ input:not([type=range]):not([type=checkbox]):not([type=radio]),textarea,select{f
 
 /* أيقونة شاشة البداية ثابتة بدون حركة */
 .splash .slogo,.splash .slogo *{animation:none!important}
+
+/* تأجيل رسم أجزاء الرئيسية البعيدة عن الشاشة (أقسام صغيرة فقط، لا حاويات طويلة) */
+#view .cats{content-visibility:auto;contain-intrinsic-size:auto 420px;padding:6px 8px 18px;margin:-6px -8px -18px}
+#view [data-shelf-k]{content-visibility:auto;contain-intrinsic-size:auto 330px}
+
+/* محتوى بطاقات نهج البلاغة المطوية ما ينحسب ولا ينرسم إلا عند فتحها */
+.njc:not(.open) .njb>div{content-visibility:hidden}
 </style>
 <link rel="stylesheet" href="fonts/ph.css">
 </head>
@@ -1972,27 +1979,38 @@ addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferred=e;if(tab=
 addEventListener('appinstalled',()=>{deferred=null;toast('تم تثبيت مداد ✓');render()});
 
 let qt=0;
-function countUp(){document.querySelectorAll('[data-count]').forEach(el=>{const to=+el.dataset.count;const t0=performance.now();const f=t=>{const k=Math.min(1,(t-t0)/900);el.textContent=ar(Math.round(to*(1-Math.pow(1-k,3))));if(k<1)requestAnimationFrame(f)};requestAnimationFrame(f)})}
+/* الأرقام تظهر بقيمتها مباشرة (العدّ المتحرك كان يعيد ترتيب الصفحة كل إطار) */
+function countUp(){document.querySelectorAll('[data-count]').forEach(el=>{el.textContent=ar(+el.dataset.count);el.removeAttribute('data-count')})}
 const buzz=()=>{try{navigator.vibrate&&navigator.vibrate(8)}catch(e){}};
 let lastTab=null;
 function movePill(){const a=document.querySelector('.nav button.on'),p=$('#npill');if(!a||!p)return;p.style.width=a.offsetWidth+'px';p.style.transform=`translateX(${a.offsetLeft}px)`;p.style.top=a.offsetTop+'px';p.style.height=a.offsetHeight+'px'}
 addEventListener('resize',movePill);
 $('#nav').addEventListener('transitionend',movePill);
+/* إبقاء الرئيسية حيّة: عند مغادرتها تُحفظ عناصرها كما هي، وعند الرجوع تُعاد فوراً بدل إعادة بنائها، ما لم تتغير بياناتها */
+const tabStore={};
+const homeKey=()=>{try{return JSON.stringify([S.lib,S.days[today()]||0,S.set.goal,S.set.theme,new Date().getHours(),Object.keys(S.books).length,Object.keys(S.fav||{}).length,(S.lists||[]).length,Object.keys(S.empty||{}).length,(S.src||[]).map(x=>x.on?1:0).join('')])}catch(e){return String(Math.random())}};
+const KEEP={explore:()=>[q,curTitle,curSec&&curSec.k,results.length,JSON.stringify(rstat),fLang,fSrc,fSort,fOpen,resN,Object.keys(S.empty||{}).length].join('|'),home:()=>homeKey(),nahj:()=>Object.keys(S.empty||{}).length+'|'+S.set.theme,mafatih:()=>mfPart+'|'+mfG+'|'+mfFamAll+'|'+JSON.stringify(S.mf||{})+'|'+new Date().getDay()};
 function render(){
- $('#view').innerHTML=({home,explore,library,sources,profile,nahj,mafatih})[tab]();
+ const v0=$('#view');let restored=false;
+ if(KEEP[lastTab]&&tab!==lastTab&&v0.firstChild){const f=document.createDocumentFragment();while(v0.firstChild)f.appendChild(v0.firstChild);tabStore[lastTab]={f,key:KEEP[lastTab]()}}
+ if(KEEP[tab]&&lastTab!==tab&&tabStore[tab]&&tabStore[tab].key===KEEP[tab]()){v0.textContent='';v0.appendChild(tabStore[tab].f);restored=true}
+ if(KEEP[tab])delete tabStore[tab];
+ wasRestored=restored;
+ if(!restored)v0.innerHTML=({home,explore,library,sources,profile,nahj,mafatih})[tab]();
  document.querySelectorAll('.nav button').forEach(b=>{const on=b.dataset.tab===tab;b.classList.toggle('on',on);b.firstElementChild.className=(on?'ph-fill ph-':'ph ph-')+b.dataset.ic});countUp();requestAnimationFrame(movePill);
- if(lastTab!==tab){const v=$('#view');v.getAnimations().forEach(a=>a.cancel());v.animate([{opacity:.4},{opacity:1}],{duration:180,easing:'cubic-bezier(.2,.8,.2,1)'});lastTab=tab}
- if(tab==='home')observeShelves();
- if(tab==='nahj'){const sc=SECTIONS.find(x=>x.k==='nahj');if(sc)loadShelf(sc)}
- if(tab==='mafatih')mfHook();
+ if(lastTab!==tab){const v=$('#view');try{if(window.__va)window.__va.cancel()}catch(e){}window.__va=v.animate([{opacity:.4},{opacity:1}],{duration:160,easing:'cubic-bezier(.2,.8,.2,1)'});lastTab=tab}
+ if(tab==='home'){if(restored){document.querySelectorAll('[data-shelf-k]').forEach(e=>{const k=e.dataset.shelfK,r=document.getElementById('sh-'+k);if(shelfCache[k]&&r&&!r.classList.contains('rail'))fillShelf(SECTIONS.find(x=>x.k===k))})}else observeShelves()}
+ if(tab==='nahj'){const sc=SECTIONS.find(x=>x.k==='nahj');if(sc&&(!restored||!$('#sh-nahj.rail')))loadShelf(sc)}
+ if(tab==='mafatih'&&!restored)mfHook();
  {const so=document.querySelector('.sscroll .on');if(so){const p=so.parentElement;p.scrollLeft=so.offsetLeft-(p.clientWidth-so.offsetWidth)/2}}
- if(tab==='explore'&&(q||curTitle)){if(results.length||Object.keys(rstat).length)drawResults();else if(q)searchAll(q)}
+ if(tab==='explore'&&!restored&&(q||curTitle)){if(results.length||Object.keys(rstat).length)drawResults();else if(q)searchAll(q)}
  const qi=$('#q');if(qi){qi.onfocus=()=>{if(!fOpen){fOpen=true;const fp=$('.fpanel');if(fp)fp.classList.add('on');const fb=$('.fbtn');if(fb)fb.classList.add('on')}};qi.oninput=()=>{q=qi.value;curTitle='';clearTimeout(qt);if(!q.trim()){render();return}{const sc=$('.sortc');if(sc)sc.style.display=''}if(SCRIBD_RE.test(q)){const u=q.trim();q='';qi.value='';openScribd(u);return}qt=setTimeout(()=>searchAll(q.trim()),500)};qi.onkeydown=e=>{if(e.key==='Enter'&&q.trim()){clearTimeout(qt);S.recent=[q.trim(),...S.recent.filter(x=>x!==q.trim())].slice(0,6);save();searchAll(q.trim());qi.blur()}}}
  const gi=$('#goal');if(gi)gi.oninput=()=>{S.set.goal=+gi.value;$('#gv').textContent=ar(gi.value)+' دقيقة';save()};
  const yi=$('#yg');if(yi)yi.oninput=()=>{S.set.yearGoal=+yi.value;$('#ygv').textContent=ar(yi.value)+' كتاباً';save()};
  const f=$('#feat');if(f)f.onscroll=()=>{const i=Math.round(Math.abs(f.scrollLeft)/f.clientWidth);document.querySelectorAll('.dots i').forEach((d,j)=>d.classList.toggle('on',i===j))};
 }
-function go(t,focus){tab=t;$('#view').scrollTop=0;render();$('#nav').classList.remove('mini');if(focus)setTimeout(()=>$('#q')?.focus(),60)}
+const tabY={};let wasRestored=false;
+function go(t,focus){tabY[tab]=$('#view').scrollTop;tab=t;$('#view').scrollTop=0;render();if(wasRestored&&t!=='explore')$('#view').scrollTop=tabY[t]||0;$('#nav').classList.remove('mini');if(focus)setTimeout(()=>$('#q')?.focus(),60)}
 /* Scribd: لا يوفّر فهرساً عاماً؛ أي مستند عام يُلصق رابطه يُفتح بالتضمين الرسمي داخل التطبيق */
 const SCRIBD_RE=/scribd\.com\/(?:[a-z]{2}\/)?(document|doc|presentation|book|read|audiobook)\/(\d+)(?:\/([^/?#\s]+))?/i;
 async function openScribd(url){const m=String(url).match(SCRIBD_RE);

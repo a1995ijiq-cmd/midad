@@ -1196,8 +1196,6 @@ em[class*=mfk-],.mffam [class*=mfk-] em,.mffam button em{color:var(--k);backgrou
 #view.vin>*{animation:none!important}
 #view.vin{animation:vfade .18s var(--out) backwards}
 @keyframes vfade{from{opacity:.4}}
-#view>section,#view>.duo,#view>.dcard{content-visibility:auto;contain-intrinsic-size:auto 280px}
-.njc,.mfch,.mfpc,.cat{content-visibility:auto;contain-intrinsic-size:auto 200px}
 @media(prefers-reduced-motion:reduce){.skel,.grid:has(>.skel-c),.skl,#view.vin{animation:none!important}}
 
 /* أداء ٢: بدون تمويه خلفي على الأشرطة الثابتة (مكلف على الموبايل)، ونقشة الأغلفة صورة خلفية بدل SVG */
@@ -1208,6 +1206,9 @@ em[class*=mfk-],.mffam [class*=mfk-] em,.mffam button em{color:var(--k);backgrou
 
 /* منع التكبير التلقائي بالآيفون عند الكتابة بخانات البحث: لازم الخط ١٦ بكسل أو أكثر */
 input:not([type=range]):not([type=checkbox]):not([type=radio]),textarea,select{font-size:max(16px,1em)!important}
+
+/* غلاف الصورة يظهر فقط بعد تحميله، وقبلها يبقى عنوان الكتاب ظاهراً */
+.cv img{opacity:0;background:none!important;transition:opacity .3s}.cv img.ok{opacity:1}
 </style>
 <link rel="stylesheet" href="fonts/ph.css">
 </head>
@@ -1373,13 +1374,17 @@ A.lv={async search(q,o){const pg=o.page||1;
   return mkB({src:'lv',key:String(x.id),t:x.title,a:((x.authors||[])[0]?((x.authors[0].first_name||'')+' '+(x.authors[0].last_name||'')).trim():''),lang:/arab/i.test(x.language||'')?'ar':'en',kind:'audio',ref:x.id,cover:iaid?`https://archive.org/services/img/${enc(iaid)}`:'',lvurl:x.url_librivox,secs:(x.sections||[]).map(s=>({t:s.title,u:s.listen_url,d:+s.playtime||0})).filter(s=>s.u),d:strip(x.description||'').slice(0,300)+(x.totaltime?' · المدة '+x.totaltime:'')})});
  l.more=l.length===20;return l}};
 /* المكتبة الرقمية العراقية: ما عندها بحث عام، فنجمع فهرسها تدريجياً ونحفظه بالجهاز */
-const LQ=()=>{if(!S.libiq)S.libiq={cur:0,end:false,dead:0,b:{}};return S.libiq};
+/* فهرس المكتبة العراقية يكبر مع الاستخدام (آلاف الكتب)، فصار يُخزن بـIndexedDB بدل حالة التطبيق حتى ما يثقّل الحفظ والفتح */
+let LQC=null,lqT=0;const LQ=()=>LQC||S.libiq||{cur:0,end:false,dead:0,b:{}};
+const lqSave=()=>{clearTimeout(lqT);lqT=setTimeout(()=>{if(LQC)IDB.set('lq:v1',LQC).catch(()=>{})},1500)};
+async function lqLoad(){if(LQC)return LQC;const d=await IDB.get('lq:v1').catch(()=>null);if(LQC)return LQC;
+ LQC=d||S.libiq||{cur:0,end:false,dead:0,b:{}};if(S.libiq){if(d&&S.libiq.cur>d.cur)LQC=S.libiq;delete S.libiq;save();lqSave()}return LQC}
 const lqBook=x=>mkB({src:'libiq',key:String(x.id),t:x.t,a:x.a,lang:isAr(x.t)?'ar':'en',kind:'libiq',ref:x.id,cover:x.cover,year:x.year,d:[x.subj,x.pub].filter(Boolean).join(' · ')});
-async function lqBlock(){const c=LQ();if(c.end)return [];const ids=[];for(let i=1;i<=40;i++)ids.push(c.cur+i);
+async function lqBlock(){const c=await lqLoad();if(c.end)return [];const ids=[];for(let i=1;i<=40;i++)ids.push(c.cur+i);
  const j=await getJSON('/api/libiq?ids='+ids.join(','),25000);c.cur+=40;
  (j.books||[]).forEach(x=>{c.b[x.id]={id:x.id,t:x.t,a:x.a,cover:x.cover,year:x.year,subj:(x.subj||'').slice(0,60),pub:(x.pub||'').slice(0,50)}});
- c.dead=(j.books||[]).length?0:c.dead+1;if(c.dead>=3)c.end=true;save();return j.books||[]}
-A.libiq={async search(q,o){const pg=o.page||1,c=LQ();
+ c.dead=(j.books||[]).length?0:c.dead+1;if(c.dead>=3)c.end=true;lqSave();return j.books||[]}
+A.libiq={async search(q,o){const pg=o.page||1,c=await lqLoad();
  if(!q){while(c.cur<pg*40&&!c.end)await lqBlock();const l=Object.values(c.b).filter(x=>x.id>(pg-1)*40&&x.id<=pg*40).map(lqBook);l.more=!c.end;return l}
  const nq=norm(q),hit=x=>norm(x.t+' '+x.a+' '+x.subj).includes(nq);let out=[];
  if(pg===1)out=Object.values(c.b).filter(hit);
@@ -1407,7 +1412,7 @@ let tab='home',q='',fLang='all',fSrc='all',libTab='reading',hlMode=false,add=nul
 let results=[],rstat={},stoken=0,shelfCache={};
 
 /* ---------- عرض الأغلفة ---------- */
-const cover=b=>{const c=b.c||pal(b.t);return `<div class="cv ${b.cover?'img':''} ${b.lang==='en'?'en':''}" style="--c1:${c[0]};--c2:${c[1]}"><b>${esc(String(b.t).slice(0,60))}</b><i>${esc(b.a)}</i>${b.cover?`<img src="${esc(b.cover)}" alt="" loading="lazy" decoding="async" onerror="this.remove()">`:''}</div>`};
+const cover=b=>{const c=b.c||pal(b.t);return `<div class="cv ${b.cover?'img':''} ${b.lang==='en'?'en':''}" style="--c1:${c[0]};--c2:${c[1]}"><b>${esc(String(b.t).slice(0,60))}</b><i>${esc(b.a)}</i>${b.cover?`<img src="${esc(b.cover)}" alt="" loading="lazy" decoding="async" onload="this.classList.add('ok')" onerror="this.remove()">`:''}</div>`};
 const sbadge=b=>{const s=srcOf(b.src);return s?`<span class="sb" style="background:${s.c}">${esc(s.n)}</span>`:''};
 const card=(b,i)=>`<button class="bk${i!=null?' pop':''}" ${i!=null?`style="--d:${Math.min(i,11)*45}ms"`:''} data-open="${esc(b.id)}">${cover(b)}<p>${esc(b.t)}</p>${b.a?`<span>${esc(b.a)}</span>`:''}${sbadge(b)}</button>`;
 /* ترتيب ذكي حسب الصلة بكلمة البحث: العنوان المطابق أولاً ثم المؤلف ثم الباقي */
@@ -1450,10 +1455,13 @@ function loadMore(tk=stoken){
  });
  drawResults();
 }
-let moreIO=null;
-function drawResults(){
- const el=$('#res');if(!el)return;
+let moreIO=null,drT=0,resN=36,resTk=-1,chunkIO=null,resList=null;
+/* رسم النتائج على دفعات: ٣٦ كتاباً أولاً ثم دفعة كلما اقتربت من الأسفل، وتجميع التحديثات المتتالية من المصادر في رسمة واحدة */
+function drawResults(){if(drT)return;drT=setTimeout(()=>{drT=0;drawResultsNow()},80)}
+function drawResultsNow(){
+ const el=$('#res');if(!el)return;if(resTk!==stoken){resTk=stoken;resN=36}
  const pending=Object.values(rstat).some(v=>v==='…');
+ setTimeout(()=>{const gm=$('#gmore');if(chunkIO)chunkIO.disconnect();if(gm&&'IntersectionObserver' in window){chunkIO=new IntersectionObserver(en=>{if(!en[0].isIntersecting)return;const g=el.querySelector('.grid');if(!g||!resList){chunkIO.disconnect();return}const nx=resList.slice(resN,resN+36);nx.forEach(b=>seenCards.add(b.id));g.insertAdjacentHTML('beforeend',nx.map(b=>card(b,null)).join(''));resN+=36;if(resN>=resList.length){chunkIO.disconnect();const v=$('#view'),y=v.scrollTop;drawResultsNow();v.scrollTop=y}},{root:$('#view'),rootMargin:'900px'});chunkIO.observe(gm)}},60);
  setTimeout(()=>{const mb=el.querySelector('[data-act=more]');if(moreIO)moreIO.disconnect();if(mb&&'IntersectionObserver' in window){moreIO=new IntersectionObserver(en=>{if(en[0].isIntersecting){moreIO.disconnect();loadMore()}},{root:$('#view'),rootMargin:'500px'});moreIO.observe(mb)}},50);
  let r=results.filter(b=>!S.empty[b.id]&&(fLang==='all'||b.lang===fLang)&&(fSrc==='all'||b.src===fSrc));
  r=q&&!curSec&&!curTitle?rankRes(r,q):ordered(r);
@@ -1463,11 +1471,12 @@ function drawResults(){
  if(more&&r.length>gc)r=r.slice(0,r.length-r.length%gc);
  const ent=Object.entries(rstat),bad=ent.filter(([,v])=>v==='x'||v===0).length;
  const st=`<div class="sstat">${ent.filter(([,v])=>v!=='x'&&v!==0).map(([id,v])=>{const s=srcOf(id);return s?`<span class="${v==='…'?'':'ok'}"><bdi>${esc(s.n)}</bdi>: ${v==='…'?'<span class="spin">◌</span>':ar(v)}</span>`:''}).join('')}${bad?`<span>${bad===1?'مصدر واحد':ar(bad)+(bad<11?' مصادر':' مصدراً')} بدون نتائج</span>`:''}</div>`;
- let ni=0;const rc=r.map(b=>{const fresh=!seenCards.has(b.id);seenCards.add(b.id);return card(b,fresh?ni++:null)}).join('');
+ resList=r;const shown=r.length>resN?r.slice(0,resN):r,hasChunk=r.length>resN;
+ let ni=0;const rc=shown.map(b=>{const fresh=!seenCards.has(b.id);seenCards.add(b.id);return card(b,fresh?ni++:null)}).join('');
  const tot=curJobs?curJobs.reduce((n,j)=>n+(j.total||0),0):0,nsrc=curJobs?new Set(curJobs.filter(j=>j.total).map(j=>j.src)).size:0;
  const fst=$('#fstat');if(fst)fst.innerHTML=ent.length?`<div class="fsec"><span class="flab"><i class="ph-duotone ph-chart-bar"></i> النتائج حسب المصدر</span>${st}</div>`:'';
  const sm=$('#secmeta');if(sm)sm.innerHTML=`<span><i class="ph-fill ph-books"></i> ${tot?`نحو <b>${ar(tot)}</b> كتاب`:`<b>${ar(r.length)}</b> كتاب`}</span><span><i class="ph-fill ph-stack"></i> ${ar(nsrc||ent.filter(([,v])=>v!=='x'&&v!==0).length)} ${nsrc>2&&nsrc<11?'مصادر':'مصدر'}</span>${pending?'<span class="spn"><i class="ph-bold ph-circle-notch"></i> يُحمَّل</span>':''}`;
- el.innerHTML=(fst?'':st)+(curTitle&&!sm&&tot>100?`<div class="avail"><i class="ph-duotone ph-books"></i><span>يتوفر بهذا القسم تقريباً <b>${ar(tot)}</b> كتاب من ${ar(nsrc)} ${nsrc>2&&nsrc<11?'مصادر':'مصدر'} — مرّر للأسفل حتى تتحمّل تلقائياً</span></div>`:'')+(r.length?`<div class="rhead"><span><b>${ar(r.length)}</b> كتاب معروض</span>${fSort!=='rel'?`<span class="rsort"><i class="ph-bold ph-sort-ascending"></i>${{title:'العنوان',new:'الأحدث',old:'الأقدم'}[fSort]}</span>`:''}</div><div class="grid">${rc}</div>${pending?`<div class="grid">${'<div class="skel-c"></div>'.repeat(3)}</div>`:more?`<button class="btn alt full" style="margin-top:18px" data-act="more"><i class="ph-bold ph-plus-circle"></i> تحميل المزيد</button>`:`<p class="mut" style="text-align:center;margin-top:18px">وصلت لنهاية النتائج</p>`}`:pending?`<div class="grid">${'<div class="skel-c"></div>'.repeat(6)}</div>`:`<div class="empty"><i class="ph-duotone ph-binoculars"></i><b>ما لگينا نتائج</b>جرّب كلمة ثانية، أو فعّل مصادر أكثر، أو جرّب بالإنجليزي</div>`);
+ el.innerHTML=(fst?'':st)+(curTitle&&!sm&&tot>100?`<div class="avail"><i class="ph-duotone ph-books"></i><span>يتوفر بهذا القسم تقريباً <b>${ar(tot)}</b> كتاب من ${ar(nsrc)} ${nsrc>2&&nsrc<11?'مصادر':'مصدر'} — مرّر للأسفل حتى تتحمّل تلقائياً</span></div>`:'')+(r.length?`<div class="rhead"><span><b>${ar(r.length)}</b> كتاب معروض</span>${fSort!=='rel'?`<span class="rsort"><i class="ph-bold ph-sort-ascending"></i>${{title:'العنوان',new:'الأحدث',old:'الأقدم'}[fSort]}</span>`:''}</div><div class="grid">${rc}</div>${hasChunk?`<div class="grid" id="gmore">${'<div class="skel-c"></div>'.repeat(3)}</div>`:pending?`<div class="grid">${'<div class="skel-c"></div>'.repeat(3)}</div>`:more?`<button class="btn alt full" style="margin-top:18px" data-act="more"><i class="ph-bold ph-plus-circle"></i> تحميل المزيد</button>`:`<p class="mut" style="text-align:center;margin-top:18px">وصلت لنهاية النتائج</p>`}`:pending?`<div class="grid">${'<div class="skel-c"></div>'.repeat(6)}</div>`:`<div class="empty"><i class="ph-duotone ph-binoculars"></i><b>ما لگينا نتائج</b>جرّب كلمة ثانية، أو فعّل مصادر أكثر، أو جرّب بالإنجليزي</div>`);
 }
 
 /* ---------- الشاشات ---------- */
@@ -3007,6 +3016,7 @@ document.addEventListener('keydown',e=>{if(!$('#reader').classList.contains('on'
 {const nv0=$('#nav');if(window.ResizeObserver){const ro=new ResizeObserver(()=>movePill());ro.observe(nv0);nv0.querySelectorAll('button').forEach(b=>ro.observe(b))}nv0.addEventListener('transitionend',movePill)}
 {let lastY=0;const v=$('#view'),nv=$('#nav');v.addEventListener('scroll',()=>{const y=v.scrollTop;if(y>lastY+6&&y>90)nv.classList.add('mini');else if(y<lastY-6||y<40)nv.classList.remove('mini');lastY=y},{passive:true})}
 render();
+setTimeout(()=>lqLoad().catch(()=>{}),2500);
 setTimeout(()=>{const sp=$('#splash');sp.classList.add('off');setTimeout(()=>sp.remove(),700)},1000);
 /* منع تكبير واجهة التطبيق كلها بالقرص (يسبب ثقل وإعادة تشغيل على الآيفون)؛ التكبير متاح داخل عارض الصفحات */
 document.addEventListener('gesturestart',e=>{if(!e.target.closest||!e.target.closest('.pdfv'))e.preventDefault()},{passive:false});

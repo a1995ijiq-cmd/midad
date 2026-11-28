@@ -26,7 +26,7 @@
 :root{color-scheme:light dark;--bg:light-dark(#fbfafc,#120e17);--card:light-dark(#fff,#1c1724);--ink:light-dark(#1d1626,#f1ecf6);--mute:light-dark(#6c6478,#a59db2);--line:light-dark(#ece8f1,#2b2436);--plum:light-dark(#3b2157,#c3a6ea);--plumbg:light-dark(#3b2157,#2a1b3d);--gold:#c79a2e;--soft:light-dark(#f2eef7,#231c2d);--ok:light-dark(#1d7a4a,#5fd39a);--bad:light-dark(#b3261e,#ff8a80)}
 :root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
 *{box-sizing:border-box;min-width:0;-webkit-tap-highlight-color:transparent}
-body{margin:0;background:light-dark(#e9e4ef,#0a080d);color:var(--ink);font:16px/1.55 "eKalem","IBM Plex Sans Arabic",system-ui,sans-serif;overflow-x:clip}
+body{margin:0;background:light-dark(#e9e4ef,#0a080d);color:var(--ink);font:16px/1.55 "IBM Plex Sans Arabic",system-ui,sans-serif;overflow-x:clip}
 button,input{font:inherit;color:inherit}
 button{cursor:pointer;border:0;background:none}
 :focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:8px}
@@ -43,7 +43,7 @@ button{cursor:pointer;border:0;background:none}
 .nav button.on svg{stroke:var(--gold)}
 h1{font:700 30px/1.15 eKalem,Amiri,serif;margin:0}
 h2{font:700 21px/1.2 eKalem,Amiri,serif;margin:26px 0 12px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
-h2 button,h2 small{font:500 13px "eKalem","IBM Plex Sans Arabic";color:var(--plum)}
+h2 button,h2 small{font:500 13px "IBM Plex Sans Arabic";color:var(--plum)}
 .mut{color:var(--mute);font-size:14px}
 .top{display:flex;justify-content:space-between;align-items:center;gap:12px}
 .logo{display:flex;align-items:center;gap:8px;font:700 24px eKalem,Amiri;color:var(--plum)}
@@ -81,7 +81,7 @@ h2 button,h2 small{font:500 13px "eKalem","IBM Plex Sans Arabic";color:var(--plu
 .bk:active .cv{transform:scale(.97)}
 .cv svg{position:absolute;inset:0;width:100%;height:100%}
 .cv::before{content:"";position:absolute;inset:7%;border:1px solid rgb(255 230 170/.55);border-radius:4px 10px 10px 4px}
-.cv b{position:relative;font:700 1.15em/1.2 eKalem,Amiri;text-wrap:balance;text-shadow:0 1px 6px rgb(0 0 0/.3)}
+.cv b{position:relative;font:700 1.15em/1.2 Amiri;text-wrap:balance;text-shadow:0 1px 6px rgb(0 0 0/.3)}
 .cv i{position:relative;font-style:normal;font-size:.7em;opacity:.85;margin-top:6px}
 .cv.en b{font-family:Georgia,serif}
 .cats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
@@ -188,7 +188,7 @@ input[type=range]{accent-color:var(--gold);width:140px;height:44px}
 .page p{margin:0 0 1em;border-radius:6px;transition:background .2s}
 .page p.hl{background:var(--hl);box-shadow:0 0 0 4px var(--hl)}
 .reader.hlm .page p{cursor:pointer;outline:1px dashed var(--rline);outline-offset:4px}
-.page .note{font:13px "eKalem","IBM Plex Sans Arabic";color:var(--rmute);text-align:center;border-top:1px dashed var(--rline);padding-top:10px}
+.page .note{font:13px "IBM Plex Sans Arabic";color:var(--rmute);text-align:center;border-top:1px dashed var(--rline);padding-top:10px}
 .rnav{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--rmute)}
 .rnav input{flex:1;width:auto}
 .pnl{position:absolute;inset:auto 10px 118px;max-height:60%;overflow-y:auto;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:22px;padding:16px;box-shadow:0 20px 50px rgb(0 0 0/.25);display:none}
@@ -255,7 +255,7 @@ input[type=range]{accent-color:var(--gold);width:140px;height:44px}
 .sbar i{font-size:20px}
 .logo i{font-size:20px}
 /* أغلفة بحواف صفحات */
-.cv{transform-style:preserve-3d}
+
 .cv::after{content:"";position:absolute;inset:3% auto 3% 0;width:5px;z-index:4;background:repeating-linear-gradient(90deg,#f6efe0 0 1px,#d9cfbb 1px 2px);border-radius:0 2px 2px 0;opacity:.9}
 .bk .cv{transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s}
 .bk:hover .cv,.bk:focus-visible .cv{transform:perspective(700px) rotateY(-14deg) translateY(-4px);box-shadow:inset -6px 0 0 rgb(0 0 0/.18),14px 16px 26px rgb(30 15 50/.28)}
@@ -317,7 +317,7 @@ section .rail{background:linear-gradient(to bottom,transparent calc(100% - 9px),
 .ext i{font-size:16px}
 .dhead .cv{transform:perspective(800px) rotateY(-14deg);box-shadow:inset -6px 0 0 rgb(0 0 0/.2),16px 18px 28px rgb(30 15 50/.3)}
 .sheet .acts .btn.full{box-shadow:0 8px 20px rgb(199 154 46/.35)}
-.reveal{animation:rise .5s cubic-bezier(.2,.8,.2,1) both}
+.reveal{animation:rise .5s cubic-bezier(.2,.8,.2,1) backwards}
 .top .logo{letter-spacing:0}
 
 /* ===== إصلاح الحواف وشريط سفلي مثل إنستغرام ===== */
@@ -346,9 +346,9 @@ html,body{height:100%;overscroll-behavior:none}
 .reader.imm .ribbon{position:absolute;top:0;left:0;right:0;z-index:2}
 .page{padding:18px clamp(20px,6vw,56px) 28px}
 .page .pw{max-width:40em;margin:0 auto}
-.page .rh{display:flex;justify-content:space-between;gap:12px;font:12px "eKalem","IBM Plex Sans Arabic";color:var(--rmute);border-bottom:1px solid var(--rline);padding-bottom:8px;margin-bottom:18px}
+.page .rh{display:flex;justify-content:space-between;gap:12px;font:12px "IBM Plex Sans Arabic";color:var(--rmute);border-bottom:1px solid var(--rline);padding-bottom:8px;margin-bottom:18px}
 .page .rh span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.page .rf{text-align:center;font:13px "eKalem","IBM Plex Sans Arabic";color:var(--rmute);margin-top:22px}
+.page .rf{text-align:center;font:13px "IBM Plex Sans Arabic";color:var(--rmute);margin-top:22px}
 .page .rf::before,.page .rf::after{content:"—";margin:0 8px;opacity:.5}
 .page p{hyphens:auto;position:relative}
 .page p.c-y{background:color-mix(in srgb,#f5d76e 55%,transparent);box-shadow:0 0 0 4px color-mix(in srgb,#f5d76e 55%,transparent)}
@@ -356,7 +356,7 @@ html,body{height:100%;overscroll-behavior:none}
 .page p.c-b{background:color-mix(in srgb,#8cc4f0 50%,transparent);box-shadow:0 0 0 4px color-mix(in srgb,#8cc4f0 50%,transparent)}
 .page p.c-p{background:color-mix(in srgb,#f3a3c4 50%,transparent);box-shadow:0 0 0 4px color-mix(in srgb,#f3a3c4 50%,transparent)}
 .page p.sel{outline:2px solid var(--gold)!important;outline-offset:6px}
-.page p.edited::after{content:"معدّل";font:10px "eKalem","IBM Plex Sans Arabic";color:var(--gold);margin-inline-start:6px;vertical-align:super}
+.page p.edited::after{content:"معدّل";font:10px "IBM Plex Sans Arabic";color:var(--gold);margin-inline-start:6px;vertical-align:super}
 .page .nb{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:8px;background:var(--gold);color:#241500;font-size:14px;vertical-align:middle;margin-inline-start:6px}
 .page .mine{border-inline-start:3px solid var(--gold);padding-inline-start:12px;color:color-mix(in srgb,var(--rink) 80%,var(--gold));font-style:italic}
 .page .mine::before{content:"✎ ";color:var(--gold);font-style:normal}
@@ -376,7 +376,7 @@ html,body{height:100%;overscroll-behavior:none}
 .rmodal.on{display:flex}
 .rmodal>div{width:100%;background:var(--card);color:var(--ink);border-radius:24px 24px 0 0;padding:18px 18px calc(18px + env(safe-area-inset-bottom));animation:rise .25s ease}
 .rmodal h6{font:700 18px eKalem,Amiri;margin:0 0 10px}
-.rmodal textarea{width:100%;min-height:140px;border-radius:14px;border:1px solid var(--line);background:var(--bg);color:var(--ink);padding:12px;font:17px/1.8 eKalem,Amiri;resize:vertical}
+.rmodal textarea{width:100%;min-height:140px;border-radius:14px;border:1px solid var(--line);background:var(--bg);color:var(--ink);padding:12px;font:17px/1.8 Amiri;resize:vertical}
 .rmodal .acts{margin-top:12px}
 .pdfv{position:absolute;inset:0;overflow-y:auto;background:#5a5560;padding:12px 0 80px;-webkit-overflow-scrolling:touch}
 .pdfv .pp{position:relative;margin:0 auto 12px;background:#fff;box-shadow:0 6px 20px rgb(0 0 0/.35);width:min(96%,900px)}
@@ -414,7 +414,7 @@ html,body{height:100%;overscroll-behavior:none}
 #view.vin>*{animation:vin .34s var(--out) both}
 #view.vin>*:nth-child(2){animation-delay:.03s}#view.vin>*:nth-child(3){animation-delay:.06s}#view.vin>*:nth-child(4){animation-delay:.09s}#view.vin>*:nth-child(5){animation-delay:.12s}#view.vin>*:nth-child(n+6){animation-delay:.15s}
 @keyframes vin{from{opacity:0;transform:translateY(12px)}}
-.bk.pop{animation:popin .42s var(--out) both;animation-delay:var(--d,0ms)}
+.bk.pop{animation:popin .42s var(--out) backwards;animation-delay:var(--d,0ms)}
 @keyframes popin{from{opacity:0;transform:translateY(14px) scale(.96)}}
 .btn,.chip,.cat,.ib,.addsrc,.seg button,.row,.qact button,.annbar button,.audbtns button,.sw{transition:transform .18s var(--spring),background .2s,color .2s,box-shadow .2s}
 .btn:active,.chip:active,.ib:active,.addsrc:active,.seg button:active,.qact button:active,.annbar button:active,.audbtns button:active{transform:scale(.95)}
@@ -478,7 +478,7 @@ html[dir=rtl] .npill{right:auto;left:0}
 .qnum{font-style:normal;color:var(--gold);font-size:.85em;white-space:nowrap}
 .qnav{display:flex;justify-content:space-between;gap:10px;margin-top:22px}
 .qay{font:22px/2 "Amiri Quran",eKalem,Amiri,serif;margin:0 0 10px;color:var(--plum)}
-.qtafx{max-height:45vh;overflow-y:auto;font:17px/1.9 eKalem,Amiri,serif;white-space:pre-line;background:var(--bg);border-radius:14px;padding:12px;margin-top:8px}
+.qtafx{max-height:45vh;overflow-y:auto;font:17px/1.9 Amiri,serif;white-space:pre-line;background:var(--bg);border-radius:14px;padding:12px;margin-top:8px}
 .qrecs{max-height:55vh;overflow-y:auto}
 .qrecs button{display:flex;justify-content:space-between;width:100%;padding:12px 6px;border-bottom:1px solid var(--line);min-height:48px;text-align:start}
 .qrecs button.on{color:var(--gold);font-weight:700}.qrecs small{color:var(--mute)}
@@ -514,7 +514,7 @@ html[dir=rtl] .npill{right:auto;left:0}
 .njhikma button{position:absolute;bottom:10px;left:10px;width:38px;height:38px;border-radius:12px;background:var(--soft);display:grid;place-items:center}
 .njchips{padding-top:2px}.njchips .chip{display:inline-flex;align-items:center;gap:6px}
 .njlist{display:flex;flex-direction:column;gap:10px;margin-top:12px}
-.njc{border-radius:20px;background:var(--card);border:1px solid var(--line);overflow:hidden;transition:border-color .25s,box-shadow .3s;animation:njin .45s var(--d) both cubic-bezier(.2,.8,.2,1)}
+.njc{border-radius:20px;background:var(--card);border:1px solid var(--line);overflow:hidden;transition:border-color .25s,box-shadow .3s;animation:njin .45s var(--d) backwards cubic-bezier(.2,.8,.2,1)}
 @keyframes njin{from{opacity:0;transform:translateY(12px)}}
 .njc.open{border-color:color-mix(in srgb,var(--gold) 55%,var(--line));box-shadow:0 14px 30px rgb(40 20 70/.12)}
 .njh{display:flex;align-items:center;gap:12px;width:100%;padding:14px;text-align:start}
@@ -601,7 +601,7 @@ html[dir=rtl] .npill{right:auto;left:0}
 .qseg button{flex:1;height:34px;border-radius:10px;font-size:14px;color:var(--rmute);transition:background .25s,color .25s}
 .qseg button.on{background:linear-gradient(135deg,#1a6b4c,var(--qg1));color:#fff;box-shadow:0 4px 12px rgb(13 74 53/.3)}
 .qgrid{display:grid;gap:8px;padding:2px 16px 10px}
-.qsr{display:grid;grid-template-columns:52px 1fr auto;align-items:center;gap:12px;padding:10px 12px;border-radius:18px;text-align:start;color:var(--rink);background:color-mix(in srgb,var(--rink) 3%,var(--rbg));border:1px solid var(--rline);transition:transform .15s,border-color .25s,box-shadow .25s;animation:qin .45s var(--d) both cubic-bezier(.2,.8,.2,1)}
+.qsr{display:grid;grid-template-columns:52px 1fr auto;align-items:center;gap:12px;padding:10px 12px;border-radius:18px;text-align:start;color:var(--rink);background:color-mix(in srgb,var(--rink) 3%,var(--rbg));border:1px solid var(--rline);transition:transform .15s,border-color .25s,box-shadow .25s;animation:qin .45s var(--d) backwards cubic-bezier(.2,.8,.2,1)}
 @keyframes qin{from{opacity:0;transform:translateY(10px)}}
 .qsr:active{transform:scale(.98)}
 .qsr.cur{border-color:color-mix(in srgb,var(--qgold) 70%,transparent);box-shadow:0 0 0 3px color-mix(in srgb,var(--qgold) 18%,transparent)}
@@ -696,10 +696,10 @@ h1{font:700 var(--fs-3xl)/1.15 eKalem,Amiri,serif;letter-spacing:0}
 h2{font:700 var(--fs-xl)/1.25 eKalem,Amiri,serif;margin:30px 0 12px;align-items:center}
 h2>span{display:inline-flex;align-items:center;gap:8px;flex-wrap:wrap}
 h2>span>i:first-child{width:32px;height:32px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;direction:ltr;font-size:18px;background:color-mix(in srgb,currentColor 12%,transparent)}
-h2 button{display:inline-flex;align-items:center;gap:4px;font:600 var(--fs-xs)/1 "eKalem","IBM Plex Sans Arabic";color:var(--plum);background:color-mix(in srgb,var(--plum) 9%,transparent);padding:8px 12px;border-radius:99px;flex:none;transition:transform .16s var(--e-out),background .2s}
+h2 button{display:inline-flex;align-items:center;gap:4px;font:600 var(--fs-xs)/1 "IBM Plex Sans Arabic";color:var(--plum);background:color-mix(in srgb,var(--plum) 9%,transparent);padding:8px 12px;border-radius:99px;flex:none;transition:transform .16s var(--e-out),background .2s}
 h2 button i{font-size:13px}
 h2 button:active{transform:scale(.95)}
-h2 small{font:500 var(--fs-xs) "eKalem","IBM Plex Sans Arabic";color:var(--mute)}
+h2 small{font:500 var(--fs-xs) "IBM Plex Sans Arabic";color:var(--mute)}
 
 /* الشعار والتحية */
 .top{padding-top:2px}
@@ -833,7 +833,7 @@ button.sbar:active{transform:scale(.985)}
 /* دخول الشاشات: مرة واحدة لكل تبديل، تتابع قصير غير منتظم */
 #view.vin>*{animation:vin .42s var(--e-out) both}
 #view.vin>*:nth-child(2){animation-delay:.04s}#view.vin>*:nth-child(3){animation-delay:.07s}#view.vin>*:nth-child(4){animation-delay:.1s}#view.vin>*:nth-child(5){animation-delay:.12s}#view.vin>*:nth-child(n+6){animation-delay:.14s}
-.cats .cat{animation:popin .4s var(--e-out) both;animation-delay:calc(var(--i,0) * 22ms + 60ms)}
+.cats .cat{animation:popin .4s var(--e-out) backwards;animation-delay:calc(var(--i,0) * 22ms + 60ms)}
 @keyframes vin{from{opacity:0;transform:translateY(10px)}}
 @keyframes popin{from{opacity:0;transform:translateY(8px) scale(.98)}}
 
@@ -841,7 +841,7 @@ button.sbar:active{transform:scale(.985)}
 .phd h1 span{background:linear-gradient(100deg,var(--ink) 47%,var(--gold) 55%,var(--ink) 63%);background-size:250% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 1.6s .2s var(--e-out) both}
 @keyframes shine{from{background-position:100% 0}to{background-position:0 0}}
 
-@media(prefers-reduced-motion:reduce){#view.vin>*,.cats .cat{animation:vfade .2s ease both!important}.phd h1 span{animation:none;color:var(--ink);background:none}@keyframes vfade{from{opacity:0}}}
+@media(prefers-reduced-motion:reduce){#view.vin>*,.cats .cat{animation:vfade .2s ease backwards!important}.phd h1 span{animation:none;color:var(--ink);background:none}@keyframes vfade{from{opacity:0}}}
 
 
 /* ===== تصميم ٢: نافذة الكتاب ===== */
@@ -871,7 +871,7 @@ button.sbar:active{transform:scale(.985)}
 .links .ext:active{background:var(--soft)}
 .meta{grid-template-columns:repeat(4,1fr)}
 .meta>div+div{border-inline-start:1px solid var(--line2)}
-.meta b{display:block;font:700 var(--fs-lg)/1.3 "eKalem","IBM Plex Sans Arabic";color:var(--plum)}
+.meta b{display:block;font:700 var(--fs-lg)/1.3 "IBM Plex Sans Arabic";color:var(--plum)}
 .sheet .grab{width:40px;height:5px}
 
 /* ===== تصميم ٢: القارئ ===== */
@@ -1007,8 +1007,8 @@ input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;bac
 .qth b{font:700 18px/1.4 eKalem,Amiri,serif;color:var(--plum)}
 .qth small{font-size:var(--fs-xs);color:var(--mute)}
 .qtr{display:inline-flex;align-items:center;gap:5px;font-size:var(--fs-xs);color:var(--gold);background:color-mix(in srgb,var(--gold) 10%,transparent);padding:4px 10px;border-radius:99px;margin-bottom:8px}
-.qtb p{margin:0 0 10px;font:400 17px/1.95 eKalem,Amiri,serif;text-align:justify}
-.qtb h5{margin:14px 0 6px;font:700 15px/1.5 "eKalem","IBM Plex Sans Arabic";color:var(--plum)}
+.qtb p{margin:0 0 10px;font:400 17px/1.95 Amiri,serif;text-align:justify}
+.qtb h5{margin:14px 0 6px;font:700 15px/1.5 "IBM Plex Sans Arabic";color:var(--plum)}
 .qtsrc{display:inline-flex;align-items:center;gap:5px;font-size:var(--fs-xs);color:var(--mute);margin-top:6px}
 .qtna{text-align:center;padding:10px 6px}
 .qtna>i{font-size:40px;color:var(--gold)}
@@ -1038,7 +1038,7 @@ mark.sfind.cur{background:var(--gold);color:#2a1900;box-shadow:0 0 0 3px rgb(199
 .rfx{width:42px;height:42px;flex:none;border-radius:13px;display:grid;place-items:center;font-size:20px;background:color-mix(in srgb,var(--gold) 12%,transparent)}
 .rfin{flex:1;display:flex;align-items:center;gap:8px;height:46px;padding:0 12px;border-radius:14px;background:var(--surf);border:1.5px solid color-mix(in srgb,var(--gold) 55%,var(--line2));box-shadow:0 0 0 4px rgb(199 154 46/.12)}
 .rfin>i{font-size:19px;color:var(--gold)}
-.rfin input{flex:1;min-width:0;border:0;outline:0;background:none;font:500 17px/1.2 "eKalem","IBM Plex Sans Arabic";color:var(--ink);-webkit-appearance:none}
+.rfin input{flex:1;min-width:0;border:0;outline:0;background:none;font:500 17px/1.2 "IBM Plex Sans Arabic";color:var(--ink);-webkit-appearance:none}
 .rfin input::-webkit-search-cancel-button{display:none}
 .rfclr{font-size:20px;color:var(--mute);display:grid;place-items:center}
 .rfclr[hidden]{display:none}
@@ -1054,8 +1054,8 @@ mark.sfind.cur{background:var(--gold);color:#2a1900;box-shadow:0 0 0 3px rgb(199
 .rfres .fres:active{transform:scale(.985)}
 .frp{flex:none;width:50px;padding:6px 0;border-radius:12px;display:flex;flex-direction:column;align-items:center;background:color-mix(in srgb,var(--gold) 12%,transparent);color:var(--plum)}
 .frp small{font-size:10px;color:var(--mute)}
-.frp b{font:700 16px/1.2 "eKalem","IBM Plex Sans Arabic"}
-.frt{flex:1;font:400 17px/1.85 eKalem,Amiri,serif;color:var(--ink);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.frp b{font:700 16px/1.2 "IBM Plex Sans Arabic"}
+.frt{flex:1;font:400 17px/1.85 Amiri,serif;color:var(--ink);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .frt mark{background:var(--gold);color:#2a1900;border-radius:4px;padding:0 2px;font-weight:700}
 .rfempty{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;padding:48px 20px;color:var(--mute)}
 .rfempty i{font-size:44px;color:var(--gold);margin-bottom:6px}
@@ -1095,7 +1095,7 @@ mark.sfind.cur{background:var(--gold);color:#2a1900;box-shadow:0 0 0 3px rgb(199
 .qrh i{color:var(--gold)}
 #qtaf:has(.qrh){max-height:62vh;overflow-y:auto;-webkit-overflow-scrolling:touch}#qtaf .qrecs{max-height:none!important;overflow:visible!important}
 
-.qdlp{font:700 11px/1 "eKalem","IBM Plex Sans Arabic";color:#e6c26a}
+.qdlp{font:700 11px/1 "IBM Plex Sans Arabic";color:#e6c26a}
 .qbar [data-act=qdl] .ph-check-circle{color:#7fe0b5}
 .qdlok{color:#1d5f4f;font-size:12px;margin-inline-end:4px}
 .qdlok[hidden]{display:none}
@@ -1132,13 +1132,13 @@ mark.sfind.cur{background:var(--gold);color:#2a1900;box-shadow:0 0 0 3px rgb(199
 .mfk-dua,.mfk-taq{--k:#b8862a}.mfk-ziy{--k:#1f7a5a}.mfk-mun{--k:#7a4bb0}.mfk-sal,.mfk-amal{--k:#2a6fa8}.mfk-sura{--k:#0f6b62}.mfk-txt{--k:#8a6f60}
 em[class*=mfk-],.mffam [class*=mfk-] em,.mffam button em{color:var(--k);background:color-mix(in srgb,var(--k) 13%,transparent)}
 .mffam{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-.mffam button{position:relative;display:flex;align-items:center;gap:10px;padding:10px 12px;min-height:66px;border-radius:20px;text-align:start;background:var(--surf,var(--card));border:1px solid var(--line2,var(--line));box-shadow:var(--sh1);overflow:hidden;animation:mfin .45s var(--e-out,ease) both;animation-delay:var(--d);transition:transform .16s var(--e-out,ease)}
+.mffam button{position:relative;display:flex;align-items:center;gap:10px;padding:10px 12px;min-height:66px;border-radius:20px;text-align:start;background:var(--surf,var(--card));border:1px solid var(--line2,var(--line));box-shadow:var(--sh1);overflow:hidden;animation:mfin .45s var(--e-out,ease) backwards;animation-delay:var(--d);transition:transform .16s var(--e-out,ease)}
 .mffam button::after{content:"";position:absolute;inset:auto -20px -30px auto;width:90px;height:90px;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--k) 16%,transparent),transparent 70%);pointer-events:none}
 .mffam b{flex:1;min-width:0;font:700 16px/1.45 eKalem,Amiri;color:var(--ink)}.mffam small{display:none}
 @keyframes mfin{from{opacity:0;transform:translateY(8px)}}
 .mfseg{grid-template-columns:1fr 1fr!important}
 .mfparts{display:flex;flex-direction:column;gap:10px;margin-top:12px}
-.mfpc{display:flex;align-items:center;gap:14px;padding:14px;border-radius:20px;text-align:start;background:var(--surf,var(--card));border:1px solid var(--line2,var(--line));box-shadow:var(--sh1);animation:mfin .45s var(--e-out,ease) both;animation-delay:var(--d);transition:transform .16s var(--e-out,ease)}
+.mfpc{display:flex;align-items:center;gap:14px;padding:14px;border-radius:20px;text-align:start;background:var(--surf,var(--card));border:1px solid var(--line2,var(--line));box-shadow:var(--sh1);animation:mfin .45s var(--e-out,ease) backwards;animation-delay:var(--d);transition:transform .16s var(--e-out,ease)}
 .mfpc>span:nth-child(2){flex:1;min-width:0}.mfpc small{display:block;font-size:12px;color:var(--gold);font-weight:600}.mfpc b{display:block;font:700 17px/1.5 eKalem,Amiri;color:var(--ink);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.mfpc>span>i{display:block;font-style:normal;font-size:12px;color:var(--mute);margin-top:2px}.mfpc>i{color:var(--mute)}
 .mfnum{flex:none;width:46px;height:46px;display:grid;place-items:center;font:700 20px eKalem,Amiri;color:#f3dc9a;background:linear-gradient(145deg,#6e2438,#2e0c17);border-radius:14px;transform:rotate(45deg);box-shadow:0 6px 14px -4px rgb(46 12 23/.5),inset 0 0 0 1.5px rgb(233 196 106/.45)}
 .mfnum{width:40px;height:40px;margin:3px}.mfnum em{font-style:normal;transform:rotate(-45deg)}
@@ -1193,11 +1193,17 @@ em[class*=mfk-],.mffam [class*=mfk-] em,.mffam button em{color:var(--k);backgrou
 .skel,.grid:has(>.skel-c),.skl{animation:skp 1.4s ease-in-out infinite}
 @keyframes skp{50%{opacity:.5}}
 #view.vin>*{animation:none!important}
-#view.vin{animation:vfade .18s var(--out) both}
+#view.vin{animation:vfade .18s var(--out) backwards}
 @keyframes vfade{from{opacity:.4}}
 #view>section,#view>.duo,#view>.dcard{content-visibility:auto;contain-intrinsic-size:auto 280px}
 .njc,.mfch,.mfpc,.cat{content-visibility:auto;contain-intrinsic-size:auto 200px}
 @media(prefers-reduced-motion:reduce){.skel,.grid:has(>.skel-c),.skl,#view.vin{animation:none!important}}
+
+/* أداء ٢: بدون تمويه خلفي على الأشرطة الثابتة (مكلف على الموبايل)، ونقشة الأغلفة صورة خلفية بدل SVG */
+.nav,.sfill,.greet,.rtop,.rbot,#fbar,.rfh,.rfch,.mfbar,.njstats button,.qgo{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+.nav{background:var(--card)!important}.sfill{background:var(--bg)!important}.greet{background:var(--surf,var(--card))!important}
+.rtop,.rbot,.mfbar{background:var(--rbg)!important}#fbar{background:var(--surf,var(--card))!important}.rfh,.rfch{background:var(--rbg,var(--bg))!important}
+.cv{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='34'%3E%3Cpath d='M17 3l4 8 8-4-4 8 8 4-8 4 4 8-8-4-4 8-4-8-8 4 4-8-8-4 8-4-4-8 8 4z' fill='rgb(255 240 200/.11)'/%3E%3C/svg%3E"),linear-gradient(160deg,var(--c1),var(--c2));background-size:34px 34px,auto}
 </style>
 <link rel="stylesheet" href="fonts/ph.css">
 </head>
@@ -1380,12 +1386,14 @@ const extUrl=b=>b.kind==='scribd'?b.link:b.kind==='nahj'?'https://github.com/Ope
 /* ---------- الحالة ---------- */
 const seed=()=>({lib:{},books:{},hl:[],recent:[],cust:{},stat:{pages:0},
  src:Object.keys(BUILTIN).map(k=>({id:k,on:true,sync:0})),
- set:{fs:20,lh:2,font:'eKalem',theme:'sepia',arFirst:true,goal:20,yearGoal:24},days:{}});
+ set:{fs:20,lh:2,font:'Amiri',theme:'sepia',arFirst:true,goal:20,yearGoal:24},days:{}});
 let S;try{S=JSON.parse(localStorage.getItem('midad4'))||seed()}catch(e){S=seed()}
-if(!S.empty)S.empty={};if(!S.fontMig){S.set.font='eKalem';S.fontMig=1}if(!S.fav)S.fav={};if(!S.lists)S.lists=[];if(!S.hist)S.hist=[];if(!S.secHit)S.secHit={};
+if(!S.empty)S.empty={};if(!S.fontMig2){if(S.set.font==='eKalem')S.set.font='Amiri';S.fontMig=S.fontMig2=1}if(!S.fav)S.fav={};if(!S.lists)S.lists=[];if(!S.hist)S.hist=[];if(!S.secHit)S.secHit={};
 if(!S.src.some(s=>s.id==='libiq'))S.src.splice(0,0,{id:'libiq',on:true,sync:0});
 ['gb','sw','lv','tr','aco'].forEach(k=>{if(!S.src.some(s=>s.id===k))S.src.push({id:k,on:true,sync:0})});
-const save=()=>{try{localStorage.setItem('midad4',JSON.stringify(S))}catch(e){try{S.cust={};localStorage.setItem('midad4',JSON.stringify(S))}catch(_){}}};
+const saveNow=()=>{clearTimeout(saveT);saveT=0;try{localStorage.setItem('midad4',JSON.stringify(S))}catch(e){try{S.cust={};localStorage.setItem('midad4',JSON.stringify(S))}catch(_){}}};
+let saveT=0;const save=()=>{if(!saveT)saveT=setTimeout(saveNow,600)};
+addEventListener('pagehide',()=>{if(saveT)saveNow()});document.addEventListener('visibilitychange',()=>{if(document.hidden&&saveT)saveNow()});
 const srcMeta=s=>BUILTIN[s.id]?{...BUILTIN[s.id],...s}:s;
 const srcOf=id=>{const s=S.src.find(x=>x.id===id);return s&&srcMeta(s)};
 const remember=b=>{const {txtCache,...m}=b;S.books[b.id]=m};
@@ -1395,7 +1403,7 @@ let tab='home',q='',fLang='all',fSrc='all',libTab='reading',hlMode=false,add=nul
 let results=[],rstat={},stoken=0,shelfCache={};
 
 /* ---------- عرض الأغلفة ---------- */
-const cover=b=>{const c=b.c||pal(b.t);return `<div class="cv ${b.cover?'img':''} ${b.lang==='en'?'en':''}" style="--c1:${c[0]};--c2:${c[1]}"><svg aria-hidden="true"><rect width="100%" height="100%" fill="url(#pt)"/></svg><b>${esc(String(b.t).slice(0,60))}</b><i>${esc(b.a)}</i>${b.cover?`<img src="${esc(b.cover)}" alt="" loading="lazy" onerror="this.remove()">`:''}</div>`};
+const cover=b=>{const c=b.c||pal(b.t);return `<div class="cv ${b.cover?'img':''} ${b.lang==='en'?'en':''}" style="--c1:${c[0]};--c2:${c[1]}"><b>${esc(String(b.t).slice(0,60))}</b><i>${esc(b.a)}</i>${b.cover?`<img src="${esc(b.cover)}" alt="" loading="lazy" decoding="async" onerror="this.remove()">`:''}</div>`};
 const sbadge=b=>{const s=srcOf(b.src);return s?`<span class="sb" style="background:${s.c}">${esc(s.n)}</span>`:''};
 const card=(b,i)=>`<button class="bk${i!=null?' pop':''}" ${i!=null?`style="--d:${Math.min(i,11)*45}ms"`:''} data-open="${esc(b.id)}">${cover(b)}<p>${esc(b.t)}</p>${b.a?`<span>${esc(b.a)}</span>`:''}${sbadge(b)}</button>`;
 /* ترتيب ذكي حسب الصلة بكلمة البحث: العنوان المطابق أولاً ثم المؤلف ثم الباقي */
@@ -1578,7 +1586,7 @@ function kwRe(src){const P='(?:^|[^\\p{L}\\p{N}])(?:[وف])?(?:[بل])?(?:ال|�
   const ar=w.replace(/[^؀-ۿ]/g,'');if(!/[()\[\]]/.test(w)&&!w.includes(' ')&&ar.length<=3)return P+w+'(?:ي|يه|ه|ات|ون|ين|يات|يين|ا|ها|هم|يه)?(?=$|[^\\p{L}\\p{N}])';
   return P+w});
  return new RegExp(alts.join('|'),'iu')}
-SECTIONS.forEach(s=>{if(KW[s.k])s.re=kwRe(KW[s.k]);if(NX[s.k])s.nx=kwRe(NX[s.k])});
+SECTIONS.forEach(s=>{const lz=(f,src)=>{let v;Object.defineProperty(s,f,{configurable:true,get(){return v||(v=kwRe(src))}})};if(KW[s.k])lz('re',KW[s.k]);if(NX[s.k])lz('nx',NX[s.k])});
 const fits=(sec,b,j)=>{const isAud=b.kind==='audio'||b.media==='audio';if(sec&&sec.k==='audio')return isAud;if(isAud)return false;if(sec&&sec.strict&&sec.re){const tt=norm(b.t||'');if(sec.k==='nahj'&&b.src==='aco'&&/^"?نهج البلاغه"?\s*(:|v\.|للامام|للإمام|$)/.test(tt))return false;return sec.re.test(tt)&&!(sec.nx&&sec.nx.test(tt))}if(!sec)return true;
  /* تراث والمكتبة العراقية يبحثان داخل نص الكتاب: نقبل الكتاب فقط إذا عنوانه/مؤلفه يحتوي عبارة البحث أو كلمات القسم */
  if(j&&(j.src==='tr'||(j.src==='libiq'&&sec.k!=='iraq'))){const tt=norm((b.t||'')+' '+(b.a||''));if(sec.nx&&sec.nx.test(tt))return false;if(titleQ(tt,j.q))return true;return !!(sec.re&&sec.re.test(tt))}
@@ -1842,7 +1850,7 @@ function home(){
  const reading=Object.entries(S.lib).filter(([id,e])=>e.s==='reading'&&S.books[id]).sort((a,b)=>(b[1].last||0)-(a[1].last||0)).map(([id])=>S.books[id]);
  const m=S.days[today()]||0,g=S.set.goal,fr=Math.min(1,m/g),C=2*Math.PI*29,h=new Date().getHours();
  const hero=reading.length?reading.slice(0,3).map(b=>{const e=S.lib[b.id];return `<div class="hero">${cover(b)}<div><span class="badge"><i class="ph-fill ph-book-open"></i>أكمل القراءة</span><h3>${esc(b.t)}</h3><div class="mut">${esc(b.a||srcOf(b.src)?.n||'')}</div>${b.kind==='wiki'||e.pages?`<div class="bar"><b style="width:${pctOf(b.id)}%"></b></div><div class="mut">${e.pages?`صفحة ${ar(e.p)} من ${ar(e.pages)}${e.parts>1?` · الجزء ${ar((e.part||0)+1)} من ${ar(e.parts)}`:''}`:''} · ${ar(pctOf(b.id))}٪</div>`:'<div class="mut" style="margin-top:8px">يُقرأ بقارئ المصدر</div>'}<button class="btn" style="margin-top:12px" data-read="${esc(b.id)}"><i class="ph-fill ph-book-open-text"></i>تابع القراءة</button></div></div>`}).join('')
-  :`<div class="hero"><div class="cv" style="--c1:#c79a2e;--c2:#6b4a12"><svg aria-hidden="true"><rect width="100%" height="100%" fill="url(#pt)"/></svg><b>مداد</b><i>مكتبتك</i></div><div><span class="badge"><i class="ph-fill ph-sparkle"></i>مرحباً بك</span><h3>ملايين الكتب بين يديك</h3><div class="mut">ابحث في ويكي مصدر وأرشيف الإنترنت وOpen Library وGutenberg من مكان واحد.</div><button class="btn" style="margin-top:12px" data-tab="explore" data-focus="1"><i class="ph-bold ph-magnifying-glass"></i>ابدأ البحث</button></div></div>`;
+  :`<div class="hero"><div class="cv" style="--c1:#c79a2e;--c2:#6b4a12"><b>مداد</b><i>مكتبتك</i></div><div><span class="badge"><i class="ph-fill ph-sparkle"></i>مرحباً بك</span><h3>ملايين الكتب بين يديك</h3><div class="mut">ابحث في ويكي مصدر وأرشيف الإنترنت وOpen Library وGutenberg من مكان واحد.</div><button class="btn" style="margin-top:12px" data-tab="explore" data-focus="1"><i class="ph-bold ph-magnifying-glass"></i>ابدأ البحث</button></div></div>`;
  const n=reading.length||1;
  return `<div class="top"><div class="logo"><i><i class="ph-fill ph-feather"></i></i>مداد</div><span class="mut greet"><i class="ph-duotone ph-${h<12?'sun-horizon':h<18?'sun':'moon-stars'}"></i>${h<12?'صباح الخير':h<18?'نهارك سعيد':'مساء الخير'}</span></div>
  ${installCard()}
@@ -2190,13 +2198,13 @@ async function exportPDF(id){
   const pdf=new window.jspdf.jsPDF({unit:'pt',format:'a5',compress:true});let first=true,pno=0;
   const isA=isAr(b.t);
   const start=()=>{g.setTransform(1,0,0,1,0,0);g.fillStyle='#fffdf8';g.fillRect(0,0,W,H);g.direction=isA?'rtl':'ltr';g.textBaseline='alphabetic'};
-  const flush=async(num)=>{if(num){g.font='22px "eKalem","IBM Plex Sans Arabic", sans-serif';g.fillStyle='#9a8f80';g.textAlign='center';g.fillText(ar(num),W/2,H-44)}
+  const flush=async(num)=>{if(num){g.font='22px "IBM Plex Sans Arabic", sans-serif';g.fillStyle='#9a8f80';g.textAlign='center';g.fillText(ar(num),W/2,H-44)}
    if(!first)pdf.addPage();first=false;pdf.addImage(cv.toDataURL('image/jpeg',.8),'JPEG',0,0,419.53,595.28);await new Promise(r=>setTimeout(r))};
   const wrap=(t,font,maxW)=>{g.font=font;const out=[];t.split('\n').forEach(par=>{let line='';par.split(/\s+/).forEach(w=>{const tr=line?line+' '+w:w;if(g.measureText(tr).width>maxW&&line){out.push(line);line=w}else line=tr});out.push(line)});return out};
   // صفحة العنوان
   start();g.textAlign='center';g.fillStyle='#3b2157';g.font='bold 64px eKalem,Amiri, serif';let ty=H*0.36;wrap(b.t,'bold 64px eKalem,Amiri, serif',TW).forEach(l=>{g.fillText(l,W/2,ty);ty+=86});
   g.fillStyle='#c79a2e';g.fillRect(W/2-60,ty,120,4);ty+=70;g.fillStyle='#555';g.font='34px eKalem,Amiri, serif';if(b.a)g.fillText(b.a,W/2,ty);
-  g.font='24px "eKalem","IBM Plex Sans Arabic", sans-serif';g.fillStyle='#9a8f80';g.fillText('صُدّر من تطبيق مداد · '+new Date().toLocaleDateString('ar-EG'),W/2,H-90);await flush(0);
+  g.font='24px "IBM Plex Sans Arabic", sans-serif';g.fillStyle='#9a8f80';g.fillText('صُدّر من تطبيق مداد · '+new Date().toLocaleDateString('ar-EG'),W/2,H-90);await flush(0);
   let y=0;const LH=52,BODY='30px eKalem,Amiri, serif',total=parts.reduce((s,p)=>s+p.blocks.length,0);let done=0;
   const newPage=async()=>{if(y)await flush(++pno);start();y=M+20};
   await newPage();
@@ -2212,7 +2220,7 @@ async function exportPDF(id){
      const text=(a.text!=null?a.text:bl.t).replace(/\t/g,'    ');const verse=bl.k==='v';
      const lines=wrap(text,BODY,TW);
      for(const l of lines){await ensure(LH);if(a.c){g.fillStyle=HLC[a.c]||HLC.y;g.fillRect(M-8,y+10,TW+16,LH)}g.fillStyle='#2a2230';g.font=BODY;if(verse){g.textAlign='center';g.fillText(l,W/2,y+LH-6)}else{g.fillText(l,align(l),y+LH-6)}y+=LH}
-     if(a.note){const nl=wrap('ملاحظة: '+a.note,'24px "eKalem","IBM Plex Sans Arabic", sans-serif',TW-40);await ensure(nl.length*38+24);g.fillStyle='#f3ecdc';g.fillRect(M,y+8,TW,nl.length*38+20);g.fillStyle='#c79a2e';g.fillRect(isA?X-6:M,y+8,6,nl.length*38+20);g.fillStyle='#6b5a3a';g.font='24px "eKalem","IBM Plex Sans Arabic", sans-serif';let ny=y+44;nl.forEach(l=>{g.textAlign=isA?'right':'left';g.fillText(l,isA?X-20:M+20,ny);ny+=38});y+=nl.length*38+30}
+     if(a.note){const nl=wrap('ملاحظة: '+a.note,'24px "IBM Plex Sans Arabic", sans-serif',TW-40);await ensure(nl.length*38+24);g.fillStyle='#f3ecdc';g.fillRect(M,y+8,TW,nl.length*38+20);g.fillStyle='#c79a2e';g.fillRect(isA?X-6:M,y+8,6,nl.length*38+20);g.fillStyle='#6b5a3a';g.font='24px "IBM Plex Sans Arabic", sans-serif';let ny=y+44;nl.forEach(l=>{g.textAlign=isA?'right':'left';g.fillText(l,isA?X-20:M+20,ny);ny+=38});y+=nl.length*38+30}
      if(a.add){const al=wrap('✎ '+a.add,'italic 28px eKalem,Amiri, serif',TW-20);for(const l of al){await ensure(48);g.fillStyle='#5a3a8a';g.font='italic 28px eKalem,Amiri, serif';g.fillText(l,align(l),y+42);y+=48}}
      y+=18;
      if(done%40===0)pr(30+done/total*65);
@@ -2995,7 +3003,7 @@ document.addEventListener('keydown',e=>{if(!$('#reader').classList.contains('on'
 {const nv0=$('#nav');if(window.ResizeObserver){const ro=new ResizeObserver(()=>movePill());ro.observe(nv0);nv0.querySelectorAll('button').forEach(b=>ro.observe(b))}nv0.addEventListener('transitionend',movePill)}
 {let lastY=0;const v=$('#view'),nv=$('#nav');v.addEventListener('scroll',()=>{const y=v.scrollTop;if(y>lastY+6&&y>90)nv.classList.add('mini');else if(y<lastY-6||y<40)nv.classList.remove('mini');lastY=y},{passive:true})}
 render();
-setTimeout(()=>$('#splash').classList.add('off'),1000);
+setTimeout(()=>{const sp=$('#splash');sp.classList.add('off');setTimeout(()=>sp.remove(),700)},1000);
 /* منع تكبير واجهة التطبيق كلها بالقرص (يسبب ثقل وإعادة تشغيل على الآيفون)؛ التكبير متاح داخل عارض الصفحات */
 document.addEventListener('gesturestart',e=>{if(!e.target.closest||!e.target.closest('.pdfv'))e.preventDefault()},{passive:false});
 document.addEventListener('touchmove',e=>{if(e.touches.length>1&&!(e.target.closest&&e.target.closest('.pdfv')))e.preventDefault()},{passive:false});
